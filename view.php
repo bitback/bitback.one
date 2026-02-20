@@ -191,6 +191,10 @@ function show_password_form(array $t, string $slug, bool $wrongPassword = false)
             <?php endif; ?>
         </form>
         <div class="logo"><?= htmlspecialchars($t['title']) ?></div>
+        <div style="margin-top:2rem;font-size:0.55rem;color:#2a2a2a;">
+            <a href="https://bitback.pl" target="_blank" rel="noopener" style="color:#3a6a9f;text-decoration:none;">bitback.pl</a>
+            · <a href="https://github.com/bitback/bitback.one" target="_blank" rel="noopener" style="color:#3a6a9f;text-decoration:none;">GitHub</a>
+        </div>
     </div>
     <script>
     document.getElementById('pwdForm').addEventListener('submit', function() {
@@ -228,6 +232,10 @@ function show_expired(array $t): void {
         <h1><?= htmlspecialchars($t['link_expired']) ?></h1>
         <p><?= htmlspecialchars($t['link_expired_info']) ?></p>
         <div class="logo"><?= htmlspecialchars($t['title']) ?></div>
+        <div style="margin-top:2rem;font-size:0.55rem;color:#2a2a2a;">
+            <a href="https://bitback.pl" target="_blank" rel="noopener" style="color:#3a6a9f;text-decoration:none;">bitback.pl</a>
+            · <a href="https://github.com/bitback/bitback.one" target="_blank" rel="noopener" style="color:#3a6a9f;text-decoration:none;">GitHub</a>
+        </div>
     </div>
 </body>
 </html><?php
@@ -259,6 +267,14 @@ function view_css(): string {
         .expire-info .date { color: #888; }
         .zt-badge { margin-top: 1.5rem; text-align: center; font-size: 0.65rem; color: #2a2a2a; }
         .zt-badge span { color: #333; }
+        .site-footer { margin-top: 3rem; padding: 1.5rem 1rem; text-align: center; border-top: 1px solid #1a1a1a; }
+        .site-footer .footer-brand { font-size: 0.7rem; color: #444; letter-spacing: 0.03em; }
+        .site-footer .footer-brand a { color: #5a8abf; text-decoration: none; }
+        .site-footer .footer-brand a:hover { color: #7ab0e8; text-decoration: underline; }
+        .site-footer .footer-desc { font-size: 0.6rem; color: #333; margin-top: 0.3rem; }
+        .site-footer .footer-links { font-size: 0.55rem; color: #2a2a2a; margin-top: 0.4rem; }
+        .site-footer .footer-links a { color: #3a6a9f; text-decoration: none; }
+        .site-footer .footer-links a:hover { text-decoration: underline; }
     ';
 }
 
@@ -326,6 +342,22 @@ function view_meta_html(array $t, array $data, bool $expired): string {
     return $html;
 }
 
+function view_footer_html(): string {
+    $lang = detect_lang();
+    if ($lang === 'pl') {
+        $desc = 'Zabezpieczamy pocztę, serwery i komputery';
+        $by = 'Zbigniew Gralewski';
+    } else {
+        $desc = 'We secure email, servers and computers';
+        $by = 'Zbigniew Gralewski';
+    }
+    return '<div class="site-footer">'
+        . '<div class="footer-brand"><a href="https://bitback.pl" target="_blank" rel="noopener">bitback.pl</a> — ' . $desc . '</div>'
+        . '<div class="footer-desc">' . $by . ' · <a href="mailto:zbigniew.gralewski@bitback.pl">zbigniew.gralewski@bitback.pl</a> · 609 505 065</div>'
+        . '<div class="footer-links"><a href="https://github.com/bitback/bitback.one" target="_blank" rel="noopener">GitHub</a></div>'
+        . '</div>';
+}
+
 /**
  * NOWY FORMAT: dwa osobne bloby (encrypted_text + encrypted_secrets)
  * Po wygaśnięciu encrypted_secrets jest null (fizycznie usunięty z JSON)
@@ -363,6 +395,7 @@ function show_view_encrypted(array $t, array $data, string $encText, ?string $en
 
         <?= view_meta_html($t, $data, $expired) ?>
     </div>
+    <?= view_footer_html() ?>
 
     <script>
     // === ZERO-TRUST CLIENT-SIDE DECRYPTION ===
@@ -525,6 +558,7 @@ function show_view_encrypted_v2(array $t, array $data, string $encryptedPayload,
         <div class="content-box" id="contentBox" style="display:none;"></div>
         <?= view_meta_html($t, $data, $expired) ?>
     </div>
+    <?= view_footer_html() ?>
     <script>
     const ENCRYPTED_PAYLOAD = <?= json_encode($encryptedPayload) ?>;
     const SECRETS_EXPIRED = <?= $expired ? 'true' : 'false' ?>;
@@ -612,6 +646,7 @@ function show_view_legacy(array $t, array $data, array $sections, bool $expired)
         ?></div>
         <?= view_meta_html($t, $data, $expired) ?>
     </div>
+    <?= view_footer_html() ?>
 </body>
 </html><?php
 }
