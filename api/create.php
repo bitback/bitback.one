@@ -82,6 +82,9 @@ $expireDays = max(1, min(3650, (int)($input['expire_days'] ?? DEFAULT_EXPIRE_DAY
 $maxViews = max(1, min(10000, (int)($input['max_views'] ?? DEFAULT_MAX_VIEWS)));
 $deleteDays = max(0, min(3650, (int)($input['delete_after_days'] ?? DEFAULT_DELETE_DAYS)));
 
+// --- TOTAL SECTIONS (do maskowników po wygaśnięciu) ---
+$totalSections = max(1, min(1000, (int)($input['total_sections'] ?? 1)));
+
 // --- HASŁO (opcjonalne) ---
 $password = trim($input['password'] ?? '');
 $passwordHash = $password !== '' ? password_hash($password, PASSWORD_BCRYPT) : null;
@@ -102,6 +105,7 @@ $data = [
     'current_views' => 0,
     'status' => 'active',
     'password_hash' => $passwordHash,
+    'total_sections' => $totalSections,
     'view_log' => [],
     'encrypted_text' => $encryptedText,
     'encrypted_secrets' => $encryptedSecrets,

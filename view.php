@@ -471,6 +471,7 @@ function show_view_encrypted(array $t, array $data, string $encText, ?string $en
 
     const ENC_TEXT = <?= json_encode($encText) ?>;
     const ENC_SECRETS = <?= json_encode($encSecrets) ?>;  // null = sekrety fizycznie usunięte
+    const TOTAL_SECTIONS = <?= (int)($data['total_sections'] ?? 0) ?>;
 
     (async function() {
         const loadingBox = document.getElementById('loadingBox');
@@ -525,14 +526,16 @@ function show_view_encrypted(array $t, array $data, string $encText, ?string $en
     })();
 
     function fillMasked(textItems) {
-        // Wykryj luki w numeracji idx — tam były sekrety (teraz fizycznie usunięte)
-        if (textItems.length === 0) return textItems;
-        const maxIdx = Math.max(...textItems.map(i => i.idx));
+        // Wstaw maskowniki w miejsca brakujących idx (fizycznie usunięte sekrety)
+        // TOTAL_SECTIONS = łączna liczba sekcji (text + secret) z momentu tworzenia
+        const total = TOTAL_SECTIONS || (textItems.length > 0 ? Math.max(...textItems.map(i => i.idx)) + 1 : 0);
+        if (total === 0) return textItems;
+
         const byIdx = {};
         for (const item of textItems) byIdx[item.idx] = item;
 
         const result = [];
-        for (let i = 0; i <= maxIdx; i++) {
+        for (let i = 0; i < total; i++) {
             if (byIdx[i]) {
                 result.push(byIdx[i]);
             } else {
