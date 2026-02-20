@@ -1,0 +1,29 @@
+# === Dane użytkowników (runtime) ===
+data/
+trash/
+
+# === Pliki tymczasowe ===
+tmp/
+*.bak
+*.tmp
+*.log
+NDH6SA~M
+
+# === System / IDE ===
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# === Composer / npm (na przyszłość) ===
+vendor/
+node_modules/
+
+# === Dokumentacja wewnętrzna ===
+docs/
+
+# === Env ===
+.env
+.env.local

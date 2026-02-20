@@ -1,0 +1,12 @@
+RewriteEngine On
+
+# HTTP → HTTPS
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Nie przekierowuj istniejących plików/folderów
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# UUID pattern → view.php (klucz jest w #fragment, nie trafia do serwera)
+RewriteRule ^([0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})$ view.php?slug=$1 [L,QSA]
