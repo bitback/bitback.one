@@ -191,9 +191,9 @@ function show_password_form(array $t, string $slug, bool $wrongPassword = false)
             <?php endif; ?>
         </form>
         <div class="logo"><?= htmlspecialchars($t['title']) ?></div>
-        <div style="margin-top:2rem;font-size:0.75rem;color:#555;">
-            <a href="https://bitback.pl" target="_blank" rel="noopener" style="color:#6a9fd4;text-decoration:none;font-weight:500;">bitback.pl</a>
-            · Kod źródłowy na <a href="https://github.com/bitback/bitback.one" target="_blank" rel="noopener" style="color:#5a8abf;text-decoration:none;">GitHub</a>
+        <div style="position:fixed;bottom:0;left:0;right:0;z-index:100;background:#0a0a0a;border-top:1px solid #1a1a1a;padding:0.5rem 1rem;text-align:center;font-size:0.75rem;color:#555;white-space:nowrap;">
+            <a href="https://bitback.pl" target="_blank" rel="noopener" style="color:#6a9fd4;text-decoration:none;"><strong>bitback.pl</strong></a>
+            <span style="color:#2a2a2a;margin:0 0.5rem;">|</span>Kod źródłowy na <a href="https://github.com/bitback/bitback.one" target="_blank" rel="noopener" style="color:#6a9fd4;text-decoration:none;">GitHub</a>
         </div>
     </div>
     <script>
@@ -232,9 +232,9 @@ function show_expired(array $t): void {
         <h1><?= htmlspecialchars($t['link_expired']) ?></h1>
         <p><?= htmlspecialchars($t['link_expired_info']) ?></p>
         <div class="logo"><?= htmlspecialchars($t['title']) ?></div>
-        <div style="margin-top:2rem;font-size:0.75rem;color:#555;">
-            <a href="https://bitback.pl" target="_blank" rel="noopener" style="color:#6a9fd4;text-decoration:none;font-weight:500;">bitback.pl</a>
-            · Kod źródłowy na <a href="https://github.com/bitback/bitback.one" target="_blank" rel="noopener" style="color:#5a8abf;text-decoration:none;">GitHub</a>
+        <div style="position:fixed;bottom:0;left:0;right:0;z-index:100;background:#0a0a0a;border-top:1px solid #1a1a1a;padding:0.5rem 1rem;text-align:center;font-size:0.75rem;color:#555;white-space:nowrap;">
+            <a href="https://bitback.pl" target="_blank" rel="noopener" style="color:#6a9fd4;text-decoration:none;"><strong>bitback.pl</strong></a>
+            <span style="color:#2a2a2a;margin:0 0.5rem;">|</span>Kod źródłowy na <a href="https://github.com/bitback/bitback.one" target="_blank" rel="noopener" style="color:#6a9fd4;text-decoration:none;">GitHub</a>
         </div>
     </div>
 </body>
@@ -246,7 +246,7 @@ function show_expired(array $t): void {
 function view_css(): string {
     return '
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0a0a0a; color: #e0e0e0; min-height: 100vh; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0a0a0a; color: #e0e0e0; min-height: 100vh; padding-bottom: 2.5rem; }
         .header { text-align: center; padding: 2rem 1rem 1.5rem; }
         .header h1 { font-size: 1.4rem; font-weight: 300; letter-spacing: 0.08em; color: #fff; }
         .container { max-width: 700px; margin: 0 auto; padding: 0 1rem 3rem; }
@@ -267,17 +267,10 @@ function view_css(): string {
         .expire-info .date { color: #888; }
         .zt-badge { margin-top: 1.5rem; text-align: center; font-size: 0.65rem; color: #2a2a2a; }
         .zt-badge span { color: #333; }
-        .site-footer { margin-top: 3rem; padding: 2rem 1rem; text-align: center; border-top: 1px solid #1a1a1a; }
-        .site-footer .footer-brand { font-size: 1rem; color: #666; letter-spacing: 0.03em; }
-        .site-footer .footer-brand a { color: #6a9fd4; text-decoration: none; font-weight: 500; }
-        .site-footer .footer-brand a:hover { color: #8abcf0; text-decoration: underline; }
-        .site-footer .footer-tagline { font-size: 0.8rem; color: #555; margin-top: 0.2rem; }
-        .site-footer .footer-contact { font-size: 0.8rem; color: #555; margin-top: 0.6rem; }
-        .site-footer .footer-contact a { color: #6a9fd4; text-decoration: none; }
-        .site-footer .footer-contact a:hover { text-decoration: underline; }
-        .site-footer .footer-links { font-size: 0.7rem; color: #444; margin-top: 0.6rem; }
-        .site-footer .footer-links a { color: #5a8abf; text-decoration: none; }
-        .site-footer .footer-links a:hover { text-decoration: underline; }
+        .site-footer { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; background: #0a0a0a; border-top: 1px solid #1a1a1a; padding: 0.5rem 1rem; text-align: center; font-size: 0.75rem; color: #555; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .site-footer a { color: #6a9fd4; text-decoration: none; }
+        .site-footer a:hover { color: #8abcf0; text-decoration: underline; }
+        .site-footer .sep { color: #2a2a2a; margin: 0 0.5rem; }
     ';
 }
 
@@ -347,18 +340,24 @@ function view_meta_html(array $t, array $data, bool $expired): string {
 
 function view_footer_html(): string {
     $lang = detect_lang();
+    $s = '<span class="sep">|</span>';
     if ($lang === 'pl') {
-        $desc = 'Zabezpieczamy pocztę, serwery i komputery';
-        $src = 'Kod źródłowy na';
-    } else {
-        $desc = 'We secure email, servers and computers';
-        $src = 'Source code on';
+        return '<div class="site-footer">'
+            . '<a href="https://bitback.pl" target="_blank" rel="noopener"><strong>bitback.pl</strong></a>'
+            . $s . 'Zabezpieczamy pocztę, serwery i komputery'
+            . $s . 'Zbigniew Gralewski'
+            . $s . '<a href="mailto:zbigniew.gralewski@bitback.pl">zbigniew.gralewski@bitback.pl</a>'
+            . $s . '609 505 065'
+            . $s . 'Kod źródłowy na <a href="https://github.com/bitback/bitback.one" target="_blank" rel="noopener">GitHub</a>'
+            . '</div>';
     }
     return '<div class="site-footer">'
-        . '<div class="footer-brand"><a href="https://bitback.pl" target="_blank" rel="noopener">bitback.pl</a></div>'
-        . '<div class="footer-tagline">' . $desc . '</div>'
-        . '<div class="footer-contact">Zbigniew Gralewski · <a href="mailto:zbigniew.gralewski@bitback.pl">zbigniew.gralewski@bitback.pl</a> · 609 505 065</div>'
-        . '<div class="footer-links">' . $src . ' <a href="https://github.com/bitback/bitback.one" target="_blank" rel="noopener">GitHub</a></div>'
+        . '<a href="https://bitback.pl" target="_blank" rel="noopener"><strong>bitback.pl</strong></a>'
+        . $s . 'We secure email, servers and computers'
+        . $s . 'Zbigniew Gralewski'
+        . $s . '<a href="mailto:zbigniew.gralewski@bitback.pl">zbigniew.gralewski@bitback.pl</a>'
+        . $s . '609 505 065'
+        . $s . 'Source code on <a href="https://github.com/bitback/bitback.one" target="_blank" rel="noopener">GitHub</a>'
         . '</div>';
 }
 
