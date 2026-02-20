@@ -124,3 +124,15 @@ Auto-detects Polish or English from the browser's `Accept-Language` header. Tran
 ## License
 
 [MIT](LICENSE)
+
+---
+
+### Built by [bitback.pl](https://bitback.pl)
+
+**Zabezpieczamy pocztę, serwery i komputery.**
+
+bitback.one to projekt open-source od bitback.pl — firmy specjalizującej się w cyberbezpieczeństwie dla biznesu.
+
+📧 [zbigniew.gralewski@bitback.pl](mailto:zbigniew.gralewski@bitback.pl)
+📞 609 505 065
+👤 Zbigniew Gralewski
