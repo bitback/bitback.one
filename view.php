@@ -472,6 +472,7 @@ function show_view_encrypted(array $t, array $data, string $encText, ?string $en
     const ENC_TEXT = <?= json_encode($encText) ?>;
     const ENC_SECRETS = <?= json_encode($encSecrets) ?>;  // null = sekrety fizycznie usunięte
     const TOTAL_SECTIONS = <?= (int)($data['total_sections'] ?? 0) ?>;
+    const HAD_SECRETS = <?= ($expired && $encSecrets === null) ? 'true' : ($encSecrets !== null ? 'true' : 'false') ?>;
 
     (async function() {
         const loadingBox = document.getElementById('loadingBox');
@@ -524,8 +525,24 @@ function show_view_encrypted(array $t, array $data, string $encText, ?string $en
     function fillMasked(textItems) {
         // Wstaw maskowniki w miejsca brakujących idx (fizycznie usunięte sekrety)
         // TOTAL_SECTIONS = łączna liczba sekcji (text + secret) z momentu tworzenia
-        const total = TOTAL_SECTIONS || (textItems.length > 0 ? Math.max(...textItems.map(i => i.idx)) + 1 : 0);
-        if (total === 0) return textItems;
+        let total = TOTAL_SECTIONS;
+
+        if (!total) {
+            // Fallback dla starych linków (bez total_sections w JSON)
+            if (textItems.length > 0) {
+                const maxIdx = Math.max(...textItems.map(i => i.idx));
+                const hasGaps = textItems.length < (maxIdx + 1);
+                // Jeśli wiemy że były sekrety, a max idx nie pokrywa wszystkiego — dodaj ekstra
+                total = hasGaps ? maxIdx + 2 : maxIdx + 1;
+                // Jeśli były sekrety ale nie ma dziur, to sekrety były na końcu
+                if (!hasGaps && HAD_SECRETS) total = maxIdx + 2;
+            } else if (HAD_SECRETS) {
+                // Cała treść to sekrety (brak tekstu)
+                total = 1;
+            }
+        }
+
+        if (!total) return textItems;
 
         const byIdx = {};
         for (const item of textItems) byIdx[item.idx] = item;
