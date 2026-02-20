@@ -193,7 +193,7 @@ function show_password_form(array $t, string $slug, bool $wrongPassword = false)
         <div class="logo"><?= htmlspecialchars($t['title']) ?></div>
         <div style="margin-top:2rem;font-size:0.75rem;color:#555;">
             <a href="https://bitback.pl" target="_blank" rel="noopener" style="color:#6a9fd4;text-decoration:none;font-weight:500;">bitback.pl</a>
-            · <a href="https://github.com/bitback/bitback.one" target="_blank" rel="noopener" style="color:#5a8abf;text-decoration:none;">GitHub</a>
+            · Kod źródłowy na <a href="https://github.com/bitback/bitback.one" target="_blank" rel="noopener" style="color:#5a8abf;text-decoration:none;">GitHub</a>
         </div>
     </div>
     <script>
@@ -234,7 +234,7 @@ function show_expired(array $t): void {
         <div class="logo"><?= htmlspecialchars($t['title']) ?></div>
         <div style="margin-top:2rem;font-size:0.75rem;color:#555;">
             <a href="https://bitback.pl" target="_blank" rel="noopener" style="color:#6a9fd4;text-decoration:none;font-weight:500;">bitback.pl</a>
-            · <a href="https://github.com/bitback/bitback.one" target="_blank" rel="noopener" style="color:#5a8abf;text-decoration:none;">GitHub</a>
+            · Kod źródłowy na <a href="https://github.com/bitback/bitback.one" target="_blank" rel="noopener" style="color:#5a8abf;text-decoration:none;">GitHub</a>
         </div>
     </div>
 </body>
@@ -349,16 +349,16 @@ function view_footer_html(): string {
     $lang = detect_lang();
     if ($lang === 'pl') {
         $desc = 'Zabezpieczamy pocztę, serwery i komputery';
-        $by = 'Zbigniew Gralewski';
+        $src = 'Kod źródłowy na';
     } else {
         $desc = 'We secure email, servers and computers';
-        $by = 'Zbigniew Gralewski';
+        $src = 'Source code on';
     }
     return '<div class="site-footer">'
         . '<div class="footer-brand"><a href="https://bitback.pl" target="_blank" rel="noopener">bitback.pl</a></div>'
         . '<div class="footer-tagline">' . $desc . '</div>'
-        . '<div class="footer-contact">' . $by . ' · <a href="mailto:zbigniew.gralewski@bitback.pl">zbigniew.gralewski@bitback.pl</a> · 609 505 065</div>'
-        . '<div class="footer-links"><a href="https://github.com/bitback/bitback.one" target="_blank" rel="noopener">GitHub — open source</a></div>'
+        . '<div class="footer-contact">Zbigniew Gralewski · <a href="mailto:zbigniew.gralewski@bitback.pl">zbigniew.gralewski@bitback.pl</a> · 609 505 065</div>'
+        . '<div class="footer-links">' . $src . ' <a href="https://github.com/bitback/bitback.one" target="_blank" rel="noopener">GitHub</a></div>'
         . '</div>';
 }
 
