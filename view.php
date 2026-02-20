@@ -181,7 +181,7 @@ function show_password_form(array $t, string $slug, bool $wrongPassword = false)
 </head>
 <body>
     <div class="box">
-        <h1><?= htmlspecialchars($t['title']) ?></h1>
+        <h1><a href="/" style="color:inherit;text-decoration:none;"><?= htmlspecialchars($t['title']) ?></a></h1>
         <div class="sub"><?= htmlspecialchars($t['password_required'] ?? 'This link is password protected') ?></div>
         <form method="POST" action="/<?= htmlspecialchars($slug) ?>" id="pwdForm">
             <input type="password" name="password" class="pwd-input" placeholder="<?= htmlspecialchars($t['password_placeholder'] ?? 'Enter password') ?>" autofocus required>
@@ -190,7 +190,7 @@ function show_password_form(array $t, string $slug, bool $wrongPassword = false)
             <div class="error"><?= htmlspecialchars($t['password_wrong'] ?? 'Wrong password') ?></div>
             <?php endif; ?>
         </form>
-        <div class="logo"><?= htmlspecialchars($t['title']) ?></div>
+        <div class="logo"><a href="/" style="color:inherit;text-decoration:none;"><?= htmlspecialchars($t['title']) ?></a></div>
         <div style="position:fixed;bottom:0;left:0;right:0;z-index:100;background:#0a0a0a;border-top:1px solid #1a1a1a;padding:0.5rem 1rem;text-align:center;font-size:0.75rem;color:#555;white-space:nowrap;">
             <a href="https://bitback.pl" target="_blank" rel="noopener" style="color:#6a9fd4;text-decoration:none;"><strong>bitback.pl</strong></a>
             <span style="color:#2a2a2a;margin:0 0.5rem;">|</span>Kod źródłowy na <a href="https://github.com/bitback/bitback.one" target="_blank" rel="noopener" style="color:#6a9fd4;text-decoration:none;">GitHub</a>
@@ -296,7 +296,7 @@ function show_expired(array $t): void {
     <div class="box">
         <h1><?= htmlspecialchars($t['link_expired']) ?></h1>
         <p><?= htmlspecialchars($t['link_expired_info']) ?></p>
-        <div class="logo"><?= htmlspecialchars($t['title']) ?></div>
+        <div class="logo"><a href="/" style="color:inherit;text-decoration:none;"><?= htmlspecialchars($t['title']) ?></a></div>
         <div style="position:fixed;bottom:0;left:0;right:0;z-index:100;background:#0a0a0a;border-top:1px solid #1a1a1a;padding:0.5rem 1rem;text-align:center;font-size:0.75rem;color:#555;white-space:nowrap;">
             <a href="https://bitback.pl" target="_blank" rel="noopener" style="color:#6a9fd4;text-decoration:none;"><strong>bitback.pl</strong></a>
             <span style="color:#2a2a2a;margin:0 0.5rem;">|</span>Kod źródłowy na <a href="https://github.com/bitback/bitback.one" target="_blank" rel="noopener" style="color:#6a9fd4;text-decoration:none;">GitHub</a>
@@ -445,7 +445,7 @@ function show_view_encrypted(array $t, array $data, string $encText, ?string $en
     <style><?= view_css() ?></style>
 </head>
 <body>
-    <div class="header"><h1><?= htmlspecialchars($t['title']) ?></h1></div>
+    <div class="header"><h1><a href="/" style="color:inherit;text-decoration:none;"><?= htmlspecialchars($t['title']) ?></a></h1></div>
     <div class="container">
         <?php if ($expired): ?>
         <div class="expired-banner">
@@ -630,7 +630,7 @@ function show_view_encrypted_v2(array $t, array $data, string $encryptedPayload,
     <style><?= view_css() ?></style>
 </head>
 <body>
-    <div class="header"><h1><?= htmlspecialchars($t['title']) ?></h1></div>
+    <div class="header"><h1><a href="/" style="color:inherit;text-decoration:none;"><?= htmlspecialchars($t['title']) ?></a></h1></div>
     <div class="container">
         <?php if ($expired): ?>
         <div class="expired-banner">
@@ -711,7 +711,7 @@ function show_view_legacy(array $t, array $data, array $sections, bool $expired)
     <style><?= view_css() ?></style>
 </head>
 <body>
-    <div class="header"><h1><?= htmlspecialchars($t['title']) ?></h1></div>
+    <div class="header"><h1><a href="/" style="color:inherit;text-decoration:none;"><?= htmlspecialchars($t['title']) ?></a></h1></div>
     <div class="container">
         <?php if ($expired): ?>
         <div class="expired-banner">
