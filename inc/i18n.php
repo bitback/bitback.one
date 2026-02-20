@@ -61,6 +61,10 @@ function get_strings(string $lang = null): array {
             'delete_permanent_in' => 'dni do usunięcia',
             'delete_permanent_label' => 'Permanentne usunięcie:',
             'delete_permanent_today' => 'Usunięcie wkrótce',
+            // 404
+            'not_found_title' => 'Nie ma takiego linka',
+            'not_found_sub' => 'Albo nigdy nie istniał, albo został permanentnie usunięty.',
+            'not_found_hint' => 'Sprawdź czy link jest kompletny — klucz deszyfrujący jest za znakiem #',
         ],
         'en' => [
             'title' => defined('APP_NAME') ? APP_NAME : 'bitback.one',
@@ -109,6 +113,10 @@ function get_strings(string $lang = null): array {
             'delete_permanent_in' => 'days to deletion',
             'delete_permanent_label' => 'Permanent deletion:',
             'delete_permanent_today' => 'Deletion imminent',
+            // 404
+            'not_found_title' => 'This link does not exist',
+            'not_found_sub' => 'It either never existed or has been permanently deleted.',
+            'not_found_hint' => 'Make sure the link is complete — the decryption key is after the # sign',
         ],
     ];
 

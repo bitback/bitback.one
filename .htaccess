@@ -10,3 +10,6 @@ RewriteCond %{REQUEST_FILENAME} !-d
 
 # UUID pattern → view.php (klucz jest w #fragment, nie trafia do serwera)
 RewriteRule ^([0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})$ view.php?slug=$1 [L,QSA]
+
+# Customowa strona 404 dla wszystkich pozostałych ścieżek
+ErrorDocument 404 /404.php
