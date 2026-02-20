@@ -1,13 +1,16 @@
 <?php
 /**
  * API: Tworzenie linka
- * POST JSON → zwraca URL
+ * POST JSON → zwraca URL (bez klucza — klucz dodaje przeglądarka)
+ *
+ * ZERO-TRUST: serwer NIGDY nie widzi plaintextu ani klucza.
+ * Przeglądarka szyfruje dane (AES-256-CBC) i wysyła gotowe bloby (base64).
  */
 
 header('Content-Type: application/json; charset=utf-8');
 
 require_once __DIR__ . '/../inc/config.php';
-require_once __DIR__ . '/../inc/crypto.php';
+require_once __DIR__ . '/../inc/crypto.php';  // generate_uuid()
 require_once __DIR__ . '/../inc/ratelimit.php';
 
 // tylko POST
@@ -49,25 +52,29 @@ if (!check_rate_limit($ip)) {
     exit;
 }
 
-// --- WALIDACJA TREŚCI ---
-$sections = $input['sections'] ?? [];
-if (!is_array($sections) || count($sections) === 0) {
+// --- WALIDACJA ZASZYFROWANYCH BLOBÓW ---
+$encryptedText = $input['encrypted_text'] ?? null;
+$encryptedSecrets = $input['encrypted_secrets'] ?? null;  // null = brak poufnych fragmentów
+
+if (!$encryptedText || !is_string($encryptedText)) {
     http_response_code(400);
     echo json_encode(['error' => 'empty']);
     exit;
 }
 
-$hasContent = false;
-foreach ($sections as $s) {
-    if (!empty(trim($s['content'] ?? ''))) {
-        $hasContent = true;
-        break;
-    }
-}
-if (!$hasContent) {
+// Sprawdź czy to valid base64 o rozsądnej długości
+if (base64_decode($encryptedText, true) === false || strlen($encryptedText) > 1048576) {
     http_response_code(400);
-    echo json_encode(['error' => 'empty']);
+    echo json_encode(['error' => 'invalid_payload']);
     exit;
+}
+
+if ($encryptedSecrets !== null) {
+    if (!is_string($encryptedSecrets) || base64_decode($encryptedSecrets, true) === false || strlen($encryptedSecrets) > 1048576) {
+        http_response_code(400);
+        echo json_encode(['error' => 'invalid_payload']);
+        exit;
+    }
 }
 
 // --- WALIDACJA USTAWIEŃ ---
@@ -79,39 +86,8 @@ $deleteDays = max(0, min(3650, (int)($input['delete_after_days'] ?? DEFAULT_DELE
 $password = trim($input['password'] ?? '');
 $passwordHash = $password !== '' ? password_hash($password, PASSWORD_BCRYPT) : null;
 
-// --- GENEROWANIE ---
+// --- GENEROWANIE UUID (klucz generuje przeglądarka, nie serwer!) ---
 $uuid = generate_uuid();
-$key = generate_key();
-
-// --- ROZDZIEL NA DWA BLOBY: tekst + sekrety ---
-// Struktura: każda sekcja ma index (pozycja w oryginalnej kolejności)
-// Blob "text" = sekcje jawne (type:text) z ich pozycjami
-// Blob "secrets" = sekcje poufne (type:secret) z ich pozycjami
-// Po wygaśnięciu serwer FIZYCZNIE kasuje blob secrets → nie do odzyskania
-
-$textSections = [];
-$secretSections = [];
-$idx = 0;
-
-foreach ($sections as $s) {
-    $type = ($s['type'] ?? 'text') === 'secret' ? 'secret' : 'text';
-    $entry = [
-        'idx' => $idx,
-        'content' => $s['content'] ?? '',
-    ];
-    if ($type === 'secret') {
-        $secretSections[] = $entry;
-    } else {
-        $textSections[] = $entry;
-    }
-    $idx++;
-}
-
-// szyfruj oba bloby tym samym kluczem
-$encryptedText = encrypt_payload($textSections, $key);
-$encryptedSecrets = count($secretSections) > 0
-    ? encrypt_payload($secretSections, $key)
-    : null;
 
 // --- ZAPIS ---
 $now = gmdate('Y-m-d\TH:i:s\Z');
@@ -138,10 +114,9 @@ if (!is_dir(DATA_DIR)) {
 $file = DATA_DIR . '/' . $uuid . '.json';
 file_put_contents($file, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE), LOCK_EX);
 
-// --- ZWROT URL ---
-// Klucz w #fragment — nigdy nie trafia do serwera (Apache loguje tylko /uuid)
+// --- ZWROT URL (bez klucza! klucz dodaje przeglądarka jako #fragment) ---
 $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-$url = $scheme . '://' . $_SERVER['HTTP_HOST'] . '/' . $uuid . '#' . $key;
+$url = $scheme . '://' . $_SERVER['HTTP_HOST'] . '/' . $uuid;
 
 echo json_encode([
     'ok' => true,

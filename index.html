@@ -718,6 +718,37 @@
         return merged.filter(s => s.content.length > 0);
     }
 
+    // === CLIENT-SIDE ENCRYPTION (Web Crypto API) ===
+    // Klucz generowany w przeglądarce, nigdy nie wysyłany na serwer.
+    // Serwer otrzymuje wyłącznie zaszyfrowane bloby (base64).
+
+    function generateHexKey() {
+        const bytes = crypto.getRandomValues(new Uint8Array(16));
+        return Array.from(bytes, b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    async function sha256(data) {
+        return new Uint8Array(await crypto.subtle.digest('SHA-256', data));
+    }
+
+    async function encryptBlob(sections, hexKey) {
+        const json = JSON.stringify(sections);
+        const plaintext = new TextEncoder().encode(json);
+        const keyBytes = await sha256(new TextEncoder().encode(hexKey));
+        const iv = crypto.getRandomValues(new Uint8Array(16));
+        const cryptoKey = await crypto.subtle.importKey(
+            'raw', keyBytes, { name: 'AES-CBC' }, false, ['encrypt']
+        );
+        const encrypted = await crypto.subtle.encrypt(
+            { name: 'AES-CBC', iv: iv }, cryptoKey, plaintext
+        );
+        // iv + ciphertext → base64 (identyczny format jak PHP encrypt_secret)
+        const combined = new Uint8Array(iv.length + encrypted.byteLength);
+        combined.set(iv, 0);
+        combined.set(new Uint8Array(encrypted), iv.length);
+        return btoa(String.fromCharCode(...combined));
+    }
+
     // --- GENERUJ LINK ---
     async function generateLink() {
         // honeypot
@@ -738,17 +769,39 @@
 
         const sections = extractSections();
 
+        // --- CLIENT-SIDE ENCRYPTION ---
+        const hexKey = generateHexKey();
+
+        // Rozdziel na text + secrets (z zachowaniem idx)
+        const textSections = [];
+        const secretSections = [];
+        sections.forEach((s, idx) => {
+            const entry = { idx: idx, content: s.content };
+            if (s.type === 'secret') {
+                secretSections.push(entry);
+            } else {
+                textSections.push(entry);
+            }
+        });
+
         const btn = document.querySelector('.generate-btn');
         btn.disabled = true;
         btn.textContent = '...';
 
         try {
+            // Szyfruj w przeglądarce
+            const encryptedText = await encryptBlob(textSections, hexKey);
+            const encryptedSecrets = secretSections.length > 0
+                ? await encryptBlob(secretSections, hexKey)
+                : null;
+
             const resp = await fetch('/api/create.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     website_url: honeypot,
-                    sections: sections,
+                    encrypted_text: encryptedText,
+                    encrypted_secrets: encryptedSecrets,
                     expire_days: parseInt(document.getElementById('expireDays').value) || 7,
                     max_views: parseInt(document.getElementById('maxViews').value) || 25,
                     delete_after_days: parseInt(document.getElementById('deleteDays').value) || 30,
@@ -761,7 +814,8 @@
             const result = await resp.json();
 
             if (result.ok) {
-                document.getElementById('resultUrl').value = result.url;
+                // Serwer zwraca URL bez klucza — klucz dodajemy po stronie klienta
+                document.getElementById('resultUrl').value = result.url + '#' + hexKey;
                 document.getElementById('result').classList.add('show');
                 // pokaż hasło jeśli było ustawione
                 const pwdEl = document.getElementById('resultPassword');
