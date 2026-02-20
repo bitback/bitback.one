@@ -504,13 +504,9 @@ function show_view_encrypted(array $t, array $data, string $encText, ?string $en
             all.sort((a, b) => a.idx - b.idx);
 
             // Jeśli sekrety wygasły, wstaw maskowniki w miejsce brakujących idx
-            if (!ENC_SECRETS && all.length > 0) {
-                // Znajdź luki w idx — tam były sekrety
+            if (!ENC_SECRETS) {
                 const filled = fillMasked(all);
                 renderSections(filled, true);
-            } else if (!ENC_SECRETS) {
-                // brak tekstu i brak sekretów
-                renderSections(all, true);
             } else {
                 renderSections(all, false);
             }
