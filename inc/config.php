@@ -1,4 +1,5 @@
 <?php
+define('APP_NAME', 'bitback.one');
 define('DATA_DIR', __DIR__ . '/../data');
 define('TRASH_DIR', __DIR__ . '/../trash');
 define('RATE_LIMIT_DIR', __DIR__ . '/../data/_ratelimit');

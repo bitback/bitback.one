@@ -14,7 +14,7 @@ function get_strings(string $lang = null): array {
 
     $strings = [
         'pl' => [
-            'title' => 'bitback.one',
+            'title' => defined('APP_NAME') ? APP_NAME : 'bitback.one',
             'subtitle' => 'bezpieczne jednorazowe linki',
             'content_label' => 'Treść',
             'placeholder_line1' => 'Wpisz treść tutaj...',
@@ -63,7 +63,7 @@ function get_strings(string $lang = null): array {
             'delete_permanent_today' => 'Usunięcie wkrótce',
         ],
         'en' => [
-            'title' => 'bitback.one',
+            'title' => defined('APP_NAME') ? APP_NAME : 'bitback.one',
             'subtitle' => 'secure one-time links',
             'content_label' => 'Content',
             'placeholder_line1' => 'Type your content here...',

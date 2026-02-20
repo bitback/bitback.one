@@ -27,7 +27,8 @@ if (!$input) {
 // --- HONEYPOT ---
 if (!empty($input['website_url'])) {
     // cichy sukces dla bota
-    echo json_encode(['url' => 'https://bitback.one/ok']);
+    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    echo json_encode(['url' => $scheme . '://' . $_SERVER['HTTP_HOST'] . '/ok']);
     exit;
 }
 
@@ -139,7 +140,8 @@ file_put_contents($file, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_U
 
 // --- ZWROT URL ---
 // Klucz w #fragment — nigdy nie trafia do serwera (Apache loguje tylko /uuid)
-$url = 'https://bitback.one/' . $uuid . '#' . $key;
+$scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+$url = $scheme . '://' . $_SERVER['HTTP_HOST'] . '/' . $uuid . '#' . $key;
 
 echo json_encode([
     'ok' => true,

@@ -150,7 +150,7 @@ function show_password_form(array $t, string $slug, bool $wrongPassword = false)
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>bitback.one</title>
+    <title><?= htmlspecialchars($t['title']) ?></title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -181,7 +181,7 @@ function show_password_form(array $t, string $slug, bool $wrongPassword = false)
 </head>
 <body>
     <div class="box">
-        <h1>bitback.one</h1>
+        <h1><?= htmlspecialchars($t['title']) ?></h1>
         <div class="sub"><?= htmlspecialchars($t['password_required'] ?? 'This link is password protected') ?></div>
         <form method="POST" action="/<?= htmlspecialchars($slug) ?>" id="pwdForm">
             <input type="password" name="password" class="pwd-input" placeholder="<?= htmlspecialchars($t['password_placeholder'] ?? 'Enter password') ?>" autofocus required>
@@ -190,7 +190,7 @@ function show_password_form(array $t, string $slug, bool $wrongPassword = false)
             <div class="error"><?= htmlspecialchars($t['password_wrong'] ?? 'Wrong password') ?></div>
             <?php endif; ?>
         </form>
-        <div class="logo">bitback.one</div>
+        <div class="logo"><?= htmlspecialchars($t['title']) ?></div>
     </div>
     <script>
     document.getElementById('pwdForm').addEventListener('submit', function() {
@@ -209,7 +209,7 @@ function show_expired(array $t): void {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($t['link_expired']) ?> — bitback.one</title>
+    <title><?= htmlspecialchars($t['link_expired']) ?> — <?= htmlspecialchars($t['title']) ?></title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -227,7 +227,7 @@ function show_expired(array $t): void {
     <div class="box">
         <h1><?= htmlspecialchars($t['link_expired']) ?></h1>
         <p><?= htmlspecialchars($t['link_expired_info']) ?></p>
-        <div class="logo">bitback.one</div>
+        <div class="logo"><?= htmlspecialchars($t['title']) ?></div>
     </div>
 </body>
 </html><?php
@@ -341,11 +341,11 @@ function show_view_encrypted(array $t, array $data, string $encText, ?string $en
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>bitback.one</title>
+    <title><?= htmlspecialchars($t['title']) ?></title>
     <style><?= view_css() ?></style>
 </head>
 <body>
-    <div class="header"><h1>bitback.one</h1></div>
+    <div class="header"><h1><?= htmlspecialchars($t['title']) ?></h1></div>
     <div class="container">
         <?php if ($expired): ?>
         <div class="expired-banner">
@@ -509,11 +509,11 @@ function show_view_encrypted_v2(array $t, array $data, string $encryptedPayload,
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>bitback.one</title>
+    <title><?= htmlspecialchars($t['title']) ?></title>
     <style><?= view_css() ?></style>
 </head>
 <body>
-    <div class="header"><h1>bitback.one</h1></div>
+    <div class="header"><h1><?= htmlspecialchars($t['title']) ?></h1></div>
     <div class="container">
         <?php if ($expired): ?>
         <div class="expired-banner">
@@ -589,11 +589,11 @@ function show_view_legacy(array $t, array $data, array $sections, bool $expired)
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>bitback.one</title>
+    <title><?= htmlspecialchars($t['title']) ?></title>
     <style><?= view_css() ?></style>
 </head>
 <body>
-    <div class="header"><h1>bitback.one</h1></div>
+    <div class="header"><h1><?= htmlspecialchars($t['title']) ?></h1></div>
     <div class="container">
         <?php if ($expired): ?>
         <div class="expired-banner">

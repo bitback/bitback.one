@@ -106,11 +106,16 @@ Set up daily cleanup (Synology Task Scheduler, crontab, etc.):
 Edit `inc/config.php`:
 
 ```php
+define('APP_NAME', 'bitback.one');    // App name (used in titles, headers)
 define('DEFAULT_EXPIRE_DAYS', 14);    // Secret data expiration
 define('DEFAULT_MAX_VIEWS', 5);       // Max views before secrets expire
 define('DEFAULT_DELETE_DAYS', 90);    // Days until permanent deletion
 define('RATE_LIMIT_MAX', 10);         // Max links per IP per hour
 ```
+
+### Custom branding
+
+The app auto-detects its domain from HTTP headers — generated URLs always match your server. To change the app name shown in titles and headers, edit `APP_NAME` in `inc/config.php`. The main page (`index.html`) has two hardcoded references to update manually.
 
 ## i18n
 
