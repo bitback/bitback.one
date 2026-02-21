@@ -137,6 +137,14 @@ show_view_encrypted($t, $data, $encText, $encSecrets, $secretsExpired);
 // FUNKCJE
 // ============================================================
 
+function linkify_html(string $escapedHtml): string {
+    return preg_replace(
+        '#(https?://[^\s<>\'"&]+(?:&amp;[^\s<>\'"&]+)*)#',
+        '<a href="$1" target="_blank" rel="noopener" style="color:#6a9fd4;">$1</a>',
+        $escapedHtml
+    );
+}
+
 function move_to_trash(string $file, string $uuid): void {
     if (!is_dir(TRASH_DIR)) {
         mkdir(TRASH_DIR, 0755, true);
@@ -319,7 +327,9 @@ function view_css(): string {
         .error-banner { background: #1a1010; border: 1px solid #3a1010; border-radius: 8px; padding: 0.7rem 1rem; margin-bottom: 1rem; font-size: 0.8rem; color: #d44; }
         .content-box { background: #111; border: 1px solid #1e1e1e; border-radius: 8px; padding: 1rem; font-family: "Consolas", "Monaco", "Courier New", monospace; font-size: 0.85rem; line-height: 1.7; white-space: pre-wrap; word-break: break-word; }
         .s-text { color: #ddd; }
+        .s-text a { color: #6a9fd4; }
         .s-secret { background: rgba(212, 146, 42, 0.15); color: #f0c060; border-radius: 3px; padding: 0.05em 0.2em; border-bottom: 2px solid rgba(212, 146, 42, 0.4); }
+        .s-secret a { color: inherit; }
         .s-masked { background: rgba(100, 100, 100, 0.2); color: #555; border-radius: 3px; padding: 0.05em 0.2em; letter-spacing: 0.1em; }
         .loading { text-align: center; padding: 2rem; color: #555; font-size: 0.85rem; }
         .loading .spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid #333; border-top-color: #888; border-radius: 50%; animation: spin 0.6s linear infinite; margin-right: 0.5rem; vertical-align: middle; }
@@ -566,12 +576,22 @@ function show_view_encrypted(array $t, array $data, string $encText, ?string $en
             if (s.type === 'masked') {
                 html += '<span class="s-masked">' + escaped + '</span>';
             } else if (s.type === 'secret') {
-                html += '<span class="s-secret">' + escaped + '</span>';
+                html += '<span class="s-secret">' + linkify(escaped) + '</span>';
             } else {
-                html += '<span class="s-text">' + escaped + '</span>';
+                html += '<span class="s-text">' + linkify(escaped) + '</span>';
             }
         }
         contentBox.innerHTML = html;
+    }
+
+    function linkify(escapedHtml) {
+        // Regex na escaped HTML — URL może zawierać &amp; (escaped &)
+        return escapedHtml.replace(
+            /https?:\/\/[^\s<>'"]+/g,
+            function(match) {
+                return '<a href="' + match + '" target="_blank" rel="noopener" style="color:#6a9fd4;">' + match + '</a>';
+            }
+        );
     }
 
     // === AES-256-CBC DECRYPTION (Web Crypto API) ===
@@ -667,9 +687,9 @@ function show_view_encrypted_v2(array $t, array $data, string $encryptedPayload,
             for (const s of sections) {
                 const escaped = escapeHtml(s.content);
                 if (s.type === 'secret') {
-                    html += SECRETS_EXPIRED ? '<span class="s-masked">●●●●●●</span>' : '<span class="s-secret">' + escaped + '</span>';
+                    html += SECRETS_EXPIRED ? '<span class="s-masked">●●●●●●</span>' : '<span class="s-secret">' + linkify(escaped) + '</span>';
                 } else {
-                    html += '<span class="s-text">' + escaped + '</span>';
+                    html += '<span class="s-text">' + linkify(escaped) + '</span>';
                 }
             }
             loadingBox.style.display = 'none';
@@ -683,6 +703,11 @@ function show_view_encrypted_v2(array $t, array $data, string $encryptedPayload,
     })();
     async function sha256(data) { return new Uint8Array(await crypto.subtle.digest('SHA-256', data)); }
     function escapeHtml(str) { const d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
+    function linkify(escapedHtml) {
+        return escapedHtml.replace(/https?:\/\/[^\s<>'"]+/g, function(m) {
+            return '<a href="' + m + '" target="_blank" rel="noopener" style="color:#6a9fd4;">' + m + '</a>';
+        });
+    }
     </script>
 </body>
 </html><?php
@@ -721,10 +746,11 @@ function show_view_legacy(array $t, array $data, array $sections, bool $expired)
         <div class="content-box"><?php
             foreach ($htmlSections as $s) {
                 $esc = htmlspecialchars($s['content']);
+                $linked = ($s['type'] !== 'masked') ? linkify_html($esc) : $esc;
                 switch ($s['type']) {
-                    case 'secret': echo '<span class="s-secret">' . $esc . '</span>'; break;
+                    case 'secret': echo '<span class="s-secret">' . $linked . '</span>'; break;
                     case 'masked': echo '<span class="s-masked">' . $esc . '</span>'; break;
-                    default: echo '<span class="s-text">' . $esc . '</span>';
+                    default: echo '<span class="s-text">' . $linked . '</span>';
                 }
             }
         ?></div>
