@@ -342,6 +342,16 @@ function view_css(): string {
         .expire-info .date { color: #888; }
         .zt-badge { margin-top: 1.5rem; text-align: center; font-size: 0.65rem; color: #2a2a2a; }
         .zt-badge span { color: #333; }
+        .expire-now-wrap { margin-top: 1rem; display: flex; flex-direction: column; align-items: center; gap: 0.6rem; }
+        .expire-now-confirm { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.65rem 1.5rem; border: 1.5px solid transparent; border-radius: 8px; transition: border-color 0.2s; cursor: pointer; font-size: 0.85rem; line-height: 1.2; box-sizing: border-box; }
+        .expire-now-confirm input[type="checkbox"] { accent-color: #d4922a; width: 16px; height: 16px; cursor: pointer; flex-shrink: 0; }
+        .expire-now-confirm label { color: #888; font-size: 0.85rem; cursor: pointer; user-select: none; line-height: 1.2; }
+        .expire-now-confirm.shake { border-color: #c0392b; animation: shakeBox 0.4s ease; }
+        @keyframes shakeBox { 0%,100% { transform: translateX(0); } 20%,60% { transform: translateX(-4px); } 40%,80% { transform: translateX(4px); } }
+        .expire-now-btn { background: rgba(212, 146, 42, 0.12); border: 1.5px solid #d4922a; color: #f0c060; font-size: 0.85rem; line-height: 1.2; padding: 0.65rem 1.5rem; border-radius: 8px; cursor: pointer; transition: all 0.15s; font-weight: 500; letter-spacing: 0.01em; box-sizing: border-box; }
+        .expire-now-btn:hover { background: rgba(212, 146, 42, 0.22); border-color: #f0c060; color: #ffe0a0; }
+        .expire-now-btn:disabled { opacity: 0.4; cursor: default; }
+        .expire-now-btn.done { background: rgba(74, 138, 74, 0.12); border-color: #4a8a4a; color: #6aba6a; }
         .site-footer { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; background: #0a0a0a; border-top: 1px solid #1a1a1a; padding: 0.5rem 1rem; text-align: center; font-size: 0.75rem; color: #555; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .site-footer a { color: #6a9fd4; text-decoration: none; }
         .site-footer a:hover { color: #8abcf0; text-decoration: underline; }
@@ -409,6 +419,35 @@ function view_meta_html(array $t, array $data, bool $expired): string {
         ? 'Zero-trust: deszyfrowanie odbyło się w Twojej przeglądarce. Serwer nie miał dostępu do klucza.'
         : 'Zero-trust: decryption happened in your browser. The server never had access to the key.';
     $html .= '<div class="zt-badge"><span>&#128274;</span> ' . $ztText . '</div>';
+
+    // Przycisk natychmiastowego wygaszenia — tylko gdy sekrety jeszcze aktywne
+    if (!$expired) {
+        $uuid = $data['id'] ?? '';
+        $checkLabel = $lang === 'pl'
+            ? 'Otrzymałem dane. Potwierdź'
+            : 'I received the data. Confirm';
+        $btnLabel = $lang === 'pl'
+            ? 'wygaś poufne dane teraz'
+            : 'expire secret data now';
+        $successMsg = $lang === 'pl'
+            ? 'Dane poufne zostały wygaszone.'
+            : 'Secret data has been expired.';
+        $errorMsg = $lang === 'pl'
+            ? 'Nie udało się wygasić danych. Spróbuj ponownie.'
+            : 'Failed to expire data. Please try again.';
+
+        $html .= '<div class="expire-now-wrap">';
+        $html .= '<div class="expire-now-confirm" id="expireConfirmWrap">';
+        $html .= '<input type="checkbox" id="expireConfirmCb">';
+        $html .= '<label for="expireConfirmCb">' . htmlspecialchars($checkLabel) . '</label>';
+        $html .= '</div>';
+        $html .= '<button type="button" class="expire-now-btn" onclick="expireNow(this)"';
+        $html .= ' data-uuid="' . htmlspecialchars($uuid) . '"';
+        $html .= ' data-success="' . htmlspecialchars($successMsg) . '"';
+        $html .= ' data-error="' . htmlspecialchars($errorMsg) . '"';
+        $html .= '>' . htmlspecialchars($btnLabel) . '</button>';
+        $html .= '</div>';
+    }
 
     return $html;
 }
@@ -627,6 +666,41 @@ function show_view_encrypted(array $t, array $data, string $encText, ?string $en
         d.textContent = str;
         return d.innerHTML;
     }
+
+    async function expireNow(btn) {
+        var wrap = document.getElementById('expireConfirmWrap');
+        var cb = document.getElementById('expireConfirmCb');
+        if (!cb.checked) {
+            wrap.classList.remove('shake');
+            void wrap.offsetWidth;
+            wrap.classList.add('shake');
+            return;
+        }
+        btn.disabled = true;
+        cb.disabled = true;
+        btn.textContent = '...';
+        try {
+            const resp = await fetch('/api/expire.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ uuid: btn.dataset.uuid }),
+            });
+            const result = await resp.json();
+            if (result.ok) {
+                btn.textContent = '\u2713 ' + btn.dataset.success;
+                btn.classList.add('done');
+                setTimeout(function() { location.reload(); }, 1500);
+            } else {
+                btn.textContent = btn.dataset.error;
+                btn.disabled = false;
+                cb.disabled = false;
+            }
+        } catch (e) {
+            btn.textContent = btn.dataset.error;
+            btn.disabled = false;
+            cb.disabled = false;
+        }
+    }
     </script>
 </body>
 </html><?php
@@ -708,6 +782,18 @@ function show_view_encrypted_v2(array $t, array $data, string $encryptedPayload,
             return '<a href="' + m + '" target="_blank" rel="noopener" style="color:#6a9fd4;">' + m + '</a>';
         });
     }
+    async function expireNow(btn) {
+        var wrap = document.getElementById('expireConfirmWrap');
+        var cb = document.getElementById('expireConfirmCb');
+        if (!cb.checked) { wrap.classList.remove('shake'); void wrap.offsetWidth; wrap.classList.add('shake'); return; }
+        btn.disabled = true; cb.disabled = true; btn.textContent = '...';
+        try {
+            const r = await fetch('/api/expire.php', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({uuid: btn.dataset.uuid}) });
+            const j = await r.json();
+            if (j.ok) { btn.textContent = '\u2713 ' + btn.dataset.success; btn.classList.add('done'); setTimeout(()=>location.reload(), 1500); }
+            else { btn.textContent = btn.dataset.error; btn.disabled = false; cb.disabled = false; }
+        } catch(e) { btn.textContent = btn.dataset.error; btn.disabled = false; cb.disabled = false; }
+    }
     </script>
 </body>
 </html><?php
@@ -757,6 +843,22 @@ function show_view_legacy(array $t, array $data, array $sections, bool $expired)
         <?= view_meta_html($t, $data, $expired) ?>
     </div>
     <?= view_footer_html() ?>
+    <?php if (!$expired): ?>
+    <script>
+    async function expireNow(btn) {
+        var wrap = document.getElementById('expireConfirmWrap');
+        var cb = document.getElementById('expireConfirmCb');
+        if (!cb.checked) { wrap.classList.remove('shake'); void wrap.offsetWidth; wrap.classList.add('shake'); return; }
+        btn.disabled = true; cb.disabled = true; btn.textContent = '...';
+        try {
+            const r = await fetch('/api/expire.php', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({uuid: btn.dataset.uuid}) });
+            const j = await r.json();
+            if (j.ok) { btn.textContent = '\u2713 ' + btn.dataset.success; btn.classList.add('done'); setTimeout(()=>location.reload(), 1500); }
+            else { btn.textContent = btn.dataset.error; btn.disabled = false; cb.disabled = false; }
+        } catch(e) { btn.textContent = btn.dataset.error; btn.disabled = false; cb.disabled = false; }
+    }
+    </script>
+    <?php endif; ?>
 </body>
 </html><?php
 }
