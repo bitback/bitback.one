@@ -90,6 +90,9 @@ if ($secretsExpired && isset($data['encrypted_secrets'])) {
 }
 
 // --- LOGUJ WYŚWIETLENIE (tylko aktywne sekrety) ---
+// Zachowaj sekrety dla ostatniego wyświetlenia (zanim zostaną skasowane z pliku)
+$lastViewSecrets = $data['encrypted_secrets'] ?? null;
+
 if (!$secretsExpired) {
     $data['current_views']++;
     $data['view_log'][] = [
@@ -98,10 +101,11 @@ if (!$secretsExpired) {
     ];
 
     if ($data['current_views'] >= $data['max_views']) {
-        $secretsExpired = true;
+        // To jest ostatnie dozwolone wyświetlenie — user jeszcze widzi dane,
+        // ale w pliku kasujemy sekrety (następne odwiedziny = wygaszone)
         $data['_secrets_expired_at'] = $now;
-        // fizycznie kasuj sekrety od razu
         $data['encrypted_secrets'] = null;
+        // $secretsExpired pozostaje false — ten widok jeszcze pokazuje dane
     }
 
     $needSave = true;
@@ -124,7 +128,8 @@ if (isset($data['sections'])) {
 
 // --- NOWY FORMAT: dwa bloby ---
 $encText = $data['encrypted_text'] ?? null;
-$encSecrets = $data['encrypted_secrets'] ?? null; // null jeśli wygasłe (fizycznie usunięte!)
+// Użyj zachowanych sekretów ($lastViewSecrets) — ostatnie wyświetlenie je jeszcze pokazuje
+$encSecrets = $lastViewSecrets;
 
 if ($encText === null) {
     show_expired($t);
