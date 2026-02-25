@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/inc/config.php'; ?>
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -468,7 +469,7 @@
                     <div class="config-group">
                         <label>Wygaśnięcie danych poufnych</label>
                         <div class="config-row">
-                            <input type="number" class="config-input" id="expireDays" value="14" min="1" max="3650">
+                            <input type="number" class="config-input" id="expireDays" value="<?= DEFAULT_EXPIRE_DAYS ?>" min="1" max="3650">
                             <span class="config-unit">dni</span>
                         </div>
                     </div>
@@ -476,7 +477,7 @@
                     <div class="config-group">
                         <label>Maksymalna liczba wyświetleń</label>
                         <div class="config-row">
-                            <input type="number" class="config-input" id="maxViews" value="5" min="1" max="10000">
+                            <input type="number" class="config-input" id="maxViews" value="<?= DEFAULT_MAX_VIEWS ?>" min="1" max="10000">
                             <span class="config-unit">razy</span>
                         </div>
                     </div>
@@ -484,7 +485,7 @@
                     <div class="config-group">
                         <label>Permanentne usunięcie po</label>
                         <div class="config-row">
-                            <input type="number" class="config-input" id="deleteDays" value="90" min="0" max="3650">
+                            <input type="number" class="config-input" id="deleteDays" value="<?= DEFAULT_DELETE_DAYS ?>" min="0" max="3650">
                             <span class="config-unit">dni (0 = od razu)</span>
                         </div>
                     </div>
@@ -803,9 +804,9 @@
                     encrypted_text: encryptedText,
                     encrypted_secrets: encryptedSecrets,
                     total_sections: sections.length,
-                    expire_days: parseInt(document.getElementById('expireDays').value) || 7,
-                    max_views: parseInt(document.getElementById('maxViews').value) || 25,
-                    delete_after_days: parseInt(document.getElementById('deleteDays').value) || 30,
+                    expire_days: parseInt(document.getElementById('expireDays').value) || <?= DEFAULT_EXPIRE_DAYS ?>,
+                    max_views: parseInt(document.getElementById('maxViews').value) || <?= DEFAULT_MAX_VIEWS ?>,
+                    delete_after_days: parseInt(document.getElementById('deleteDays').value) || <?= DEFAULT_DELETE_DAYS ?>,
                     password: document.getElementById('linkPassword').value.trim() || '',
                     math_expected: mathA + mathB,
                     math_answer: selectedAnswer,
