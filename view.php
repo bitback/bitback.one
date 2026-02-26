@@ -61,7 +61,7 @@ $secretsExpired = (strtotime($data['expires_secrets']) <= $now)
 // permanentne usunięcie (delete_after_days == 0 → od razu)
 if ($secretsExpired && $data['delete_after_days'] == 0) {
     move_to_trash($file, $uuid);
-    show_expired($t);
+    show_expired($t, $data['_killed_manually'] ?? null, $data['_expired_manually'] ?? null);
     exit;
 }
 
@@ -74,7 +74,7 @@ if ($secretsExpired && $data['delete_after_days'] > 0) {
 
     if ($now >= ($deleteAt ?? $now + ($data['delete_after_days'] * 86400))) {
         move_to_trash($file, $uuid);
-        show_expired($t);
+        show_expired($t, $data['_killed_manually'] ?? null, $data['_expired_manually'] ?? null);
         exit;
     }
 }
@@ -135,7 +135,7 @@ $encText = $data['encrypted_text'] ?? null;
 $encSecrets = $lastViewSecrets;
 
 if ($encText === null) {
-    show_expired($t);
+    show_expired($t, $data['_killed_manually'] ?? null, $data['_expired_manually'] ?? null);
     exit;
 }
 
@@ -287,10 +287,24 @@ function show_not_found(array $t): void {
     exit;
 }
 
-function show_expired(array $t): void {
+function show_expired(array $t, ?string $killedAt = null, ?string $expiredManually = null): void {
     http_response_code(410);
+    $lang = detect_lang();
+    // Info o manualnym ubiciu/wygaszeniu
+    $manualInfo = '';
+    if ($killedAt) {
+        $date = substr($killedAt, 0, 10); // YYYY-MM-DD
+        $manualInfo = $lang === 'pl'
+            ? 'Link został ręcznie ubity dnia ' . $date . '.'
+            : 'Link was manually killed on ' . $date . '.';
+    } elseif ($expiredManually) {
+        $date = substr($expiredManually, 0, 10);
+        $manualInfo = $lang === 'pl'
+            ? 'Dane poufne zostały ręcznie wygaszone dnia ' . $date . '.'
+            : 'Secret data was manually expired on ' . $date . '.';
+    }
     ?><!DOCTYPE html>
-<html lang="<?= detect_lang() ?>">
+<html lang="<?= $lang ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -305,6 +319,7 @@ function show_expired(array $t): void {
         .box { text-align: center; padding: 2rem; }
         h1 { font-size: 1.4rem; font-weight: 300; color: #fff; margin-bottom: 0.5rem; }
         p { color: #555; font-size: 0.85rem; }
+        .manual-info { color: #d4922a; font-size: 0.8rem; margin-top: 0.5rem; }
         .logo { color: #333; font-size: 0.75rem; margin-top: 2rem; letter-spacing: 0.1em; }
     </style>
 </head>
@@ -312,6 +327,9 @@ function show_expired(array $t): void {
     <div class="box">
         <h1><?= htmlspecialchars($t['link_expired']) ?></h1>
         <p><?= htmlspecialchars($t['link_expired_info']) ?></p>
+        <?php if ($manualInfo): ?>
+        <p class="manual-info"><?= htmlspecialchars($manualInfo) ?></p>
+        <?php endif; ?>
         <div class="logo"><a href="/" style="color:inherit;text-decoration:none;"><?= htmlspecialchars($t['title']) ?></a></div>
         <div style="position:fixed;bottom:0;left:0;right:0;z-index:100;background:#0a0a0a;border-top:1px solid #1a1a1a;padding:0.5rem 1rem;text-align:center;font-size:0.75rem;color:#555;white-space:nowrap;">
             <a href="https://bitback.pl" target="_blank" rel="noopener" style="color:#6a9fd4;text-decoration:none;"><strong>bitback.pl</strong></a>
@@ -360,6 +378,8 @@ function view_css(): string {
         .expire-now-btn:hover { background: rgba(212, 146, 42, 0.22); border-color: #f0c060; color: #ffe0a0; }
         .expire-now-btn:disabled { opacity: 0.4; cursor: default; }
         .expire-now-btn.done { background: rgba(74, 138, 74, 0.12); border-color: #4a8a4a; color: #6aba6a; }
+        .expire-now-btn.kill { background: rgba(192, 57, 43, 0.10); border-color: #8b3a3a; color: #c0392b; font-size: 0.75rem; padding: 0.45rem 1.2rem; }
+        .expire-now-btn.kill:hover { background: rgba(192, 57, 43, 0.20); border-color: #c0392b; color: #e74c3c; }
         .site-footer { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; background: #0a0a0a; border-top: 1px solid #1a1a1a; padding: 0.5rem 1rem; text-align: center; font-size: 0.75rem; color: #555; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .site-footer a { color: #6a9fd4; text-decoration: none; }
         .site-footer a:hover { color: #8abcf0; text-decoration: underline; }
@@ -428,33 +448,44 @@ function view_meta_html(array $t, array $data, bool $expired): string {
         : 'Zero-trust: decryption happened in your browser. The server never had access to the key.';
     $html .= '<div class="zt-badge"><span>&#128274;</span> ' . $ztText . '</div>';
 
-    // Przycisk natychmiastowego wygaszenia — tylko gdy sekrety aktywne i nie jest to ostatni widok
+    // Przyciski natychmiastowego wygaszenia/ubicia — tylko gdy sekrety aktywne i nie jest to ostatni widok
     global $lastView;
     if (!$expired && empty($lastView)) {
         $uuid = $data['id'] ?? '';
         $checkLabel = $lang === 'pl'
             ? 'Otrzymałem dane. Potwierdź'
             : 'I received the data. Confirm';
-        $btnLabel = $lang === 'pl'
+        $btnExpire = $lang === 'pl'
             ? 'wygaś poufne dane teraz'
             : 'expire secret data now';
-        $successMsg = $lang === 'pl'
+        $btnKill = $lang === 'pl'
+            ? 'ubij cały link teraz'
+            : 'kill entire link now';
+        $successExpire = $lang === 'pl'
             ? 'Dane poufne zostały wygaszone.'
             : 'Secret data has been expired.';
+        $successKill = $lang === 'pl'
+            ? 'Link został ubity.'
+            : 'Link has been killed.';
         $errorMsg = $lang === 'pl'
-            ? 'Nie udało się wygasić danych. Spróbuj ponownie.'
-            : 'Failed to expire data. Please try again.';
+            ? 'Nie udało się. Spróbuj ponownie.'
+            : 'Failed. Please try again.';
 
         $html .= '<div class="expire-now-wrap">';
         $html .= '<div class="expire-now-confirm" id="expireConfirmWrap">';
         $html .= '<input type="checkbox" id="expireConfirmCb">';
         $html .= '<label for="expireConfirmCb">' . htmlspecialchars($checkLabel) . '</label>';
         $html .= '</div>';
-        $html .= '<button type="button" class="expire-now-btn" onclick="expireNow(this)"';
+        $html .= '<button type="button" class="expire-now-btn" onclick="expireNow(this,\'expire\')"';
         $html .= ' data-uuid="' . htmlspecialchars($uuid) . '"';
-        $html .= ' data-success="' . htmlspecialchars($successMsg) . '"';
+        $html .= ' data-success="' . htmlspecialchars($successExpire) . '"';
         $html .= ' data-error="' . htmlspecialchars($errorMsg) . '"';
-        $html .= '>' . htmlspecialchars($btnLabel) . '</button>';
+        $html .= '>' . htmlspecialchars($btnExpire) . '</button>';
+        $html .= '<button type="button" class="expire-now-btn kill" onclick="expireNow(this,\'kill\')"';
+        $html .= ' data-uuid="' . htmlspecialchars($uuid) . '"';
+        $html .= ' data-success="' . htmlspecialchars($successKill) . '"';
+        $html .= ' data-error="' . htmlspecialchars($errorMsg) . '"';
+        $html .= '>' . htmlspecialchars($btnKill) . '</button>';
         $html .= '</div>';
     }
 
@@ -508,6 +539,11 @@ function show_view_encrypted(array $t, array $data, string $encText, ?string $en
         <?php if ($expired): ?>
         <div class="expired-banner">
             <?= htmlspecialchars($t['secrets_expired']) ?> — <?= htmlspecialchars($t['secrets_expired_info']) ?>
+            <?php if (isset($data['_expired_manually'])): ?>
+            <br><small style="color:#d4922a;"><?= $lang === 'pl'
+                ? 'Ręcznie wygaszone dnia ' . substr($data['_expired_manually'], 0, 10) . '.'
+                : 'Manually expired on ' . substr($data['_expired_manually'], 0, 10) . '.' ?></small>
+            <?php endif; ?>
         </div>
         <?php endif; ?>
 
@@ -676,7 +712,7 @@ function show_view_encrypted(array $t, array $data, string $encText, ?string $en
         return d.innerHTML;
     }
 
-    async function expireNow(btn) {
+    async function expireNow(btn, action) {
         var wrap = document.getElementById('expireConfirmWrap');
         var cb = document.getElementById('expireConfirmCb');
         if (!cb.checked) {
@@ -685,14 +721,15 @@ function show_view_encrypted(array $t, array $data, string $encText, ?string $en
             wrap.classList.add('shake');
             return;
         }
-        btn.disabled = true;
+        // Wyłącz oba przyciski
+        document.querySelectorAll('.expire-now-btn').forEach(function(b) { b.disabled = true; });
         cb.disabled = true;
         btn.textContent = '...';
         try {
             const resp = await fetch('/api/expire.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ uuid: btn.dataset.uuid }),
+                body: JSON.stringify({ uuid: btn.dataset.uuid, action: action || 'expire' }),
             });
             const result = await resp.json();
             if (result.ok) {
@@ -701,12 +738,12 @@ function show_view_encrypted(array $t, array $data, string $encText, ?string $en
                 setTimeout(function() { location.reload(); }, 1500);
             } else {
                 btn.textContent = btn.dataset.error;
-                btn.disabled = false;
+                document.querySelectorAll('.expire-now-btn').forEach(function(b) { b.disabled = false; });
                 cb.disabled = false;
             }
         } catch (e) {
             btn.textContent = btn.dataset.error;
-            btn.disabled = false;
+            document.querySelectorAll('.expire-now-btn').forEach(function(b) { b.disabled = false; });
             cb.disabled = false;
         }
     }
@@ -738,6 +775,11 @@ function show_view_encrypted_v2(array $t, array $data, string $encryptedPayload,
         <?php if ($expired): ?>
         <div class="expired-banner">
             <?= htmlspecialchars($t['secrets_expired']) ?> — <?= htmlspecialchars($t['secrets_expired_info']) ?>
+            <?php if (isset($data['_expired_manually'])): ?>
+            <br><small style="color:#d4922a;"><?= $lang === 'pl'
+                ? 'Ręcznie wygaszone dnia ' . substr($data['_expired_manually'], 0, 10) . '.'
+                : 'Manually expired on ' . substr($data['_expired_manually'], 0, 10) . '.' ?></small>
+            <?php endif; ?>
         </div>
         <?php endif; ?>
         <div id="errorBox" class="error-banner" style="display:none;"></div>
@@ -791,17 +833,18 @@ function show_view_encrypted_v2(array $t, array $data, string $encryptedPayload,
             return '<a href="' + m + '" target="_blank" rel="noopener" style="color:#6a9fd4;">' + m + '</a>';
         });
     }
-    async function expireNow(btn) {
+    async function expireNow(btn, action) {
         var wrap = document.getElementById('expireConfirmWrap');
         var cb = document.getElementById('expireConfirmCb');
         if (!cb.checked) { wrap.classList.remove('shake'); void wrap.offsetWidth; wrap.classList.add('shake'); return; }
-        btn.disabled = true; cb.disabled = true; btn.textContent = '...';
+        document.querySelectorAll('.expire-now-btn').forEach(b => b.disabled = true);
+        cb.disabled = true; btn.textContent = '...';
         try {
-            const r = await fetch('/api/expire.php', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({uuid: btn.dataset.uuid}) });
+            const r = await fetch('/api/expire.php', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({uuid: btn.dataset.uuid, action: action || 'expire'}) });
             const j = await r.json();
             if (j.ok) { btn.textContent = '\u2713 ' + btn.dataset.success; btn.classList.add('done'); setTimeout(()=>location.reload(), 1500); }
-            else { btn.textContent = btn.dataset.error; btn.disabled = false; cb.disabled = false; }
-        } catch(e) { btn.textContent = btn.dataset.error; btn.disabled = false; cb.disabled = false; }
+            else { btn.textContent = btn.dataset.error; document.querySelectorAll('.expire-now-btn').forEach(b => b.disabled = false); cb.disabled = false; }
+        } catch(e) { btn.textContent = btn.dataset.error; document.querySelectorAll('.expire-now-btn').forEach(b => b.disabled = false); cb.disabled = false; }
     }
     </script>
 </body>
@@ -833,9 +876,14 @@ function show_view_legacy(array $t, array $data, array $sections, bool $expired)
 <body>
     <div class="header"><h1><a href="/" style="color:inherit;text-decoration:none;"><?= htmlspecialchars($t['title']) ?></a></h1></div>
     <div class="container">
-        <?php if ($expired): ?>
+        <?php if ($expired): $ll = detect_lang(); ?>
         <div class="expired-banner">
             <?= htmlspecialchars($t['secrets_expired']) ?> — <?= htmlspecialchars($t['secrets_expired_info']) ?>
+            <?php if (isset($data['_expired_manually'])): ?>
+            <br><small style="color:#d4922a;"><?= $ll === 'pl'
+                ? 'Ręcznie wygaszone dnia ' . substr($data['_expired_manually'], 0, 10) . '.'
+                : 'Manually expired on ' . substr($data['_expired_manually'], 0, 10) . '.' ?></small>
+            <?php endif; ?>
         </div>
         <?php endif; ?>
         <div class="content-box"><?php
@@ -854,17 +902,18 @@ function show_view_legacy(array $t, array $data, array $sections, bool $expired)
     <?= view_footer_html() ?>
     <?php if (!$expired): ?>
     <script>
-    async function expireNow(btn) {
+    async function expireNow(btn, action) {
         var wrap = document.getElementById('expireConfirmWrap');
         var cb = document.getElementById('expireConfirmCb');
         if (!cb.checked) { wrap.classList.remove('shake'); void wrap.offsetWidth; wrap.classList.add('shake'); return; }
-        btn.disabled = true; cb.disabled = true; btn.textContent = '...';
+        document.querySelectorAll('.expire-now-btn').forEach(b => b.disabled = true);
+        cb.disabled = true; btn.textContent = '...';
         try {
-            const r = await fetch('/api/expire.php', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({uuid: btn.dataset.uuid}) });
+            const r = await fetch('/api/expire.php', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({uuid: btn.dataset.uuid, action: action || 'expire'}) });
             const j = await r.json();
             if (j.ok) { btn.textContent = '\u2713 ' + btn.dataset.success; btn.classList.add('done'); setTimeout(()=>location.reload(), 1500); }
-            else { btn.textContent = btn.dataset.error; btn.disabled = false; cb.disabled = false; }
-        } catch(e) { btn.textContent = btn.dataset.error; btn.disabled = false; cb.disabled = false; }
+            else { btn.textContent = btn.dataset.error; document.querySelectorAll('.expire-now-btn').forEach(b => b.disabled = false); cb.disabled = false; }
+        } catch(e) { btn.textContent = btn.dataset.error; document.querySelectorAll('.expire-now-btn').forEach(b => b.disabled = false); cb.disabled = false; }
     }
     </script>
     <?php endif; ?>

@@ -1,10 +1,12 @@
 <?php
 /**
- * API: Natychmiastowe wygaszenie sekretów
- * POST JSON { "uuid": "..." }
+ * API: Natychmiastowe wygaszenie sekretów lub ubicie całego linka
+ * POST JSON { "uuid": "...", "action": "expire" | "kill" }
  *
- * Fizycznie kasuje encrypted_secrets z pliku JSON.
- * Nie wymaga klucza — każdy kto ma UUID może wygasić dane.
+ * action=expire (domyślne): kasuje encrypted_secrets, tekst zostaje
+ * action=kill: kasuje encrypted_secrets + encrypted_text, link martwy
+ *
+ * Nie wymaga klucza — każdy kto ma UUID może wygasić/ubić dane.
  * (To bezpieczne — wygaszenie ≠ odczyt, a UUID bez klucza i tak jest bezużyteczny)
  */
 
@@ -27,11 +29,18 @@ if (!$input) {
 }
 
 $uuid = $input['uuid'] ?? '';
+$action = $input['action'] ?? 'expire'; // expire | kill
 
 // Walidacja UUID v4
 if (!preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i', $uuid)) {
     http_response_code(400);
     echo json_encode(['error' => 'Invalid UUID']);
+    exit;
+}
+
+if (!in_array($action, ['expire', 'kill'], true)) {
+    http_response_code(400);
+    echo json_encode(['error' => 'Invalid action']);
     exit;
 }
 
@@ -50,15 +59,41 @@ if (!$data) {
     exit;
 }
 
+$manualDate = gmdate('Y-m-d\TH:i:s\Z');
+
+// === KILL: ubij cały link ===
+if ($action === 'kill') {
+    // Już ubity?
+    if (isset($data['_killed_manually'])) {
+        echo json_encode(['ok' => true, 'already_killed' => true]);
+        exit;
+    }
+
+    $data['encrypted_secrets'] = null;
+    $data['encrypted_text'] = null;
+    // wyczyść też stare formaty
+    if (isset($data['encrypted_payload'])) $data['encrypted_payload'] = null;
+    if (isset($data['sections'])) $data['sections'] = null;
+
+    $data['_secrets_expired_at'] = $data['_secrets_expired_at'] ?? time();
+    $data['_killed_manually'] = $manualDate;
+
+    file_put_contents($file, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE), LOCK_EX);
+    echo json_encode(['ok' => true, 'killed' => true]);
+    exit;
+}
+
+// === EXPIRE: wygaś tylko sekrety ===
+
 // Już wygaszone?
 if ($data['encrypted_secrets'] === null) {
     echo json_encode(['ok' => true, 'already_expired' => true]);
     exit;
 }
 
-// --- FIZYCZNE KASOWANIE SEKRETÓW ---
 $data['encrypted_secrets'] = null;
 $data['_secrets_expired_at'] = time();
+$data['_expired_manually'] = $manualDate;
 
 // Permanentne usunięcie od razu jeśli delete_after_days == 0
 if (($data['delete_after_days'] ?? 30) == 0) {
