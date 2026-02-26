@@ -100,7 +100,7 @@ if (!$secretsExpired) {
     $data['current_views']++;
     $data['view_log'][] = [
         'time' => gmdate('Y-m-d\TH:i:s\Z'),
-        'ip' => $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0',
+        'ip_hash' => substr(hash('sha256', ($_SERVER['REMOTE_ADDR'] ?? '0.0.0.0') . IP_HASH_SALT), 0, 12),
     ];
 
     if ($data['current_views'] >= $data['max_views']) {
@@ -295,8 +295,8 @@ function show_expired(array $t, ?string $killedAt = null, ?string $expiredManual
     if ($killedAt) {
         $date = substr($killedAt, 0, 10); // YYYY-MM-DD
         $manualInfo = $lang === 'pl'
-            ? 'Link został ręcznie ubity dnia ' . $date . '.'
-            : 'Link was manually killed on ' . $date . '.';
+            ? 'Link został ręcznie usunięty dnia ' . $date . '.'
+            : 'Link was manually deleted on ' . $date . '.';
     } elseif ($expiredManually) {
         $date = substr($expiredManually, 0, 10);
         $manualInfo = $lang === 'pl'
@@ -459,21 +459,21 @@ function view_meta_html(array $t, array $data, bool $expired): string {
             ? 'wygaś poufne dane teraz'
             : 'expire secret data now';
         $btnKill = $lang === 'pl'
-            ? 'ubij cały link teraz'
-            : 'kill entire link now';
+            ? 'usuń cały link teraz'
+            : 'delete entire link now';
         $successExpire = $lang === 'pl'
             ? 'Dane poufne zostały wygaszone.'
             : 'Secret data has been expired.';
         $successKill = $lang === 'pl'
-            ? 'Link został ubity.'
-            : 'Link has been killed.';
+            ? 'Link został usunięty.'
+            : 'Link has been deleted.';
         $errorMsg = $lang === 'pl'
             ? 'Nie udało się. Spróbuj ponownie.'
             : 'Failed. Please try again.';
 
         $html .= '<div class="expire-now-wrap">';
         $html .= '<div class="expire-now-confirm" id="expireConfirmWrap">';
-        $html .= '<input type="checkbox" id="expireConfirmCb">';
+        $html .= '<input type="checkbox" id="expireConfirmCb" autocomplete="off">';
         $html .= '<label for="expireConfirmCb">' . htmlspecialchars($checkLabel) . '</label>';
         $html .= '</div>';
         $html .= '<button type="button" class="expire-now-btn" onclick="expireNow(this,\'expire\')"';
@@ -486,6 +486,35 @@ function view_meta_html(array $t, array $data, bool $expired): string {
         $html .= ' data-success="' . htmlspecialchars($successKill) . '"';
         $html .= ' data-error="' . htmlspecialchars($errorMsg) . '"';
         $html .= '>' . htmlspecialchars($btnKill) . '</button>';
+        $html .= '</div>';
+    }
+
+    // Przycisk usunięcia linka na widoku wygaszonym (sekrety expired, ale link jeszcze żyje)
+    if ($expired && !isset($data['_killed_manually'])) {
+        $uuid = $data['id'] ?? '';
+        $checkLabelKill = $lang === 'pl'
+            ? 'Potwierdzam usunięcie'
+            : 'Confirm deletion';
+        $btnKillOnly = $lang === 'pl'
+            ? 'usuń cały link teraz'
+            : 'delete entire link now';
+        $successKillOnly = $lang === 'pl'
+            ? 'Link został usunięty.'
+            : 'Link has been deleted.';
+        $errorMsgKill = $lang === 'pl'
+            ? 'Nie udało się. Spróbuj ponownie.'
+            : 'Failed. Please try again.';
+
+        $html .= '<div class="expire-now-wrap">';
+        $html .= '<div class="expire-now-confirm" id="expireConfirmWrap">';
+        $html .= '<input type="checkbox" id="expireConfirmCb" autocomplete="off">';
+        $html .= '<label for="expireConfirmCb">' . htmlspecialchars($checkLabelKill) . '</label>';
+        $html .= '</div>';
+        $html .= '<button type="button" class="expire-now-btn kill" onclick="expireNow(this,\'kill\')"';
+        $html .= ' data-uuid="' . htmlspecialchars($uuid) . '"';
+        $html .= ' data-success="' . htmlspecialchars($successKillOnly) . '"';
+        $html .= ' data-error="' . htmlspecialchars($errorMsgKill) . '"';
+        $html .= '>' . htmlspecialchars($btnKillOnly) . '</button>';
         $html .= '</div>';
     }
 
@@ -900,7 +929,6 @@ function show_view_legacy(array $t, array $data, array $sections, bool $expired)
         <?= view_meta_html($t, $data, $expired) ?>
     </div>
     <?= view_footer_html() ?>
-    <?php if (!$expired): ?>
     <script>
     async function expireNow(btn, action) {
         var wrap = document.getElementById('expireConfirmWrap');
@@ -916,7 +944,6 @@ function show_view_legacy(array $t, array $data, array $sections, bool $expired)
         } catch(e) { btn.textContent = btn.dataset.error; document.querySelectorAll('.expire-now-btn').forEach(b => b.disabled = false); cb.disabled = false; }
     }
     </script>
-    <?php endif; ?>
 </body>
 </html><?php
 }

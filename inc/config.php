@@ -9,3 +9,4 @@ define('DEFAULT_EXPIRE_DAYS', 14);
 define('DEFAULT_MAX_VIEWS', 5);
 define('DEFAULT_DELETE_DAYS', 90);
 define('CIPHER_METHOD', 'aes-256-cbc');
+define('IP_HASH_SALT', 'zmien-na-losowy-ciag-min-24-znakow');

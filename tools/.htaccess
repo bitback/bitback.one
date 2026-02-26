@@ -1,0 +1,2 @@
+# Block all HTTP access to tools directory
+Deny from all

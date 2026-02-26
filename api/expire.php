@@ -61,9 +61,9 @@ if (!$data) {
 
 $manualDate = gmdate('Y-m-d\TH:i:s\Z');
 
-// === KILL: ubij cały link ===
+// === KILL: usuń cały link ===
 if ($action === 'kill') {
-    // Już ubity?
+    // Już usunięty?
     if (isset($data['_killed_manually'])) {
         echo json_encode(['ok' => true, 'already_killed' => true]);
         exit;
