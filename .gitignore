@@ -4,6 +4,7 @@ trash/
 
 # === Pliki tymczasowe ===
 tmp/
+temp/
 *.bak
 *.tmp
 *.log
