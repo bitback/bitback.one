@@ -54,7 +54,9 @@ if (!empty($data['password_hash'])) {
 
 // --- SPRAWDŹ STATUS ---
 $now = time();
-$secretsExpired = (strtotime($data['expires_secrets']) <= $now) || ($data['current_views'] >= $data['max_views']);
+$secretsExpired = (strtotime($data['expires_secrets']) <= $now)
+    || ($data['current_views'] >= $data['max_views'])
+    || ($data['encrypted_secrets'] === null && isset($data['_secrets_expired_at']));
 
 // permanentne usunięcie (delete_after_days == 0 → od razu)
 if ($secretsExpired && $data['delete_after_days'] == 0) {
@@ -92,6 +94,7 @@ if ($secretsExpired && isset($data['encrypted_secrets'])) {
 // --- LOGUJ WYŚWIETLENIE (tylko aktywne sekrety) ---
 // Zachowaj sekrety dla ostatniego wyświetlenia (zanim zostaną skasowane z pliku)
 $lastViewSecrets = $data['encrypted_secrets'] ?? null;
+$lastView = false;
 
 if (!$secretsExpired) {
     $data['current_views']++;
@@ -105,7 +108,7 @@ if (!$secretsExpired) {
         // ale w pliku kasujemy sekrety (następne odwiedziny = wygaszone)
         $data['_secrets_expired_at'] = $now;
         $data['encrypted_secrets'] = null;
-        // $secretsExpired pozostaje false — ten widok jeszcze pokazuje dane
+        $lastView = true; // ukryj przycisk expire — dane właśnie wygasają
     }
 
     $needSave = true;
@@ -425,8 +428,9 @@ function view_meta_html(array $t, array $data, bool $expired): string {
         : 'Zero-trust: decryption happened in your browser. The server never had access to the key.';
     $html .= '<div class="zt-badge"><span>&#128274;</span> ' . $ztText . '</div>';
 
-    // Przycisk natychmiastowego wygaszenia — tylko gdy sekrety jeszcze aktywne
-    if (!$expired) {
+    // Przycisk natychmiastowego wygaszenia — tylko gdy sekrety aktywne i nie jest to ostatni widok
+    global $lastView;
+    if (!$expired && empty($lastView)) {
         $uuid = $data['id'] ?? '';
         $checkLabel = $lang === 'pl'
             ? 'Otrzymałem dane. Potwierdź'
