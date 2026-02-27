@@ -65,6 +65,25 @@ function get_strings(string $lang = null): array {
             'not_found_title' => 'Nie ma takiego linka',
             'not_found_sub' => 'Albo nigdy nie istniał, albo został permanentnie usunięty.',
             'not_found_hint' => 'Sprawdź czy link jest kompletny — klucz deszyfrujący jest za znakiem #',
+            // index: meta
+            'meta_title' => 'bitback.one — bezpieczne udostępnianie danych',
+            // index: trust bar
+            'trust1_title' => 'Szyfrowanie zero-trust',
+            'trust1_desc' => 'Treść szyfrowana AES-256 w przeglądarce. Klucz deszyfrujący jest w części linka (#fragment), która nigdy nie trafia do serwera — nawet w logach. Administrator nie ma fizycznej możliwości odczytu danych.',
+            'trust2_title' => 'Kontrolowane wygasanie',
+            'trust2_desc' => 'Po wygaśnięciu linka fragmenty oznaczone jako poufne zostają trwale ukryte. Reszta treści pozostaje widoczna jako kontekst. Po usunięciu — wszystko znika bezpowrotnie.',
+            'trust3_title' => 'Bez śladu na serwerze',
+            'trust3_desc' => 'Serwer przechowuje wyłącznie zaszyfrowany blob. Klucz nie pojawia się w logach, bazie danych, ani w pamięci serwera. Deszyfrowanie odbywa się wyłącznie w przeglądarce odbiorcy.',
+            // index: hint bar
+            'hint_text' => 'Zaznacz fragment tekstu i naciśnij <strong>Ctrl+E</strong> aby oznaczyć go jako <strong>poufny</strong>. Poufne fragmenty zostaną ukryte po wygaśnięciu linka — reszta treści pozostanie widoczna. Ponowne Ctrl+E odznacza.',
+            // index: editor placeholder
+            'editor_placeholder' => "Wpisz treść tutaj...\nNp. Login: admin\nHasło: s3cret123  ← zaznacz i Ctrl+E",
+            // index: JS alerts/messages
+            'error_math_select' => 'Wybierz odpowiedź na pytanie.',
+            'error_connection' => 'Błąd połączenia z serwerem.',
+            // index: footer
+            'footer_tagline' => 'Zabezpieczamy pocztę, serwery i komputery',
+            'footer_source' => 'Kod źródłowy na',
         ],
         'en' => [
             'title' => defined('APP_NAME') ? APP_NAME : 'bitback.one',
@@ -117,6 +136,25 @@ function get_strings(string $lang = null): array {
             'not_found_title' => 'This link does not exist',
             'not_found_sub' => 'It either never existed or has been permanently deleted.',
             'not_found_hint' => 'Make sure the link is complete — the decryption key is after the # sign',
+            // index: meta
+            'meta_title' => 'bitback.one — secure data sharing',
+            // index: trust bar
+            'trust1_title' => 'Zero-trust encryption',
+            'trust1_desc' => 'Content encrypted with AES-256 in the browser. The decryption key is in the link fragment (#), which never reaches the server — not even in logs. The administrator has no way to read the data.',
+            'trust2_title' => 'Controlled expiration',
+            'trust2_desc' => 'After link expiration, fragments marked as secret are permanently hidden. The rest of the content remains visible as context. After deletion — everything is gone forever.',
+            'trust3_title' => 'No trace on the server',
+            'trust3_desc' => 'The server stores only the encrypted blob. The key never appears in logs, database, or server memory. Decryption happens exclusively in the recipient\'s browser.',
+            // index: hint bar
+            'hint_text' => 'Select text and press <strong>Ctrl+E</strong> to mark it as <strong>secret</strong>. Secret fragments will be hidden after link expiration — the rest remains visible. Press Ctrl+E again to unmark.',
+            // index: editor placeholder
+            'editor_placeholder' => "Type your content here...\ne.g. Login: admin\nPassword: s3cret123  ← select and Ctrl+E",
+            // index: JS alerts/messages
+            'error_math_select' => 'Select an answer to the question.',
+            'error_connection' => 'Connection error.',
+            // index: footer
+            'footer_tagline' => 'We secure email, servers and computers',
+            'footer_source' => 'Source code on',
         ],
     ];
 

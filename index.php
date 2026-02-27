@@ -1,10 +1,15 @@
-<?php require_once __DIR__ . '/inc/config.php'; ?>
+<?php
+require_once __DIR__ . '/inc/config.php';
+require_once __DIR__ . '/inc/i18n.php';
+$lang = detect_lang();
+$t = get_strings($lang);
+?>
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="<?= $lang ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>bitback.one — bezpieczne udostępnianie danych</title>
+    <title><?= htmlspecialchars($t['meta_title']) ?></title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -148,7 +153,7 @@
         }
         .editor:focus { border-color: #333; }
         .editor:empty::before {
-            content: 'Wpisz treść tutaj...\ANp. Login: admin\AHasło: s3cret123  ← zaznacz i Ctrl+E';
+            content: '<?= str_replace("'", "\\'", str_replace("\n", "\\A", $t['editor_placeholder'])) ?>';
             color: #333;
             pointer-events: none;
             white-space: pre-wrap;
@@ -410,7 +415,7 @@
 
 <div class="header">
     <h1><a href="https://bitback.one" style="color:inherit;text-decoration:none;">bitback.one</a></h1>
-    <p>bezpieczne jednorazowe linki</p>
+    <p><?= htmlspecialchars($t['subtitle']) ?></p>
 </div>
 
 <div class="trust">
@@ -418,18 +423,18 @@
         <div class="trust-grid">
             <div class="trust-item">
                 <div class="trust-icon">&#128274;</div>
-                <div class="trust-title">Szyfrowanie zero-trust</div>
-                <div class="trust-desc">Treść szyfrowana AES-256 w przeglądarce. Klucz deszyfrujący jest w części linka (#fragment), która nigdy nie trafia do serwera — nawet w logach. Administrator nie ma fizycznej możliwości odczytu danych.</div>
+                <div class="trust-title"><?= htmlspecialchars($t['trust1_title']) ?></div>
+                <div class="trust-desc"><?= htmlspecialchars($t['trust1_desc']) ?></div>
             </div>
             <div class="trust-item">
                 <div class="trust-icon">&#128337;</div>
-                <div class="trust-title">Kontrolowane wygasanie</div>
-                <div class="trust-desc">Po wygaśnięciu linka fragmenty oznaczone jako poufne zostają trwale ukryte. Reszta treści pozostaje widoczna jako kontekst. Po usunięciu — wszystko znika bezpowrotnie.</div>
+                <div class="trust-title"><?= htmlspecialchars($t['trust2_title']) ?></div>
+                <div class="trust-desc"><?= htmlspecialchars($t['trust2_desc']) ?></div>
             </div>
             <div class="trust-item">
                 <div class="trust-icon">&#128421;</div>
-                <div class="trust-title">Bez śladu na serwerze</div>
-                <div class="trust-desc">Serwer przechowuje wyłącznie zaszyfrowany blob. Klucz nie pojawia się w logach, bazie danych, ani w pamięci serwera. Deszyfrowanie odbywa się wyłącznie w przeglądarce odbiorcy.</div>
+                <div class="trust-title"><?= htmlspecialchars($t['trust3_title']) ?></div>
+                <div class="trust-desc"><?= htmlspecialchars($t['trust3_desc']) ?></div>
             </div>
         </div>
     </div>
@@ -442,20 +447,20 @@
         <div class="two-col">
             <!-- LEWA — edytor -->
             <div class="col-left">
-                <div class="col-label">Treść</div>
+                <div class="col-label"><?= htmlspecialchars($t['content_label']) ?></div>
                 <div class="hint-bar">
                     <kbd>Ctrl+E</kbd>
-                    <span class="hint-text">Zaznacz fragment tekstu i naciśnij <strong>Ctrl+E</strong> aby oznaczyć go jako <strong>poufny</strong>. Poufne fragmenty zostaną ukryte po wygaśnięciu linka — reszta treści pozostanie widoczna. Ponowne Ctrl+E odznacza.</span>
+                    <span class="hint-text"><?= $t['hint_text'] ?></span>
                 </div>
                 <div class="editor" id="editor" contenteditable="true" spellcheck="false"></div>
 
                 <!-- podgląd pod edytorem -->
                 <div class="preview-section">
                     <div class="preview-bar">
-                        <div class="col-label">Podgląd</div>
+                        <div class="col-label"><?= htmlspecialchars($t['preview_label']) ?></div>
                         <div class="preview-tabs">
-                            <button type="button" class="preview-tab active" onclick="setPreview('expired', this)">po wygaśnięciu</button>
-                            <button type="button" class="preview-tab" onclick="setPreview('active', this)">aktywny link</button>
+                            <button type="button" class="preview-tab active" onclick="setPreview('expired', this)"><?= htmlspecialchars($t['preview_expired']) ?></button>
+                            <button type="button" class="preview-tab" onclick="setPreview('active', this)"><?= htmlspecialchars($t['preview_active']) ?></button>
                         </div>
                     </div>
                     <div class="preview-box" id="preview"></div>
@@ -464,48 +469,48 @@
 
             <!-- PRAWA — konfiguracja -->
             <div class="col-right">
-                <div class="col-label">Ustawienia</div>
+                <div class="col-label"><?= htmlspecialchars($t['settings_label']) ?></div>
                 <div class="config-panel">
                     <div class="config-group">
-                        <label>Wygaśnięcie danych poufnych</label>
+                        <label><?= htmlspecialchars($t['expire_label']) ?></label>
                         <div class="config-row">
                             <input type="number" class="config-input" id="expireDays" value="<?= DEFAULT_EXPIRE_DAYS ?>" min="1" max="3650">
-                            <span class="config-unit">dni</span>
+                            <span class="config-unit"><?= htmlspecialchars($t['expire_unit']) ?></span>
                         </div>
                     </div>
 
                     <div class="config-group">
-                        <label>Maksymalna liczba wyświetleń</label>
+                        <label><?= htmlspecialchars($t['views_label']) ?></label>
                         <div class="config-row">
                             <input type="number" class="config-input" id="maxViews" value="<?= DEFAULT_MAX_VIEWS ?>" min="1" max="10000">
-                            <span class="config-unit">razy</span>
+                            <span class="config-unit"><?= htmlspecialchars($t['views_unit']) ?></span>
                         </div>
                     </div>
 
                     <div class="config-group">
-                        <label>Permanentne usunięcie po</label>
+                        <label><?= htmlspecialchars($t['delete_label']) ?></label>
                         <div class="config-row">
                             <input type="number" class="config-input" id="deleteDays" value="<?= DEFAULT_DELETE_DAYS ?>" min="0" max="3650">
-                            <span class="config-unit">dni (0 = od razu)</span>
+                            <span class="config-unit"><?= htmlspecialchars($t['delete_unit']) ?></span>
                         </div>
                     </div>
 
                     <div class="config-group">
-                        <label>Hasło otwarcia (opcjonalne)</label>
+                        <label><?= htmlspecialchars($t['password_label']) ?></label>
                         <div class="config-row">
-                            <input type="text" class="config-input" id="linkPassword" style="width:100%;text-align:left;" placeholder="zostaw puste = bez hasła" autocomplete="off">
+                            <input type="text" class="config-input" id="linkPassword" style="width:100%;text-align:left;" placeholder="<?= htmlspecialchars($t['password_placeholder_config']) ?>" autocomplete="off">
                         </div>
                     </div>
 
                     <hr class="config-sep">
 
                     <div class="config-group">
-                        <label>Weryfikacja</label>
+                        <label><?= htmlspecialchars($t['verify_label']) ?></label>
                         <div class="antibot-q" id="mathQuestion"></div>
                         <div class="antibot-options" id="mathOptions"></div>
                     </div>
 
-                    <button type="button" class="generate-btn" onclick="generateLink()">Generuj link</button>
+                    <button type="button" class="generate-btn" onclick="generateLink()"><?= htmlspecialchars($t['generate_btn']) ?></button>
                 </div>
             </div>
         </div>
@@ -513,10 +518,10 @@
 
     <div class="result" id="result">
         <div class="result-box">
-            <div class="result-label">Twój link</div>
+            <div class="result-label"><?= htmlspecialchars($t['your_link']) ?></div>
             <div class="result-link">
                 <input type="text" class="result-url" id="resultUrl" readonly>
-                <button type="button" class="copy-btn" onclick="copyLink()">Kopiuj</button>
+                <button type="button" class="copy-btn" onclick="copyLink()"><?= htmlspecialchars($t['copy']) ?></button>
             </div>
             <div class="result-password" id="resultPassword"></div>
         </div>
@@ -526,14 +531,26 @@
 
 <div style="position:fixed;bottom:0;left:0;right:0;z-index:100;background:#0a0a0a;border-top:1px solid #1a1a1a;padding:0.5rem 1rem;text-align:center;font-size:0.75rem;color:#555;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
     <a href="https://bitback.pl" target="_blank" rel="noopener" style="color:#6a9fd4;text-decoration:none;"><strong>bitback.pl</strong></a>
-    <span style="color:#2a2a2a;margin:0 0.5rem;">|</span>Zabezpieczamy pocztę, serwery i komputery
+    <span style="color:#2a2a2a;margin:0 0.5rem;">|</span><?= htmlspecialchars($t['footer_tagline']) ?>
     <span style="color:#2a2a2a;margin:0 0.5rem;">|</span>Zbigniew Gralewski
     <span style="color:#2a2a2a;margin:0 0.5rem;">|</span><a href="mailto:zbigniew.gralewski@bitback.pl" style="color:#6a9fd4;text-decoration:none;">zbigniew.gralewski@bitback.pl</a>
     <span style="color:#2a2a2a;margin:0 0.5rem;">|</span>609 505 065
-    <span style="color:#2a2a2a;margin:0 0.5rem;">|</span>Kod źródłowy na <a href="https://github.com/bitback/bitback.one" target="_blank" rel="noopener" style="color:#6a9fd4;text-decoration:none;">GitHub</a>
+    <span style="color:#2a2a2a;margin:0 0.5rem;">|</span><?= htmlspecialchars($t['footer_source']) ?> <a href="https://github.com/bitback/bitback.one" target="_blank" rel="noopener" style="color:#6a9fd4;text-decoration:none;">GitHub</a>
 </div>
 
 <script>
+    const T = {
+        error_empty: <?= json_encode($t['error_empty']) ?>,
+        error_math_select: <?= json_encode($t['error_math_select']) ?>,
+        error_ratelimit: <?= json_encode($t['error_ratelimit']) ?>,
+        error_math: <?= json_encode($t['error_math']) ?>,
+        error_server: <?= json_encode($t['error_server']) ?>,
+        error_connection: <?= json_encode($t['error_connection']) ?>,
+        your_password: <?= json_encode($t['your_password']) ?>,
+        copied: <?= json_encode($t['copied']) ?>,
+        copy: <?= json_encode($t['copy']) ?>,
+        generate_btn: <?= json_encode($t['generate_btn']) ?>
+    };
     const editor = document.getElementById('editor');
     let mathA, mathB;
     let previewMode = 'expired';
@@ -758,13 +775,13 @@
         // treść
         const text = editor.textContent.trim();
         if (!text) {
-            alert('Wpisz treść.');
+            alert(T.error_empty);
             return;
         }
 
         // math — sprawdź czy wybrano odpowiedź
         if (selectedAnswer === null) {
-            alert('Wybierz odpowiedź na pytanie.');
+            alert(T.error_math_select);
             return;
         }
 
@@ -823,7 +840,7 @@
                 const pwdEl = document.getElementById('resultPassword');
                 const pwd = document.getElementById('linkPassword').value.trim();
                 if (pwd) {
-                    pwdEl.innerHTML = 'Twoje hasło: <strong>' + pwd.replace(/</g, '&lt;') + '</strong>';
+                    pwdEl.innerHTML = T.your_password + ' <strong>' + pwd.replace(/</g, '&lt;') + '</strong>';
                     pwdEl.classList.add('show');
                 } else {
                     pwdEl.classList.remove('show');
@@ -831,18 +848,18 @@
                 }
                 generateMath();
             } else if (result.error === 'ratelimit') {
-                alert('Zbyt wiele prób. Spróbuj później.');
+                alert(T.error_ratelimit);
             } else if (result.error === 'math') {
-                alert('Nieprawidłowa odpowiedź.');
+                alert(T.error_math);
                 generateMath();
             } else {
-                alert(result.error || 'Błąd serwera.');
+                alert(result.error || T.error_server);
             }
         } catch (e) {
-            alert('Błąd połączenia z serwerem.');
+            alert(T.error_connection);
         } finally {
             btn.disabled = false;
-            btn.textContent = 'Generuj link';
+            btn.textContent = T.generate_btn;
         }
     }
 
@@ -851,8 +868,8 @@
         input.select();
         navigator.clipboard.writeText(input.value).then(() => {
             const btn = document.querySelector('.copy-btn');
-            btn.textContent = 'Skopiowano!';
-            setTimeout(() => btn.textContent = 'Kopiuj', 2000);
+            btn.textContent = T.copied;
+            setTimeout(() => btn.textContent = T.copy, 2000);
         });
     }
 
