@@ -16,6 +16,10 @@ http_response_code(404);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>404 — <?= htmlspecialchars($t['title']) ?></title>
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="<?= htmlspecialchars($t['meta_title'] ?? $t['title']) ?>">
+    <meta property="og:description" content="<?= htmlspecialchars($t['og_description'] ?? '') ?>">
+    <meta property="og:site_name" content="bitback.one">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {

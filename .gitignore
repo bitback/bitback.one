@@ -25,6 +25,9 @@ node_modules/
 # === Dokumentacja wewnętrzna ===
 docs/
 
+# === Narzędzia lokalne ===
+browser.php
+
 # === Env ===
 .env
 .env.local

@@ -10,6 +10,18 @@ $t = get_strings($lang);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($t['meta_title']) ?></title>
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="<?= htmlspecialchars($t['meta_title']) ?>">
+    <meta property="og:description" content="<?= htmlspecialchars($t['og_description']) ?>">
+    <meta property="og:url" content="https://bitback.one/">
+    <meta property="og:site_name" content="bitback.one">
+    <meta property="og:locale" content="<?= $lang === 'pl' ? 'pl_PL' : 'en_US' ?>">
+    <meta property="og:locale:alternate" content="<?= $lang === 'pl' ? 'en_US' : 'pl_PL' ?>">
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="<?= htmlspecialchars($t['meta_title']) ?>">
+    <meta name="twitter:description" content="<?= htmlspecialchars($t['og_description']) ?>">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -650,8 +662,15 @@ $t = get_strings($lang);
         try {
             range.surroundContents(mark);
         } catch(e) {
-            // fallback nie powinien się zdarzać po naszych guardach, ale na wszelki wypadek
-            return;
+            // surroundContents nie działa gdy zaznaczenie przecina granicę elementu
+            // (np. obejmuje <br> lub <div>) - użyj extractContents + appendChild
+            try {
+                const contents = range.extractContents();
+                mark.appendChild(contents);
+                range.insertNode(mark);
+            } catch(e2) {
+                return;
+            }
         }
 
         // postaw kursor za nowym spanem
@@ -703,12 +722,31 @@ $t = get_strings($lang);
     function extractSections() {
         const sections = [];
 
+        function getTextWithBreaks(el) {
+            let text = '';
+            el.childNodes.forEach(child => {
+                if (child.nodeType === 3) {
+                    text += child.textContent;
+                } else if (child.nodeType === 1) {
+                    if (child.tagName === 'BR') {
+                        text += '\n';
+                    } else if (child.tagName === 'DIV') {
+                        text += '\n';
+                        text += getTextWithBreaks(child);
+                    } else {
+                        text += getTextWithBreaks(child);
+                    }
+                }
+            });
+            return text;
+        }
+
         function parseNode(node) {
             if (node.nodeType === 3) {
                 sections.push({ type: 'text', content: node.textContent });
             } else if (node.nodeType === 1) {
                 if (node.classList && node.classList.contains('secret')) {
-                    sections.push({ type: 'secret', content: node.textContent });
+                    sections.push({ type: 'secret', content: getTextWithBreaks(node) });
                 } else if (node.tagName === 'BR') {
                     sections.push({ type: 'text', content: '\n' });
                 } else if (node.tagName === 'DIV') {

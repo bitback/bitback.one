@@ -65,8 +65,12 @@ function get_strings(string $lang = null): array {
             'not_found_title' => 'Nie ma takiego linka',
             'not_found_sub' => 'Albo nigdy nie istniał, albo został permanentnie usunięty.',
             'not_found_hint' => 'Sprawdź czy link jest kompletny — klucz deszyfrujący jest za znakiem #',
-            // index: meta
-            'meta_title' => 'bitback.one — bezpieczne udostępnianie danych',
+            // index: meta / OG
+            'meta_title' => 'bitback.one - bezpieczne udostępnianie danych',
+            'og_description' => 'Bezpieczne jednorazowe linki do przekazywania poufnych danych. Szyfrowanie AES-256 w przeglądarce, zero-trust - serwer nigdy nie widzi treści.',
+            // view: OG
+            'og_view_title' => 'Bezpieczna wiadomość - bitback.one',
+            'og_view_description' => 'Ktoś udostępnił Ci poufne dane przez zaszyfrowany link jednorazowy.',
             // index: trust bar
             'trust1_title' => 'Szyfrowanie zero-trust',
             'trust1_desc' => 'Treść szyfrowana AES-256 w przeglądarce. Klucz deszyfrujący jest w części linka (#fragment), która nigdy nie trafia do serwera — nawet w logach. Administrator nie ma fizycznej możliwości odczytu danych.',
@@ -136,8 +140,12 @@ function get_strings(string $lang = null): array {
             'not_found_title' => 'This link does not exist',
             'not_found_sub' => 'It either never existed or has been permanently deleted.',
             'not_found_hint' => 'Make sure the link is complete — the decryption key is after the # sign',
-            // index: meta
-            'meta_title' => 'bitback.one — secure data sharing',
+            // index: meta / OG
+            'meta_title' => 'bitback.one - secure data sharing',
+            'og_description' => 'Secure one-time links for sharing sensitive data. AES-256 encryption in the browser, zero-trust - the server never sees your content.',
+            // view: OG
+            'og_view_title' => 'Secure message - bitback.one',
+            'og_view_description' => 'Someone shared sensitive data with you through an encrypted one-time link.',
             // index: trust bar
             'trust1_title' => 'Zero-trust encryption',
             'trust1_desc' => 'Content encrypted with AES-256 in the browser. The decryption key is in the link fragment (#), which never reaches the server — not even in logs. The administrator has no way to read the data.',

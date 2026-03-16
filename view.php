@@ -160,6 +160,23 @@ function move_to_trash(string $file, string $uuid): void {
     rename($file, TRASH_DIR . '/' . $uuid . '.json');
 }
 
+function og_view_meta(array $t): void {
+    $lang = detect_lang();
+    $locale = $lang === 'pl' ? 'pl_PL' : 'en_US';
+    $alt = $lang === 'pl' ? 'en_US' : 'pl_PL';
+    ?>
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="<?= htmlspecialchars($t['og_view_title']) ?>">
+    <meta property="og:description" content="<?= htmlspecialchars($t['og_view_description']) ?>">
+    <meta property="og:site_name" content="bitback.one">
+    <meta property="og:locale" content="<?= $locale ?>">
+    <meta property="og:locale:alternate" content="<?= $alt ?>">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="<?= htmlspecialchars($t['og_view_title']) ?>">
+    <meta name="twitter:description" content="<?= htmlspecialchars($t['og_view_description']) ?>">
+    <?php
+}
+
 function show_password_form(array $t, string $slug, bool $wrongPassword = false): void {
     ?><!DOCTYPE html>
 <html lang="<?= detect_lang() ?>">
@@ -167,6 +184,7 @@ function show_password_form(array $t, string $slug, bool $wrongPassword = false)
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($t['title']) ?></title>
+    <?php og_view_meta($t); ?>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -230,6 +248,7 @@ function show_not_found(array $t): void {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>404 — <?= htmlspecialchars($t['title']) ?></title>
+    <?php og_view_meta($t); ?>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -309,6 +328,7 @@ function show_expired(array $t, ?string $killedAt = null, ?string $expiredManual
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($t['link_expired']) ?> — <?= htmlspecialchars($t['title']) ?></title>
+    <?php og_view_meta($t); ?>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -560,6 +580,7 @@ function show_view_encrypted(array $t, array $data, string $encText, ?string $en
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($t['title']) ?></title>
+    <?php og_view_meta($t); ?>
     <style><?= view_css() ?></style>
 </head>
 <body>
@@ -796,6 +817,7 @@ function show_view_encrypted_v2(array $t, array $data, string $encryptedPayload,
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($t['title']) ?></title>
+    <?php og_view_meta($t); ?>
     <style><?= view_css() ?></style>
 </head>
 <body>
@@ -900,6 +922,7 @@ function show_view_legacy(array $t, array $data, array $sections, bool $expired)
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($t['title']) ?></title>
+    <?php og_view_meta($t); ?>
     <style><?= view_css() ?></style>
 </head>
 <body>
