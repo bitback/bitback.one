@@ -150,8 +150,8 @@ $t = get_strings($lang);
             width: 100%;
             min-height: 220px;
             padding: 0.8rem;
-            background: #111;
-            border: 1px solid #1e1e1e;
+            background: #161310;
+            border: 1px solid #352e1a;
             border-radius: 8px;
             color: #ddd;
             font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
@@ -297,6 +297,30 @@ $t = get_strings($lang);
         }
         .generate-btn:hover { background: #4a8be5; }
         .generate-btn:active { background: #2a6bc5; }
+
+        /* przycisk oznaczania poufnych */
+        .mark-secret-btn {
+            display: block;
+            width: 270px;
+            padding: 0.6rem 1rem;
+            margin-top: 0.6rem;
+            border-radius: 6px;
+            border: 1px solid rgba(212, 146, 42, 0.4);
+            background: rgba(212, 146, 42, 0.12);
+            color: #f0c060;
+            font-size: 0.82rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.15s, border-color 0.15s;
+            letter-spacing: 0.02em;
+        }
+        .mark-secret-btn:hover {
+            background: rgba(212, 146, 42, 0.22);
+            border-color: rgba(212, 146, 42, 0.6);
+        }
+        .mark-secret-btn:active {
+            background: rgba(212, 146, 42, 0.30);
+        }
 
         /* ====== PODGLĄD WYGAŚNIĘCIA ====== */
         .preview-section {
@@ -465,6 +489,7 @@ $t = get_strings($lang);
                     <span class="hint-text"><?= $t['hint_text'] ?></span>
                 </div>
                 <div class="editor" id="editor" contenteditable="true" spellcheck="false"></div>
+                <button type="button" class="mark-secret-btn" onclick="toggleSecret()">&#128274; <?= htmlspecialchars($t['mark_secret_btn']) ?></button>
 
                 <!-- podgląd pod edytorem -->
                 <div class="preview-section">

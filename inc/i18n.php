@@ -79,7 +79,8 @@ function get_strings(string $lang = null): array {
             'trust3_title' => 'Bez śladu na serwerze',
             'trust3_desc' => 'Serwer przechowuje wyłącznie zaszyfrowany blob. Klucz nie pojawia się w logach, bazie danych, ani w pamięci serwera. Deszyfrowanie odbywa się wyłącznie w przeglądarce odbiorcy.',
             // index: hint bar
-            'hint_text' => 'Zaznacz fragment tekstu i naciśnij <strong>Ctrl+E</strong> aby oznaczyć go jako <strong>poufny</strong>. Poufne fragmenty zostaną ukryte po wygaśnięciu linka — reszta treści pozostanie widoczna. Ponowne Ctrl+E odznacza.',
+            'hint_text' => 'Zaznacz fragment tekstu i naciśnij <strong>Ctrl+E</strong> lub przycisk poniżej, aby oznaczyć go jako <strong>poufny</strong>. Poufne fragmenty zostaną ukryte po wygaśnięciu linka - reszta treści pozostanie widoczna. Ponowne użycie odznacza.',
+            'mark_secret_btn' => 'Oznacz zaznaczony tekst jako poufny',
             // index: editor placeholder
             'editor_placeholder' => "Wpisz treść tutaj...\nNp. Login: admin\nHasło: s3cret123  ← zaznacz i Ctrl+E",
             // index: JS alerts/messages
@@ -154,7 +155,8 @@ function get_strings(string $lang = null): array {
             'trust3_title' => 'No trace on the server',
             'trust3_desc' => 'The server stores only the encrypted blob. The key never appears in logs, database, or server memory. Decryption happens exclusively in the recipient\'s browser.',
             // index: hint bar
-            'hint_text' => 'Select text and press <strong>Ctrl+E</strong> to mark it as <strong>secret</strong>. Secret fragments will be hidden after link expiration — the rest remains visible. Press Ctrl+E again to unmark.',
+            'hint_text' => 'Select text and press <strong>Ctrl+E</strong> or use the button below to mark it as <strong>secret</strong>. Secret fragments will be hidden after link expiration - the rest remains visible. Use again to unmark.',
+            'mark_secret_btn' => 'Mark selected text as secret',
             // index: editor placeholder
             'editor_placeholder' => "Type your content here...\ne.g. Login: admin\nPassword: s3cret123  ← select and Ctrl+E",
             // index: JS alerts/messages
