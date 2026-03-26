@@ -1,5 +1,7 @@
 # bitback.one
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/bitback/bitback.one)
+
 Secure one-time links with zero-trust encryption.
 
 Share passwords, API keys, and confidential data through self-destructing links. The server never sees the decryption key — everything is encrypted and decrypted in the browser.
