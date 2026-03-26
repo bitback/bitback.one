@@ -40,6 +40,67 @@ This is not a software flag — the encrypted data is literally removed from dis
 
 See [SECURITY.md](SECURITY.md) for the full threat model.
 
+## Security philosophy
+
+bitback.one is deliberately simple. We treat minimalism as a security feature, not a limitation.
+
+**Why no SIEM, audit logs, or monitoring?** The attack surface is tiny: 2 endpoints, flat file storage, zero external dependencies, no database, no sessions, no user accounts. There is nothing to monitor because there is nothing to compromise on the server side - the server never sees plaintext data or encryption keys.
+
+**Browser-side verification.** All encryption and decryption happens in the browser using the Web Crypto API. This is verifiable: anyone can inspect the JavaScript source and confirm that the key never leaves the browser. The server receives only encrypted base64 blobs it cannot decrypt.
+
+**The trust boundary.** The one thing you must trust is that the server serves unmodified JavaScript. A compromised server could theoretically serve malicious JS that leaks the key. This is a fundamental limitation of all web-based encryption tools (as opposed to native apps). bitback.one mitigates this with **Subresource Integrity (SRI)** and a published cryptographic hash - see [Crypto integrity verification](#crypto-integrity-verification) below.
+
+**What we intentionally skip:**
+- Enterprise features (SIEM, centralized logging, advanced threat detection) - they add complexity without improving the core security model
+- Penetration testing infrastructure - the codebase is small enough to audit by reading it
+- Server-side security hardening guides - deployment security depends on your hosting setup, not on this application
+
+**What actually matters:**
+- HTTPS (required for Web Crypto API)
+- Keeping the server and PHP updated
+- File permissions on `data/` and `trash/` directories
+- Unmodified `crypto.js` (verified by SRI hash - see below)
+
+## Crypto integrity verification
+
+All cryptographic functions (key generation, encryption, decryption) live in a single file: [`crypto.js`](crypto.js). This file is loaded with [Subresource Integrity (SRI)](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity) - the browser **refuses to execute it** if the content doesn't match the expected hash.
+
+**Expected SHA-384 of `crypto.js`:**
+
+```
+sha384-lbGxH8AFxpkiMqDgkudynUSMoMFVnfMkcjN4XwCJHaTu9mLjvW4emijB7r3kh7MU
+```
+
+### Verify any deployment
+
+You can check whether any bitback.one deployment serves the original, unmodified cryptographic code:
+
+```bash
+# Download crypto.js from the deployment and compute its hash
+curl -s https://DEPLOYMENT-URL/crypto.js | openssl dgst -sha384 -binary | openssl base64 -A
+# Compare the output with the hash above
+```
+
+If the hashes match, the deployment uses the exact same crypto code as this repository. If they don't - the code has been modified and should not be trusted.
+
+### How it works
+
+1. `crypto.js` contains **all** encryption/decryption logic (and nothing else)
+2. `index.php` and `view.php` load it with `<script src="crypto.js" integrity="sha384-...">`
+3. The browser verifies the hash **before executing** - modified code is blocked automatically
+4. This repository publishes the expected hash - anyone can challenge any deployment
+5. After any change to `crypto.js`, run `bash tools/update-crypto-hash.sh` to update hashes everywhere
+
+### What this protects against
+
+- CDN or reverse proxy injecting code into `crypto.js`
+- Network-level MITM modifying the script in transit (defense in depth on top of HTTPS)
+- Detecting unauthorized modifications on third-party deployments
+
+### What this does NOT protect against
+
+- A compromised server modifying the HTML itself (changing the `integrity` attribute or adding inline scripts). This is a fundamental limitation of web-based encryption. The mitigation: **self-host and verify the source**, or use the curl command above to spot-check deployments.
+
 ## Tech stack
 
 - **Backend:** PHP 8.0 (no framework, no dependencies)
@@ -53,16 +114,19 @@ See [SECURITY.md](SECURITY.md) for the full threat model.
 
 ```
 bitback.one/
-├── index.html          # Main page (create link form)
+├── index.php           # Main page (create link form, i18n)
 ├── view.php            # Link viewer (password check, expiry, encrypted payload delivery)
-├── .htaccess           # URL rewriting (UUID → view.php)
+├── crypto.js           # Client-side crypto functions (SRI-protected, verifiable)
+├── .htaccess           # URL rewriting (UUID -> view.php)
 ├── api/
 │   └── create.php      # POST API: validate, encrypt, save, return URL
 ├── inc/
 │   ├── config.php      # Constants (paths, defaults, cipher)
-│   ├── crypto.php      # AES-256-CBC encrypt/decrypt, UUID/key generation
+│   ├── crypto.php      # AES-256-CBC encrypt/decrypt, UUID/key generation (server-side)
 │   ├── i18n.php        # PL/EN translations (auto-detect from Accept-Language)
 │   └── ratelimit.php   # IP-based rate limiter
+├── tools/
+│   └── update-crypto-hash.sh  # Update SRI hashes after crypto.js changes
 ├── cron/
 │   └── cleanup.php     # Daily cleanup: expire secrets, delete old files
 ├── data/               # Runtime: encrypted JSON files (gitignored)

@@ -27,7 +27,9 @@ Per [RFC 3986 §3.5](https://datatracker.ietf.org/doc/html/rfc3986#section-3.5),
 | Key derivation | Both sides | SHA-256 hash of hex key string |
 | Password hashing | Server | bcrypt (for optional password protection) |
 
-The server performs **zero cryptographic operations** on user content. It stores and serves encrypted blobs — nothing more.
+The server performs **zero cryptographic operations** on user content. It stores and serves encrypted blobs - nothing more.
+
+All cryptographic functions are isolated in [`crypto.js`](crypto.js) and loaded with **Subresource Integrity (SRI)**. The browser verifies the SHA-384 hash before executing the script - if the file has been modified, the browser blocks it entirely. See the [README](README.md#crypto-integrity-verification) for the current hash and verification instructions.
 
 ### Two-blob architecture
 
@@ -51,6 +53,8 @@ When secrets expire, the server **deletes the `encrypted_secrets` field from the
 | Automated bot abuse | Honeypot field + math verification |
 | Password brute-force | bcrypt hashing with cost factor |
 | Man-in-the-middle | HTTPS required (also needed for Web Crypto API) |
+| Tampered crypto.js | SRI hash verification - browser blocks modified scripts |
+| Rogue deployment | Published SHA-384 hash allows anyone to verify any deployment |
 
 ### What we do NOT protect against
 
@@ -59,7 +63,7 @@ When secrets expire, the server **deletes the `encrypted_secrets` field from the
 | Compromised browser | If the recipient's browser is compromised, the attacker sees decrypted content |
 | Screenshot/copy after decryption | Once decrypted in the browser, the recipient can copy the content |
 | Link interception before opening | If someone intercepts the full URL (with fragment), they can open the link |
-| Server-side code modification | A malicious server operator could modify JS to exfiltrate data — mitigated by open source (verify the code) |
+| Server-side HTML modification | A malicious operator could modify HTML to change SRI hashes or add inline scripts - mitigated by open source + self-hosting |
 
 ### Kerckhoffs's principle
 

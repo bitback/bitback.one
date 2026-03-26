@@ -489,7 +489,7 @@ $t = get_strings($lang);
                     <span class="hint-text"><?= $t['hint_text'] ?></span>
                 </div>
                 <div class="editor" id="editor" contenteditable="true" spellcheck="false"></div>
-                <button type="button" class="mark-secret-btn" onclick="toggleSecret()">&#128274; <?= htmlspecialchars($t['mark_secret_btn']) ?></button>
+                <button type="button" class="mark-secret-btn" onmousedown="event.preventDefault()" onclick="toggleSecret()">&#128274; <?= htmlspecialchars($t['mark_secret_btn']) ?></button>
 
                 <!-- podgląd pod edytorem -->
                 <div class="preview-section">
@@ -575,6 +575,7 @@ $t = get_strings($lang);
     <span style="color:#2a2a2a;margin:0 0.5rem;">|</span><?= htmlspecialchars($t['footer_source']) ?> <a href="https://github.com/bitback/bitback.one" target="_blank" rel="noopener" style="color:#6a9fd4;text-decoration:none;">GitHub</a>
 </div>
 
+<script src="/crypto.js" integrity="sha384-lbGxH8AFxpkiMqDgkudynUSMoMFVnfMkcjN4XwCJHaTu9mLjvW4emijB7r3kh7MU"></script>
 <script>
     const T = {
         error_empty: <?= json_encode($t['error_empty']) ?>,
@@ -634,6 +635,28 @@ $t = get_strings($lang);
     generateMath();
 
     // --- TOGGLE SECRET (oznacz / odznacz) ---
+    function unwrapSecret(secretEl, sel) {
+        const marker = document.createElement('span');
+        marker.setAttribute('data-cursor', '1');
+        secretEl.parentNode.insertBefore(marker, secretEl.nextSibling);
+
+        const parent = secretEl.parentNode;
+        while (secretEl.firstChild) {
+            parent.insertBefore(secretEl.firstChild, secretEl);
+        }
+        parent.removeChild(secretEl);
+        parent.normalize();
+
+        const r = document.createRange();
+        r.setStartBefore(marker);
+        r.collapse(true);
+        marker.remove();
+        sel.removeAllRanges();
+        sel.addRange(r);
+        editor.focus();
+        updatePreview();
+    }
+
     function toggleSecret() {
         const sel = window.getSelection();
         if (!sel.rangeCount) return;
@@ -643,43 +666,59 @@ $t = get_strings($lang);
         const secretEl = anchorParent ? anchorParent.closest('.secret') : null;
 
         if (secretEl && editor.contains(secretEl)) {
-            // --- ODZNACZ ---
-            // wstaw marker <span> tuż za secretEl, żeby po unwrap+normalize mieć punkt odniesienia
-            const marker = document.createElement('span');
-            marker.setAttribute('data-cursor', '1');
-            secretEl.parentNode.insertBefore(marker, secretEl.nextSibling);
-
-            const parent = secretEl.parentNode;
-            while (secretEl.firstChild) {
-                parent.insertBefore(secretEl.firstChild, secretEl);
-            }
-            parent.removeChild(secretEl);
-            parent.normalize();
-
-            // postaw kursor przed markerem, usuń marker
-            const r = document.createRange();
-            r.setStartBefore(marker);
-            r.collapse(true);
-            marker.remove();
-            sel.removeAllRanges();
-            sel.addRange(r);
-            editor.focus();
-            updatePreview();
+            unwrapSecret(secretEl, sel);
             return;
+        }
+
+        // sprawdź czy zaznaczenie obejmuje lub dotyka .secret (odznacz)
+        if (!sel.isCollapsed) {
+            const range = sel.getRangeAt(0);
+            if (!editor.contains(range.commonAncestorContainer)) return;
+
+            const startParent = range.startContainer.nodeType === 3 ? range.startContainer.parentElement : range.startContainer;
+            const endParent = range.endContainer.nodeType === 3 ? range.endContainer.parentElement : range.endContainer;
+            const startSecret = startParent ? startParent.closest('.secret') : null;
+            const endSecret = endParent ? endParent.closest('.secret') : null;
+
+            // cały zaznaczony tekst jest wewnątrz jednego .secret
+            if (startSecret && startSecret === endSecret && editor.contains(startSecret)) {
+                unwrapSecret(startSecret, sel);
+                return;
+            }
+
+            // zaznaczenie obejmuje .secret elementy - odznacz je
+            const fragment = range.cloneContents();
+            if (fragment.querySelector('.secret')) {
+                // znajdź .secret elementy w faktycznym DOM (nie w klonie)
+                const container = range.commonAncestorContainer;
+                const searchRoot = container.nodeType === 3 ? container.parentElement : container;
+                const secrets = searchRoot.querySelectorAll('.secret');
+                const toUnwrap = [];
+                for (const s of secrets) {
+                    if (range.intersectsNode(s)) toUnwrap.push(s);
+                }
+                if (toUnwrap.length > 0) {
+                    toUnwrap.forEach(s => {
+                        const parent = s.parentNode;
+                        while (s.firstChild) parent.insertBefore(s.firstChild, s);
+                        parent.removeChild(s);
+                    });
+                    editor.normalize();
+                    editor.focus();
+                    updatePreview();
+                    return;
+                }
+            }
+
+            // blokuj zagnieżdżanie
+            if (startSecret) return;
+            if (endSecret) return;
         }
 
         // --- OZNACZ ---
         if (sel.isCollapsed) return; // nic nie zaznaczono
         const range = sel.getRangeAt(0);
         if (!editor.contains(range.commonAncestorContainer)) return;
-
-        // blokuj zagnieżdżanie: sprawdź czy zaznaczenie dotyka istniejącego .secret
-        const fragment = range.cloneContents();
-        if (fragment.querySelector('.secret')) return; // zaznaczenie obejmuje .secret
-        const startParent = range.startContainer.nodeType === 3 ? range.startContainer.parentElement : range.startContainer;
-        const endParent = range.endContainer.nodeType === 3 ? range.endContainer.parentElement : range.endContainer;
-        if (startParent && startParent.closest('.secret')) return; // start wewnątrz .secret
-        if (endParent && endParent.closest('.secret')) return;   // koniec wewnątrz .secret
 
         const mark = document.createElement('span');
         mark.className = 'secret';
@@ -797,37 +836,6 @@ $t = get_strings($lang);
         });
 
         return merged.filter(s => s.content.length > 0);
-    }
-
-    // === CLIENT-SIDE ENCRYPTION (Web Crypto API) ===
-    // Klucz generowany w przeglądarce, nigdy nie wysyłany na serwer.
-    // Serwer otrzymuje wyłącznie zaszyfrowane bloby (base64).
-
-    function generateHexKey() {
-        const bytes = crypto.getRandomValues(new Uint8Array(16));
-        return Array.from(bytes, b => b.toString(16).padStart(2, '0')).join('');
-    }
-
-    async function sha256(data) {
-        return new Uint8Array(await crypto.subtle.digest('SHA-256', data));
-    }
-
-    async function encryptBlob(sections, hexKey) {
-        const json = JSON.stringify(sections);
-        const plaintext = new TextEncoder().encode(json);
-        const keyBytes = await sha256(new TextEncoder().encode(hexKey));
-        const iv = crypto.getRandomValues(new Uint8Array(16));
-        const cryptoKey = await crypto.subtle.importKey(
-            'raw', keyBytes, { name: 'AES-CBC' }, false, ['encrypt']
-        );
-        const encrypted = await crypto.subtle.encrypt(
-            { name: 'AES-CBC', iv: iv }, cryptoKey, plaintext
-        );
-        // iv + ciphertext → base64 (identyczny format jak PHP encrypt_secret)
-        const combined = new Uint8Array(iv.length + encrypted.byteLength);
-        combined.set(iv, 0);
-        combined.set(new Uint8Array(encrypted), iv.length);
-        return btoa(String.fromCharCode(...combined));
     }
 
     // --- GENERUJ LINK ---

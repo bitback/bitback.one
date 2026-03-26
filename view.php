@@ -609,6 +609,7 @@ function show_view_encrypted(array $t, array $data, string $encText, ?string $en
     </div>
     <?= view_footer_html() ?>
 
+    <script src="/crypto.js" integrity="sha384-lbGxH8AFxpkiMqDgkudynUSMoMFVnfMkcjN4XwCJHaTu9mLjvW4emijB7r3kh7MU"></script>
     <script>
     // === ZERO-TRUST CLIENT-SIDE DECRYPTION ===
     // Dwa osobne bloby: tekst (zawsze) + sekrety (null jeśli wygasłe — fizycznie usunięte z serwera)
@@ -728,34 +729,6 @@ function show_view_encrypted(array $t, array $data, string $encText, ?string $en
         );
     }
 
-    // === AES-256-CBC DECRYPTION (Web Crypto API) ===
-
-    async function decryptBlob(base64Blob, hexKey) {
-        const keyBytes = await sha256(new TextEncoder().encode(hexKey));
-        const raw = Uint8Array.from(atob(base64Blob), c => c.charCodeAt(0));
-        if (raw.length < 17) throw new Error('Invalid payload');
-
-        const iv = raw.slice(0, 16);
-        const ciphertext = raw.slice(16);
-
-        const cryptoKey = await crypto.subtle.importKey(
-            'raw', keyBytes, { name: 'AES-CBC' }, false, ['decrypt']
-        );
-
-        const decrypted = await crypto.subtle.decrypt(
-            { name: 'AES-CBC', iv: iv }, cryptoKey, ciphertext
-        );
-
-        const json = new TextDecoder().decode(decrypted);
-        const items = JSON.parse(json);
-        if (!Array.isArray(items)) throw new Error('Invalid data');
-        return items;
-    }
-
-    async function sha256(data) {
-        return new Uint8Array(await crypto.subtle.digest('SHA-256', data));
-    }
-
     function escapeHtml(str) {
         const d = document.createElement('div');
         d.textContent = str;
@@ -839,6 +812,7 @@ function show_view_encrypted_v2(array $t, array $data, string $encryptedPayload,
         <?= view_meta_html($t, $data, $expired) ?>
     </div>
     <?= view_footer_html() ?>
+    <script src="/crypto.js" integrity="sha384-lbGxH8AFxpkiMqDgkudynUSMoMFVnfMkcjN4XwCJHaTu9mLjvW4emijB7r3kh7MU"></script>
     <script>
     const ENCRYPTED_PAYLOAD = <?= json_encode($encryptedPayload) ?>;
     const SECRETS_EXPIRED = <?= $expired ? 'true' : 'false' ?>;
@@ -877,7 +851,6 @@ function show_view_encrypted_v2(array $t, array $data, string $encryptedPayload,
             errorBox.style.display = 'block';
         }
     })();
-    async function sha256(data) { return new Uint8Array(await crypto.subtle.digest('SHA-256', data)); }
     function escapeHtml(str) { const d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
     function linkify(escapedHtml) {
         return escapedHtml.replace(/https?:\/\/[^\s<>'"]+/g, function(m) {
