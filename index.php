@@ -764,10 +764,15 @@ $t = get_strings($lang);
         const html = editor.innerHTML;
 
         if (previewMode === 'expired') {
-            previewBox.innerHTML = html.replace(
-                /<span class="secret">[^<]*<\/span>/g,
-                '<span class="masked">●●●●●●</span>'
-            );
+            // DOM-based replacement - safe for any content inside .secret
+            const clone = editor.cloneNode(true);
+            clone.querySelectorAll('.secret').forEach(el => {
+                const masked = document.createElement('span');
+                masked.className = 'masked';
+                masked.textContent = '●●●●●●';
+                el.replaceWith(masked);
+            });
+            previewBox.innerHTML = clone.innerHTML;
         } else {
             previewBox.innerHTML = html;
         }
