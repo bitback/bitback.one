@@ -4,6 +4,11 @@
  */
 
 function detect_lang(): string {
+    // Override przez querystring ?lang=en lub ?lang=pl - uzyteczne do testowania
+    // i dla userow ktorzy chca wymusic jezyk. Dzialanie: ?lang=en przed # w URL.
+    if (isset($_GET['lang']) && in_array($_GET['lang'], ['pl', 'en'], true)) {
+        return $_GET['lang'];
+    }
     $header = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '';
     if (stripos($header, 'pl') !== false) return 'pl';
     return 'en';
