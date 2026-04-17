@@ -22,18 +22,20 @@
   --bb-border-hover: #333;
   --bb-border-strong:#444;
 
-  /* --- Text --- */
+  /* --- Text ---
+     Rozjasnione o ~25-30% od oryginalu, zeby apka miala wiecej zycia.
+     Nie tykam fg, fg-1, fg-2 (juz jasne). Ciemniejsze rozjasnione mocniej. */
   --bb-fg:           #fff;     /* primary */
-  --bb-fg-1:         #e0e0e0;  /* body */
-  --bb-fg-2:         #ddd;
-  --bb-fg-3:         #bbb;
-  --bb-fg-4:         #888;     /* tertiary */
-  --bb-fg-5:         #555;     /* muted */
-  --bb-fg-6:         #444;
-  --bb-fg-7:         #333;     /* quiet */
-  --bb-fg-8:         #2a2a2a;  /* separator dots */
-  --bb-fg-body:      #ccc;     /* antibot hover text */
-  --bb-fg-tab:       #aaa;     /* active tab text */
+  --bb-fg-1:         #e8e8e8;  /* body (lekki lift) */
+  --bb-fg-2:         #e0e0e0;  /* lekki lift */
+  --bb-fg-3:         #c8c8c8;  /* +7 */
+  --bb-fg-4:         #a0a0a0;  /* tertiary +24 */
+  --bb-fg-5:         #707070;  /* muted +27 */
+  --bb-fg-6:         #5c5c5c;  /* +24 */
+  --bb-fg-7:         #4d4d4d;  /* quiet +26 */
+  --bb-fg-8:         #3d3d3d;  /* separator dots +20 */
+  --bb-fg-body:      #d8d8d8;  /* antibot hover text lift */
+  --bb-fg-tab:       #bfbfbf;  /* active tab text lift */
 
   /* --- Surfaces specyficzne --- */
   --bb-surface-trust:#0d0d0d;  /* trust box bg (nieco ciemniejszy niz surface-1) */
@@ -176,8 +178,8 @@
 .bb-hero-gold {
   position: relative;
   background:
-    radial-gradient(120% 180% at 15% 120%, rgba(240,192,96,0.22) 0%, rgba(240,192,96,0) 55%),
-    radial-gradient(100% 140% at 95% -20%, rgba(255,220,140,0.12) 0%, rgba(255,220,140,0) 50%),
+    radial-gradient(120% 180% at 15% 120%, rgba(240,192,96,0.11) 0%, rgba(240,192,96,0) 55%),
+    radial-gradient(100% 140% at 95% -20%, rgba(255,220,140,0.06) 0%, rgba(255,220,140,0) 50%),
     var(--bb-bg);
   border: 1px solid #252018;
 }
