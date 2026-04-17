@@ -22,12 +22,15 @@ $t = get_strings($lang);
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="<?= htmlspecialchars($t['meta_title']) ?>">
     <meta name="twitter:description" content="<?= htmlspecialchars($t['og_description']) ?>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/assets/tokens.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: var(--bb-font-sans);
             background: var(--bb-bg);
             color: var(--bb-fg-1);
             min-height: 100vh;
@@ -108,7 +111,7 @@ $t = get_strings($lang);
             background: var(--bb-border-soft);
             border: 1px solid var(--bb-fg-8);
             border-radius: 4px;
-            font-family: 'Consolas', monospace;
+            font-family: var(--bb-font-mono);
             font-size: 0.8rem;
             color: var(--bb-secret);
             white-space: nowrap;
@@ -155,7 +158,7 @@ $t = get_strings($lang);
             border: 1px solid var(--bb-surface-editor-border);
             border-radius: 8px;
             color: var(--bb-fg-2);
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-family: var(--bb-font-mono);
             font-size: 0.85rem;
             line-height: 1.7;
             outline: none;
@@ -358,7 +361,7 @@ $t = get_strings($lang);
             border: 1px solid var(--bb-border);
             border-radius: 8px;
             padding: 0.8rem;
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-family: var(--bb-font-mono);
             font-size: 0.85rem;
             line-height: 1.7;
             white-space: pre-wrap;
@@ -412,7 +415,7 @@ $t = get_strings($lang);
             border: 1px solid var(--bb-border-mid);
             border-radius: 4px;
             color: var(--bb-success);
-            font-family: monospace;
+            font-family: var(--bb-font-mono);
             font-size: 0.8rem;
             outline: none;
         }
@@ -442,7 +445,7 @@ $t = get_strings($lang);
         .result-password.show { display: block; }
         .result-password strong {
             color: var(--bb-success-light);
-            font-family: monospace;
+            font-family: var(--bb-font-mono);
             font-weight: 500;
         }
 

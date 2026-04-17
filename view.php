@@ -174,6 +174,9 @@ function og_view_meta(array $t): void {
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="<?= htmlspecialchars($t['og_view_title']) ?>">
     <meta name="twitter:description" content="<?= htmlspecialchars($t['og_view_description']) ?>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/assets/tokens.css">
     <?php
 }
@@ -189,7 +192,7 @@ function show_password_form(array $t, string $slug, bool $wrongPassword = false)
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: var(--bb-font-sans);
             background: var(--bb-bg); color: var(--bb-fg-1);
             min-height: 100vh; display: flex; align-items: center; justify-content: center;
         }
@@ -200,7 +203,7 @@ function show_password_form(array $t, string $slug, bool $wrongPassword = false)
             width: 100%; padding: 0.6rem 0.8rem;
             background: var(--bb-surface-1); border: 1px solid var(--bb-border-mid); border-radius: 6px;
             color: var(--bb-fg); font-size: 0.9rem; outline: none; text-align: center;
-            font-family: monospace;
+            font-family: var(--bb-font-mono);
         }
         .pwd-input:focus { border-color: var(--bb-fg-6); }
         .pwd-btn {
@@ -253,7 +256,7 @@ function show_not_found(array $t): void {
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: var(--bb-font-sans);
             background: var(--bb-bg); color: var(--bb-fg-1);
             min-height: 100vh; display: flex; align-items: center; justify-content: center;
             padding-bottom: 2.5rem;
@@ -333,7 +336,7 @@ function show_expired(array $t, ?string $killedAt = null, ?string $expiredManual
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: var(--bb-font-sans);
             background: var(--bb-bg); color: var(--bb-fg-1);
             min-height: 100vh; display: flex; align-items: center; justify-content: center;
         }
@@ -366,13 +369,13 @@ function show_expired(array $t, ?string $killedAt = null, ?string $expiredManual
 function view_css(): string {
     return '
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bb-bg); color: var(--bb-fg-1); min-height: 100vh; padding-bottom: 2.5rem; }
+        body { font-family: var(--bb-font-sans); background: var(--bb-bg); color: var(--bb-fg-1); min-height: 100vh; padding-bottom: 2.5rem; }
         .header { text-align: center; padding: 2rem 1rem 1.5rem; }
         .header h1 { font-size: 1.4rem; font-weight: 300; letter-spacing: 0.08em; color: var(--bb-fg); }
         .container { max-width: 700px; margin: 0 auto; padding: 0 1rem 3rem; }
         .expired-banner { background: #1a1410; border: 1px solid #3a2a10; border-radius: 8px; padding: 0.7rem 1rem; margin-bottom: 1rem; font-size: 0.8rem; color: var(--bb-secret-ink); }
         .error-banner { background: #1a1010; border: 1px solid #3a1010; border-radius: 8px; padding: 0.7rem 1rem; margin-bottom: 1rem; font-size: 0.8rem; color: var(--bb-danger-light); }
-        .content-box { background: var(--bb-surface-1); border: 1px solid var(--bb-border); border-radius: 8px; padding: 1rem; font-family: "Consolas", "Monaco", "Courier New", monospace; font-size: 0.85rem; line-height: 1.7; white-space: pre-wrap; word-break: break-word; }
+        .content-box { background: var(--bb-surface-1); border: 1px solid var(--bb-border); border-radius: 8px; padding: 1rem; font-family: var(--bb-font-mono); font-size: 0.85rem; line-height: 1.7; white-space: pre-wrap; word-break: break-word; }
         .s-text { color: var(--bb-fg-2); }
         .s-text a { color: var(--bb-accent-link); }
         .s-secret { background: rgba(212, 146, 42, 0.15); color: var(--bb-secret); border-radius: 3px; padding: 0.05em 0.2em; border-bottom: 2px solid rgba(212, 146, 42, 0.4); }

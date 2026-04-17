@@ -20,11 +20,14 @@ http_response_code(404);
     <meta property="og:title" content="<?= htmlspecialchars($t['meta_title'] ?? $t['title']) ?>">
     <meta property="og:description" content="<?= htmlspecialchars($t['og_description'] ?? '') ?>">
     <meta property="og:site_name" content="bitback.one">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/assets/tokens.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: var(--bb-font-sans);
             background: var(--bb-bg); color: var(--bb-fg-1);
             min-height: 100vh; display: flex; align-items: center; justify-content: center;
             padding-bottom: 2.5rem;

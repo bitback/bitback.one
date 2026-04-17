@@ -67,9 +67,11 @@
   --bb-danger:       #c0392b;
   --bb-danger-light: #e74c3c;
 
-  /* --- Fonts (stack do etapu 2) --- */
-  --bb-font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --bb-font-mono: 'Consolas', 'Monaco', 'Courier New', monospace;
+  /* --- Fonts ---
+     Geist + Geist Mono laduja sie z Google Fonts przez <link> w <head>.
+     Jesli sie nie zaladuja (offline, blokowane), fallback do system stack. */
+  --bb-font-sans: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --bb-font-mono: 'Geist Mono', 'Consolas', 'Monaco', 'Courier New', monospace;
 
   /* --- Radii --- */
   --bb-radius-xs: 4px;
