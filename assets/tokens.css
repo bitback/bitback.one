@@ -111,10 +111,15 @@
 /* Zt-badge kłódka - mała */
 .zt-badge [data-lucide] { width: 10px; height: 10px; vertical-align: -0.1em; }
 
-/* Logo - uzywane w naglowkach stron */
+/* Logo - uzywane w naglowkach stron
+   !important bo inline <style> z .header h1 w PHP jest loadowane PO
+   tokens.css i nadpisuje bez tego */
 .bb-logo {
-  margin: 0;
-  line-height: 0;
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 1 !important;
+  font-size: 0 !important;
+  letter-spacing: normal !important;
 }
 .bb-logo a {
   display: inline-block;
@@ -122,12 +127,13 @@
   line-height: 0;
 }
 .bb-logo svg {
-  height: 32px;
+  height: 32px !important;
   width: auto;
-  display: block;
+  display: inline-block;
+  vertical-align: middle;
 }
 @media (max-width: 480px) {
-  .bb-logo svg { height: 28px; }
+  .bb-logo svg { height: 28px !important; }
 }
 
 /* =========================================================================

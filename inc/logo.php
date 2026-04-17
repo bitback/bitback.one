@@ -12,7 +12,7 @@ function render_logo(string $alt = 'bitback.one', string $href = '/'): string {
     $altEsc = htmlspecialchars($alt);
     $hrefEsc = htmlspecialchars($href);
     $svg = <<<SVG
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 56" role="img" aria-label="$altEsc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 56" width="220" height="56" role="img" aria-label="$altEsc">
   <defs>
     <linearGradient id="bbGold" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#ffe48a"/>
