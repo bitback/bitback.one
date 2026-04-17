@@ -301,12 +301,12 @@ $t = get_strings($lang);
             margin-top: 1rem;
             border-radius: 6px;
             border: 1px solid transparent;
-            background: linear-gradient(135deg, #5fe0d0 0%, #2fc0b0 48%, #0e9080 100%);
+            background: linear-gradient(135deg, #2a9080 0%, #1a6a5e 48%, #0a4038 100%);
             box-shadow:
-              inset 0 0 0 1px rgba(255,255,255,0.10),
-              inset 1px 0 0 rgba(160,120,220,0.55),
-              inset 0 -1px 0 rgba(0,0,0,0.25);
-            color: #07272a;
+              inset 0 0 0 1px rgba(255,255,255,0.08),
+              inset 1px 0 0 rgba(160,120,220,0.45),
+              inset 0 -1px 0 rgba(0,0,0,0.35);
+            color: #d8f0ea;
             font-size: 0.9rem;
             font-weight: 600;
             cursor: pointer;
@@ -342,12 +342,12 @@ $t = get_strings($lang);
             padding: 0.6rem 1rem;
             margin-top: 0.6rem;
             border-radius: 6px;
-            border: 1px solid rgba(120,140,220,0.6);
-            background: linear-gradient(135deg, #5aa0e8 0%, #7080d8 48%, #a078dc 100%);
+            border: 1px solid rgba(90,110,180,0.5);
+            background: linear-gradient(135deg, #2a508a 0%, #353070 48%, #452870 100%);
             box-shadow:
-              inset 0 0 0 1px rgba(200,220,255,0.25),
-              inset 0 -8px 12px -8px rgba(20,20,60,0.45);
-            color: #fff;
+              inset 0 0 0 1px rgba(200,220,255,0.15),
+              inset 0 -8px 12px -8px rgba(10,10,40,0.5);
+            color: #dde5ff;
             font-size: 0.82rem;
             font-weight: 500;
             cursor: pointer;
