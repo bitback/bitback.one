@@ -418,12 +418,56 @@ function view_css(): string {
         .expire-now-confirm label { color: var(--bb-fg-4); font-size: 0.85rem; cursor: pointer; user-select: none; line-height: 1.2; }
         .expire-now-confirm.shake { border-color: var(--bb-danger); animation: shakeBox 0.4s ease; }
         @keyframes shakeBox { 0%,100% { transform: translateX(0); } 20%,60% { transform: translateX(-4px); } 40%,80% { transform: translateX(4px); } }
-        .expire-now-btn { background: rgba(212, 146, 42, 0.12); border: 1.5px solid var(--bb-secret-ink); color: var(--bb-secret); font-size: 0.85rem; line-height: 1.2; padding: 0.65rem 1.5rem; border-radius: 8px; cursor: pointer; transition: all 0.15s; font-weight: 500; letter-spacing: 0.01em; box-sizing: border-box; }
-        .expire-now-btn:hover { background: rgba(212, 146, 42, 0.22); border-color: var(--bb-secret); color: #ffe0a0; }
-        .expire-now-btn:disabled { opacity: 0.4; cursor: default; }
-        .expire-now-btn.done { background: rgba(74, 138, 74, 0.12); border-color: #4a8a4a; color: #6aba6a; }
-        .expire-now-btn.kill { background: rgba(192, 57, 43, 0.10); border-color: #8b3a3a; color: var(--bb-danger); font-size: 0.75rem; padding: 0.45rem 1.2rem; }
-        .expire-now-btn.kill:hover { background: rgba(192, 57, 43, 0.20); border-color: var(--bb-danger); color: var(--bb-danger-light); }
+        /* expire-now: gold gradient (secret color theme), hover halo, press lift */
+        .expire-now-btn {
+          position: relative; isolation: isolate;
+          padding: 0.65rem 1.5rem; border-radius: 8px;
+          border: 1px solid rgba(240,192,96,0.7);
+          background: linear-gradient(135deg, #ffe48a 0%, #f0c060 48%, #c8902e 100%);
+          box-shadow:
+            inset 0 0 0 1px rgba(255,240,200,0.3),
+            inset 0 -8px 12px -8px rgba(80,50,10,0.35);
+          color: #2a1d08;
+          font-size: 0.85rem; font-weight: 500; line-height: 1.2; letter-spacing: 0.01em;
+          cursor: pointer; box-sizing: border-box;
+          transition: transform 160ms var(--bb-ease), filter 160ms var(--bb-ease);
+        }
+        .expire-now-btn::after {
+          content: ""; position: absolute; inset: -4px; border-radius: 12px;
+          background: var(--bb-secret); filter: blur(10px); opacity: 0; z-index: -1;
+          transition: opacity 220ms var(--bb-ease);
+        }
+        .expire-now-btn:hover { transform: translateY(-1px); }
+        .expire-now-btn:hover::after { opacity: 0.28; }
+        .expire-now-btn:active { transform: translateY(0); filter: brightness(0.95); }
+        .expire-now-btn:disabled { opacity: 0.4; cursor: default; transform: none; }
+        .expire-now-btn:disabled::after { opacity: 0; }
+
+        /* done state: green gradient (success) */
+        .expire-now-btn.done {
+          border: 1px solid transparent;
+          background: linear-gradient(135deg, #2a5a2a 0%, #1a3a1a 50%, #0e2210 100%);
+          box-shadow:
+            inset 0 0 0 1px rgba(160,230,160,0.2),
+            inset 1px 0 0 rgba(160,230,160,0.4),
+            inset 0 -1px 0 rgba(0,0,0,0.3);
+          color: #d0f0c8;
+        }
+        .expire-now-btn.done::after { background: #4aa04a; }
+
+        /* kill variant: danger gradient (blood-red wash on dark plate) */
+        .expire-now-btn.kill {
+          border: 1px solid rgba(200,60,50,0.5);
+          background:
+            linear-gradient(135deg, rgba(192,57,43,0.35) 0%, rgba(100,20,15,0.15) 60%, rgba(10,10,10,0) 100%),
+            #140a0a;
+          box-shadow:
+            inset 0 0 0 1px rgba(255,120,100,0.08),
+            inset 0 -1px 0 rgba(0,0,0,0.5);
+          color: #f28080;
+          font-size: 0.75rem; padding: 0.45rem 1.2rem;
+        }
+        .expire-now-btn.kill::after { background: #c03a2a; }
         .site-footer { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; background: var(--bb-bg); border-top: 1px solid var(--bb-border-soft); padding: 0.5rem 1rem; text-align: center; font-size: 0.75rem; color: var(--bb-fg-5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .site-footer a { color: var(--bb-accent-link); text-decoration: none; }
         .site-footer a:hover { color: #8abcf0; text-decoration: underline; }

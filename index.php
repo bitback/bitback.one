@@ -461,17 +461,31 @@ $t = get_strings($lang);
             outline: none;
         }
         .copy-btn {
+            position: relative;
             padding: 0.45rem 0.9rem;
-            background: var(--bb-success-button);
-            border: 1px solid var(--bb-success-border);
-            border-radius: 4px;
-            color: var(--bb-success);
+            border-radius: 6px;
+            border: 1px solid transparent;
+            background: linear-gradient(135deg, #2a5a2a 0%, #1a3a1a 50%, #0e2210 100%);
+            box-shadow:
+              inset 0 0 0 1px rgba(160,230,160,0.2),
+              inset 1px 0 0 rgba(160,230,160,0.4),
+              inset 0 -1px 0 rgba(0,0,0,0.3);
+            color: #d0f0c8;
             font-size: 0.75rem;
+            font-weight: 500;
             cursor: pointer;
-            transition: background 0.15s;
+            transition: transform 160ms var(--bb-ease), filter 160ms var(--bb-ease);
             white-space: nowrap;
+            isolation: isolate;
         }
-        .copy-btn:hover { background: var(--bb-success-hover); }
+        .copy-btn::after {
+            content: ""; position: absolute; inset: -4px; border-radius: 10px;
+            background: #4aa04a; filter: blur(10px); opacity: 0; z-index: -1;
+            transition: opacity 220ms var(--bb-ease);
+        }
+        .copy-btn:hover { transform: translateY(-1px); }
+        .copy-btn:hover::after { opacity: 0.28; }
+        .copy-btn:active { transform: translateY(0); filter: brightness(0.95); }
 
         .result-password {
             margin-top: 0.6rem;
