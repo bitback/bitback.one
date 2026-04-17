@@ -20,7 +20,7 @@ function get_strings(string $lang = null): array {
     $strings = [
         'pl' => [
             'title' => defined('APP_NAME') ? APP_NAME : 'bitback.one',
-            'subtitle' => 'bezpieczne jednorazowe linki',
+            'subtitle' => 'bezpieczne linki do przekazywania poufnych danych',
             'content_label' => 'Treść',
             'placeholder_line1' => 'Wpisz treść tutaj...',
             'placeholder_line2' => 'zaznacz fragment i naciśnij Ctrl+E aby oznaczyć jako poufne',
@@ -97,7 +97,7 @@ function get_strings(string $lang = null): array {
         ],
         'en' => [
             'title' => defined('APP_NAME') ? APP_NAME : 'bitback.one',
-            'subtitle' => 'secure one-time links',
+            'subtitle' => 'secure links for sharing confidential data',
             'content_label' => 'Content',
             'placeholder_line1' => 'Type your content here...',
             'placeholder_line2' => 'select text and press Ctrl+E to mark as secret',
