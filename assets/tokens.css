@@ -257,14 +257,15 @@
   box-shadow: inset 0 1px 0 rgba(120,170,240,0.08);
 }
 
-/* Statyczny gradient na tle strony - sygnaturowy multi-layer dark.
-   Dwa subtelne radial spotlights (gold + blue) na bazowym linear gradient.
+/* Statyczny cyber-neon gradient na tle strony - magenta+teal plasma.
+   Mocniej niz poprzedni gold/blue (user chce "ciekawe"), ale zmiekczony
+   vs design card (0.20/0.22) zeby fullscreen nie przytlaczal oczu.
    Fixed attachment zeby gradient nie scrollowal sie z trescia. */
 html, body {
   background:
-    radial-gradient(60% 50% at 85% 10%, rgba(240,192,96,0.06) 0%, rgba(240,192,96,0) 60%),
-    radial-gradient(70% 60% at 10% 95%, rgba(58,123,213,0.05) 0%, rgba(58,123,213,0) 60%),
-    linear-gradient(180deg, #0d0d0d 0%, #080808 100%) !important;
+    radial-gradient(70% 120% at 10% 20%, rgba(255,80,180,0.14) 0%, rgba(255,80,180,0) 55%),
+    radial-gradient(90% 140% at 95% 110%, rgba(60,220,200,0.16) 0%, rgba(60,220,200,0) 55%),
+    #0b0a10 !important;
   background-attachment: fixed !important;
   min-height: 100vh;
 }
