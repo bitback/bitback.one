@@ -28,6 +28,9 @@ docs/
 # === Narzędzia lokalne ===
 browser.php
 
+# === Design bundle (referencyjny, nie produkcyjny) ===
+_new_design/
+
 # === Env ===
 .env
 .env.local
