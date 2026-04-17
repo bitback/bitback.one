@@ -94,10 +94,13 @@ $t = get_strings($lang);
         }
         .trust-box .trust-icon [data-lucide] { color: #b8c5d8; }
 
-        /* ====== HINT BAR ====== */
+        /* ====== HINT BAR (cyber delikatny) ====== */
         .hint-bar {
-            background: var(--bb-surface-1);
-            border: 1px solid var(--bb-border);
+            background:
+                radial-gradient(80% 150% at 0% 50%, rgba(255,80,180,0.05) 0%, transparent 55%),
+                radial-gradient(80% 150% at 100% 50%, rgba(60,220,200,0.07) 0%, transparent 55%),
+                #0a0a0a;
+            border: 1px solid #1a1a24;
             border-radius: 8px;
             padding: 0.6rem 0.8rem;
             margin-bottom: 0.6rem;
@@ -105,21 +108,21 @@ $t = get_strings($lang);
             align-items: center;
             gap: 0.6rem;
             font-size: 0.75rem;
-            color: var(--bb-fg-5);
+            color: #9aa0b0;
         }
         .hint-bar kbd {
             display: inline-block;
             padding: 0.15em 0.5em;
-            background: var(--bb-border-soft);
-            border: 1px solid var(--bb-fg-8);
+            background: #0e1a1e;
+            border: 1px solid rgba(60,220,200,0.3);
             border-radius: 4px;
             font-family: var(--bb-font-mono);
             font-size: 0.8rem;
-            color: var(--bb-secret);
+            color: #6fd9c8;
             white-space: nowrap;
         }
-        .hint-bar .hint-text { color: var(--bb-fg-5); }
-        .hint-bar .hint-text strong { color: var(--bb-secret); font-weight: 500; }
+        .hint-bar .hint-text { color: #9aa0b0; }
+        .hint-bar .hint-text strong { color: #6fd9c8; font-weight: 500; }
 
         .main {
             max-width: 1100px;
@@ -151,14 +154,17 @@ $t = get_strings($lang);
 
         /* placeholder edytora */
 
-        /* edytor contenteditable */
+        /* edytor contenteditable - delikatny cyber gradient */
         .editor {
             width: 100%;
             min-height: 220px;
             padding: 0.8rem;
-            background: var(--bb-surface-editor-bg);
-            border: 1px solid var(--bb-surface-editor-border);
-            border-radius: 8px;
+            background:
+                radial-gradient(60% 100% at 0% 0%, rgba(255,80,180,0.04) 0%, transparent 55%),
+                radial-gradient(60% 100% at 100% 100%, rgba(60,220,200,0.05) 0%, transparent 55%),
+                #0a0a0f;
+            border: 1px solid #1a1a24;
+            border-radius: 10px;
             color: var(--bb-fg-2);
             font-family: var(--bb-font-mono);
             font-size: 0.85rem;
