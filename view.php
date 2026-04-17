@@ -11,6 +11,7 @@
 
 require_once __DIR__ . '/inc/config.php';
 require_once __DIR__ . '/inc/i18n.php';
+require_once __DIR__ . '/inc/logo.php';
 
 $lang = detect_lang();
 $t = get_strings($lang);
@@ -220,7 +221,7 @@ function show_password_form(array $t, string $slug, bool $wrongPassword = false)
 </head>
 <body>
     <div class="box">
-        <h1 class="bb-logo"><a href="/"><img src="/assets/logo.svg" alt="<?= htmlspecialchars($t['title']) ?>"></a></h1>
+        <?= render_logo($t['title'], '/') ?>
         <div class="sub"><?= htmlspecialchars($t['password_required'] ?? 'This link is password protected') ?></div>
         <form method="POST" action="/<?= htmlspecialchars($slug) ?>" id="pwdForm">
             <input type="password" name="password" class="pwd-input" placeholder="<?= htmlspecialchars($t['password_placeholder'] ?? 'Enter password') ?>" autofocus required>
@@ -595,7 +596,7 @@ function show_view_encrypted(array $t, array $data, string $encText, ?string $en
     <style><?= view_css() ?></style>
 </head>
 <body>
-    <div class="header"><h1 class="bb-logo"><a href="/"><img src="/assets/logo.svg" alt="<?= htmlspecialchars($t['title']) ?>"></a></h1></div>
+    <div class="header"><?= render_logo($t['title'], '/') ?></div>
     <div class="container">
         <?php if ($expired): ?>
         <div class="expired-banner">
@@ -807,7 +808,7 @@ function show_view_encrypted_v2(array $t, array $data, string $encryptedPayload,
     <style><?= view_css() ?></style>
 </head>
 <body>
-    <div class="header"><h1 class="bb-logo"><a href="/"><img src="/assets/logo.svg" alt="<?= htmlspecialchars($t['title']) ?>"></a></h1></div>
+    <div class="header"><?= render_logo($t['title'], '/') ?></div>
     <div class="container">
         <?php if ($expired): ?>
         <div class="expired-banner">
@@ -914,7 +915,7 @@ function show_view_legacy(array $t, array $data, array $sections, bool $expired)
     <style><?= view_css() ?></style>
 </head>
 <body>
-    <div class="header"><h1 class="bb-logo"><a href="/"><img src="/assets/logo.svg" alt="<?= htmlspecialchars($t['title']) ?>"></a></h1></div>
+    <div class="header"><?= render_logo($t['title'], '/') ?></div>
     <div class="container">
         <?php if ($expired): $ll = detect_lang(); ?>
         <div class="expired-banner">

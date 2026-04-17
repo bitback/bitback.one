@@ -121,13 +121,13 @@
   text-decoration: none;
   line-height: 0;
 }
-.bb-logo img {
+.bb-logo svg {
   height: 44px;
   width: auto;
   display: block;
 }
 @media (max-width: 480px) {
-  .bb-logo img { height: 36px; }
+  .bb-logo svg { height: 36px; }
 }
 
 /* =========================================================================

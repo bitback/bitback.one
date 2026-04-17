@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/inc/config.php';
 require_once __DIR__ . '/inc/i18n.php';
+require_once __DIR__ . '/inc/logo.php';
 $lang = detect_lang();
 $t = get_strings($lang);
 ?>
@@ -455,7 +456,7 @@ $t = get_strings($lang);
 <body>
 
 <div class="header">
-    <h1 class="bb-logo"><a href="https://bitback.one"><img src="/assets/logo.svg" alt="bitback.one"></a></h1>
+    <?= render_logo('bitback.one', 'https://bitback.one') ?>
     <p><?= htmlspecialchars($t['subtitle']) ?></p>
 </div>
 
