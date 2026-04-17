@@ -4,7 +4,7 @@
 
 Secure one-time links with zero-trust encryption.
 
-Share passwords, API keys, and confidential data through self-destructing links. The server never sees the decryption key — everything is encrypted and decrypted in the browser.
+Share passwords, API keys, and confidential data through one-time links that physically delete the secrets on expiry. The server never sees the decryption key - everything is encrypted and decrypted in the browser.
 
 **Live:** [bitback.one](https://bitback.one)
 
@@ -13,8 +13,8 @@ Share passwords, API keys, and confidential data through self-destructing links.
 1. You type content and optionally mark fragments as **secret** (Ctrl+E)
 2. Content is encrypted with AES-256-CBC in the browser
 3. A link is generated: `https://bitback.one/<uuid>#<key>`
-4. The `#key` part (URL fragment) **never reaches the server** — not in logs, not in memory
-5. The recipient opens the link — decryption happens entirely in their browser
+4. The `#key` part (URL fragment) **never reaches the server** - not in logs, not in memory
+5. The recipient opens the link - decryption happens entirely in their browser
 
 ## Two-stage expiration
 
@@ -22,17 +22,17 @@ bitback.one uses a two-blob architecture for physical secret destruction:
 
 | Stage | What happens |
 |-------|-------------|
-| **Secrets expire** (by time or view count) | The encrypted secrets blob is **physically deleted** from the JSON file. Irreversible — even with the key, secrets cannot be recovered. Plain text sections remain visible as context. |
+| **Secrets expire** (by time or view count) | The encrypted secrets blob is **physically deleted** from the JSON file. Irreversible - even with the key, secrets cannot be recovered. Plain text sections remain visible as context. |
 | **Permanent deletion** (configurable delay) | The entire file is moved to trash. All data gone. |
 
-This is not a software flag — the encrypted data is literally removed from disk.
+This is not a software flag - the encrypted data is literally removed from disk.
 
 ## Security model
 
 - **AES-256-CBC** encryption with SHA-256 key derivation
-- Encryption key lives in URL `#fragment` — never sent to the server (per RFC 3986)
-- Server stores only encrypted blobs — no plaintext, no key, no way to decrypt
-- Two separate encrypted blobs: text and secrets — server physically deletes the secrets blob on expiry
+- Encryption key lives in URL `#fragment` - never sent to the server (per RFC 3986)
+- Server stores only encrypted blobs - no plaintext, no key, no way to decrypt
+- Two separate encrypted blobs: text and secrets - server physically deletes the secrets blob on expiry
 - Optional bcrypt password protection
 - Apache logs show only the UUID, never the key
 - IP-based rate limiting (10 links/hour)
@@ -181,7 +181,7 @@ define('RATE_LIMIT_MAX', 10);         // Max links per IP per hour
 
 ### Custom branding
 
-The app auto-detects its domain from HTTP headers — generated URLs always match your server. To change the app name shown in titles and headers, edit `APP_NAME` in `inc/config.php`. The main page (`index.html`) has two hardcoded references to update manually.
+The app auto-detects its domain from HTTP headers - generated URLs always match your server. To change the app name shown in titles and headers, edit `APP_NAME` in `inc/config.php`. The main page (`index.php`) has two hardcoded references to update manually.
 
 ## i18n
 
@@ -197,7 +197,7 @@ Auto-detects Polish or English from the browser's `Accept-Language` header. Tran
 
 **Zabezpieczamy pocztę, serwery i komputery.**
 
-bitback.one to projekt open-source od bitback.pl — firmy specjalizującej się w cyberbezpieczeństwie dla biznesu.
+bitback.one to projekt open-source od bitback.pl - firmy specjalizującej się w cyberbezpieczeństwie dla biznesu.
 
 📧 [zbigniew.gralewski@bitback.pl](mailto:zbigniew.gralewski@bitback.pl)
 📞 609 505 065

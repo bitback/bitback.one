@@ -35,10 +35,10 @@ All cryptographic functions are isolated in [`crypto.js`](crypto.js) and loaded 
 
 Content is split into two separately encrypted blobs at creation time:
 
-- `encrypted_text` — non-secret sections (survive secret expiry)
-- `encrypted_secrets` — secret-marked sections (physically destroyed on expiry)
+- `encrypted_text` - non-secret sections (survive secret expiry)
+- `encrypted_secrets` - secret-marked sections (physically destroyed on expiry)
 
-When secrets expire, the server **deletes the `encrypted_secrets` field from the JSON file**. This is not a flag or permission check — the ciphertext is gone from disk. Even someone with the decryption key and full server access cannot recover expired secrets.
+When secrets expire, the server **deletes the `encrypted_secrets` field from the JSON file**. This is not a flag or permission check - the ciphertext is gone from disk. Even someone with the decryption key and full server access cannot recover expired secrets.
 
 ## Threat model
 
@@ -46,7 +46,7 @@ When secrets expire, the server **deletes the `encrypted_secrets` field from the
 
 | Threat | Mitigation |
 |--------|-----------|
-| Server operator reads data | Cannot — key never reaches server |
+| Server operator reads data | Cannot - key never reaches server |
 | Server logs leak key | Fragment is not logged (RFC 3986) |
 | Expired secrets recovered | Physically deleted from disk, not flagged |
 | Brute-force link creation | IP rate limiting (10/hour) + math challenge |
