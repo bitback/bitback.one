@@ -22,13 +22,14 @@ $t = get_strings($lang);
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="<?= htmlspecialchars($t['meta_title']) ?>">
     <meta name="twitter:description" content="<?= htmlspecialchars($t['og_description']) ?>">
+    <link rel="stylesheet" href="/assets/tokens.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #0a0a0a;
-            color: #e0e0e0;
+            background: var(--bb-bg);
+            color: var(--bb-fg-1);
             min-height: 100vh;
             padding-bottom: 2.5rem;
         }
@@ -41,10 +42,10 @@ $t = get_strings($lang);
             font-size: 1.6rem;
             font-weight: 300;
             letter-spacing: 0.08em;
-            color: #fff;
+            color: var(--bb-fg);
         }
         .header p {
-            color: #555;
+            color: var(--bb-fg-5);
             font-size: 0.8rem;
             margin-top: 0.3rem;
         }
@@ -56,8 +57,8 @@ $t = get_strings($lang);
             padding: 0 1rem;
         }
         .trust-box {
-            background: #0d0d0d;
-            border: 1px solid #1a1a1a;
+            background: var(--bb-surface-trust);
+            border: 1px solid var(--bb-border-soft);
             border-radius: 10px;
             padding: 1.2rem 1.5rem;
         }
@@ -79,19 +80,19 @@ $t = get_strings($lang);
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.06em;
-            color: #888;
+            color: var(--bb-fg-4);
             margin-bottom: 0.25rem;
         }
         .trust-desc {
             font-size: 0.7rem;
-            color: #444;
+            color: var(--bb-fg-6);
             line-height: 1.5;
         }
 
         /* ====== HINT BAR ====== */
         .hint-bar {
-            background: #111;
-            border: 1px solid #1e1e1e;
+            background: var(--bb-surface-1);
+            border: 1px solid var(--bb-border);
             border-radius: 8px;
             padding: 0.6rem 0.8rem;
             margin-bottom: 0.6rem;
@@ -99,21 +100,21 @@ $t = get_strings($lang);
             align-items: center;
             gap: 0.6rem;
             font-size: 0.75rem;
-            color: #555;
+            color: var(--bb-fg-5);
         }
         .hint-bar kbd {
             display: inline-block;
             padding: 0.15em 0.5em;
-            background: #1a1a1a;
-            border: 1px solid #2a2a2a;
+            background: var(--bb-border-soft);
+            border: 1px solid var(--bb-fg-8);
             border-radius: 4px;
             font-family: 'Consolas', monospace;
             font-size: 0.8rem;
-            color: #f0c060;
+            color: var(--bb-secret);
             white-space: nowrap;
         }
-        .hint-bar .hint-text { color: #555; }
-        .hint-bar .hint-text strong { color: #f0c060; font-weight: 500; }
+        .hint-bar .hint-text { color: var(--bb-fg-5); }
+        .hint-bar .hint-text strong { color: var(--bb-secret); font-weight: 500; }
 
         .main {
             max-width: 1100px;
@@ -136,7 +137,7 @@ $t = get_strings($lang);
             font-size: 0.7rem;
             text-transform: uppercase;
             letter-spacing: 0.1em;
-            color: #555;
+            color: var(--bb-fg-5);
             margin-bottom: 0.6rem;
         }
 
@@ -150,10 +151,10 @@ $t = get_strings($lang);
             width: 100%;
             min-height: 220px;
             padding: 0.8rem;
-            background: #161310;
-            border: 1px solid #352e1a;
+            background: var(--bb-surface-editor-bg);
+            border: 1px solid var(--bb-surface-editor-border);
             border-radius: 8px;
-            color: #ddd;
+            color: var(--bb-fg-2);
             font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
             font-size: 0.85rem;
             line-height: 1.7;
@@ -163,10 +164,10 @@ $t = get_strings($lang);
             cursor: text;
             transition: border-color 0.15s;
         }
-        .editor:focus { border-color: #333; }
+        .editor:focus { border-color: var(--bb-fg-7); }
         .editor:empty::before {
             content: '<?= str_replace("'", "\\'", str_replace("\n", "\\A", $t['editor_placeholder'])) ?>';
-            color: #333;
+            color: var(--bb-fg-7);
             pointer-events: none;
             white-space: pre-wrap;
         }
@@ -174,7 +175,7 @@ $t = get_strings($lang);
         /* oznaczone fragmenty poufne */
         .editor .secret {
             background: rgba(212, 146, 42, 0.15);
-            color: #f0c060;
+            color: var(--bb-secret);
             border-radius: 3px;
             padding: 0.05em 0.15em;
             border-bottom: 2px solid rgba(212, 146, 42, 0.4);
@@ -187,8 +188,8 @@ $t = get_strings($lang);
         }
 
         .config-panel {
-            background: #111;
-            border: 1px solid #1e1e1e;
+            background: var(--bb-surface-1);
+            border: 1px solid var(--bb-border);
             border-radius: 8px;
             padding: 1rem;
         }
@@ -203,7 +204,7 @@ $t = get_strings($lang);
             font-size: 0.68rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            color: #555;
+            color: var(--bb-fg-5);
             margin-bottom: 0.3rem;
         }
 
@@ -216,31 +217,31 @@ $t = get_strings($lang);
         .config-input {
             width: 70px;
             padding: 0.4rem 0.5rem;
-            background: #0a0a0a;
-            border: 1px solid #252525;
+            background: var(--bb-bg);
+            border: 1px solid var(--bb-border-mid);
             border-radius: 4px;
-            color: #fff;
+            color: var(--bb-fg);
             font-size: 0.85rem;
             text-align: center;
             outline: none;
         }
-        .config-input:focus { border-color: #444; }
+        .config-input:focus { border-color: var(--bb-fg-6); }
 
         .config-unit {
             font-size: 0.72rem;
-            color: #444;
+            color: var(--bb-fg-6);
         }
 
         .config-sep {
             border: none;
-            border-top: 1px solid #1a1a1a;
+            border-top: 1px solid var(--bb-border-soft);
             margin: 1rem 0;
         }
 
         /* antybot */
         .antibot-q {
             font-size: 0.82rem;
-            color: #888;
+            color: var(--bb-fg-4);
             margin-bottom: 0.4rem;
         }
         .antibot-options {
@@ -251,9 +252,9 @@ $t = get_strings($lang);
             flex: 1;
             padding: 0.45rem;
             border-radius: 5px;
-            border: 1px solid #252525;
-            background: #0a0a0a;
-            color: #888;
+            border: 1px solid var(--bb-border-mid);
+            background: var(--bb-bg);
+            color: var(--bb-fg-4);
             font-size: 0.85rem;
             text-align: center;
             cursor: pointer;
@@ -261,13 +262,13 @@ $t = get_strings($lang);
             user-select: none;
         }
         .antibot-opt:hover {
-            border-color: #444;
-            color: #ccc;
+            border-color: var(--bb-fg-6);
+            color: var(--bb-fg-body);
         }
         .antibot-opt.selected {
-            border-color: #3a7bd5;
-            background: #0f1a2e;
-            color: #6ea8f0;
+            border-color: var(--bb-accent);
+            background: var(--bb-accent-tint);
+            color: var(--bb-accent-light);
         }
 
         /* honeypot */
@@ -287,16 +288,16 @@ $t = get_strings($lang);
             margin-top: 1rem;
             border-radius: 6px;
             border: none;
-            background: #3a7bd5;
-            color: #fff;
+            background: var(--bb-accent);
+            color: var(--bb-fg);
             font-size: 0.9rem;
             font-weight: 500;
             cursor: pointer;
             transition: background 0.15s;
             letter-spacing: 0.02em;
         }
-        .generate-btn:hover { background: #4a8be5; }
-        .generate-btn:active { background: #2a6bc5; }
+        .generate-btn:hover { background: var(--bb-accent-hover); }
+        .generate-btn:active { background: var(--bb-accent-press); }
 
         /* przycisk oznaczania poufnych */
         .mark-secret-btn {
@@ -307,7 +308,7 @@ $t = get_strings($lang);
             border-radius: 6px;
             border: 1px solid rgba(212, 146, 42, 0.4);
             background: rgba(212, 146, 42, 0.12);
-            color: #f0c060;
+            color: var(--bb-secret);
             font-size: 0.82rem;
             font-weight: 500;
             cursor: pointer;
@@ -340,21 +341,21 @@ $t = get_strings($lang);
         .preview-tab {
             padding: 0.2rem 0.6rem;
             border-radius: 4px;
-            border: 1px solid #1e1e1e;
+            border: 1px solid var(--bb-border);
             background: transparent;
-            color: #444;
+            color: var(--bb-fg-6);
             font-size: 0.65rem;
             cursor: pointer;
             transition: all 0.15s;
         }
         .preview-tab.active {
-            border-color: #333;
-            color: #aaa;
-            background: #161616;
+            border-color: var(--bb-fg-7);
+            color: var(--bb-fg-tab);
+            background: var(--bb-surface-2);
         }
         .preview-box {
-            background: #111;
-            border: 1px solid #1e1e1e;
+            background: var(--bb-surface-1);
+            border: 1px solid var(--bb-border);
             border-radius: 8px;
             padding: 0.8rem;
             font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
@@ -366,14 +367,14 @@ $t = get_strings($lang);
         }
         .preview-box .masked {
             background: rgba(100, 100, 100, 0.2);
-            color: #555;
+            color: var(--bb-fg-5);
             border-radius: 3px;
             padding: 0.05em 0.15em;
             letter-spacing: 0.1em;
         }
         .preview-box .secret {
             background: rgba(212, 146, 42, 0.15);
-            color: #f0c060;
+            color: var(--bb-secret);
             border-radius: 3px;
             padding: 0.05em 0.15em;
             border-bottom: 2px solid rgba(212, 146, 42, 0.4);
@@ -387,8 +388,8 @@ $t = get_strings($lang);
         .result.show { display: block; }
 
         .result-box {
-            background: #0c1a0c;
-            border: 1px solid #1a3a1a;
+            background: var(--bb-success-bg);
+            border: 1px solid var(--bb-success-border);
             border-radius: 8px;
             padding: 0.8rem 1rem;
         }
@@ -396,7 +397,7 @@ $t = get_strings($lang);
             font-size: 0.68rem;
             text-transform: uppercase;
             letter-spacing: 0.1em;
-            color: #4a4;
+            color: var(--bb-success-ink);
             margin-bottom: 0.4rem;
         }
         .result-link {
@@ -407,40 +408,40 @@ $t = get_strings($lang);
         .result-url {
             flex: 1;
             padding: 0.45rem 0.6rem;
-            background: #080808;
-            border: 1px solid #252525;
+            background: var(--bb-surface-sunk);
+            border: 1px solid var(--bb-border-mid);
             border-radius: 4px;
-            color: #7d7;
+            color: var(--bb-success);
             font-family: monospace;
             font-size: 0.8rem;
             outline: none;
         }
         .copy-btn {
             padding: 0.45rem 0.9rem;
-            background: #142814;
-            border: 1px solid #1a3a1a;
+            background: var(--bb-success-button);
+            border: 1px solid var(--bb-success-border);
             border-radius: 4px;
-            color: #7d7;
+            color: var(--bb-success);
             font-size: 0.75rem;
             cursor: pointer;
             transition: background 0.15s;
             white-space: nowrap;
         }
-        .copy-btn:hover { background: #1e3a1e; }
+        .copy-btn:hover { background: var(--bb-success-hover); }
 
         .result-password {
             margin-top: 0.6rem;
             padding: 0.5rem 0.7rem;
-            background: #0a1a0a;
-            border: 1px solid #1a3a1a;
+            background: var(--bb-success-bg-2);
+            border: 1px solid var(--bb-success-border);
             border-radius: 4px;
             font-size: 0.78rem;
-            color: #6b6;
+            color: var(--bb-success-mid);
             display: none;
         }
         .result-password.show { display: block; }
         .result-password strong {
-            color: #9d9;
+            color: var(--bb-success-light);
             font-family: monospace;
             font-weight: 500;
         }
@@ -566,13 +567,13 @@ $t = get_strings($lang);
 
 </div>
 
-<div style="position:fixed;bottom:0;left:0;right:0;z-index:100;background:#0a0a0a;border-top:1px solid #1a1a1a;padding:0.5rem 1rem;text-align:center;font-size:0.75rem;color:#555;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-    <a href="https://bitback.pl" target="_blank" rel="noopener" style="color:#6a9fd4;text-decoration:none;"><strong>bitback.pl</strong></a>
-    <span style="color:#2a2a2a;margin:0 0.5rem;">|</span><?= htmlspecialchars($t['footer_tagline']) ?>
-    <span style="color:#2a2a2a;margin:0 0.5rem;">|</span>Zbigniew Gralewski
-    <span style="color:#2a2a2a;margin:0 0.5rem;">|</span><a href="mailto:zbigniew.gralewski@bitback.pl" style="color:#6a9fd4;text-decoration:none;">zbigniew.gralewski@bitback.pl</a>
-    <span style="color:#2a2a2a;margin:0 0.5rem;">|</span>609 505 065
-    <span style="color:#2a2a2a;margin:0 0.5rem;">|</span><?= htmlspecialchars($t['footer_source']) ?> <a href="https://github.com/bitback/bitback.one" target="_blank" rel="noopener" style="color:#6a9fd4;text-decoration:none;">GitHub</a>
+<div style="position:fixed;bottom:0;left:0;right:0;z-index:100;background:var(--bb-bg);border-top:1px solid var(--bb-border-soft);padding:0.5rem 1rem;text-align:center;font-size:0.75rem;color:var(--bb-fg-5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+    <a href="https://bitback.pl" target="_blank" rel="noopener" style="color:var(--bb-accent-link);text-decoration:none;"><strong>bitback.pl</strong></a>
+    <span style="color:var(--bb-fg-8);margin:0 0.5rem;">|</span><?= htmlspecialchars($t['footer_tagline']) ?>
+    <span style="color:var(--bb-fg-8);margin:0 0.5rem;">|</span>Zbigniew Gralewski
+    <span style="color:var(--bb-fg-8);margin:0 0.5rem;">|</span><a href="mailto:zbigniew.gralewski@bitback.pl" style="color:var(--bb-accent-link);text-decoration:none;">zbigniew.gralewski@bitback.pl</a>
+    <span style="color:var(--bb-fg-8);margin:0 0.5rem;">|</span>609 505 065
+    <span style="color:var(--bb-fg-8);margin:0 0.5rem;">|</span><?= htmlspecialchars($t['footer_source']) ?> <a href="https://github.com/bitback/bitback.one" target="_blank" rel="noopener" style="color:var(--bb-accent-link);text-decoration:none;">GitHub</a>
 </div>
 
 <script src="/crypto.js" integrity="sha384-lbGxH8AFxpkiMqDgkudynUSMoMFVnfMkcjN4XwCJHaTu9mLjvW4emijB7r3kh7MU"></script>

@@ -1,0 +1,91 @@
+/* =========================================================================
+   bitback.one - Design Tokens
+   Etap 1 design refresh: zmienne CSS odpowiadajace obecnym wartosciom HEX.
+   Zero zmiany wizualnej - te same kolory/rozmiary, tylko nazwane.
+
+   Fonty dojda w etapie 2.
+   Przejscie na OKLCH mozliwe w przyszlosci - HEX gwarantuje parity 1:1.
+   ========================================================================= */
+
+:root {
+  /* --- Surfaces --- */
+  --bb-bg:           #0a0a0a;  /* page */
+  --bb-surface-1:    #111;     /* card */
+  --bb-surface-2:    #161616;  /* hover/raised */
+  --bb-surface-3:    #1e1e1e;  /* input/raised */
+  --bb-surface-sunk: #080808;  /* sunken field */
+
+  /* --- Borders / dividers --- */
+  --bb-border:       #1e1e1e;
+  --bb-border-soft:  #1a1a1a;
+  --bb-border-mid:   #252525;  /* input borders */
+  --bb-border-hover: #333;
+  --bb-border-strong:#444;
+
+  /* --- Text --- */
+  --bb-fg:           #fff;     /* primary */
+  --bb-fg-1:         #e0e0e0;  /* body */
+  --bb-fg-2:         #ddd;
+  --bb-fg-3:         #bbb;
+  --bb-fg-4:         #888;     /* tertiary */
+  --bb-fg-5:         #555;     /* muted */
+  --bb-fg-6:         #444;
+  --bb-fg-7:         #333;     /* quiet */
+  --bb-fg-8:         #2a2a2a;  /* separator dots */
+  --bb-fg-body:      #ccc;     /* antibot hover text */
+  --bb-fg-tab:       #aaa;     /* active tab text */
+
+  /* --- Surfaces specyficzne --- */
+  --bb-surface-trust:#0d0d0d;  /* trust box bg (nieco ciemniejszy niz surface-1) */
+  --bb-surface-editor-bg:#161310;     /* swiadomy cieplawy tint edytora */
+  --bb-surface-editor-border:#352e1a; /* cieplawa ramka edytora */
+
+  /* --- Brand / action (blue) --- */
+  --bb-accent:       #3a7bd5;
+  --bb-accent-hover: #4a8be5;
+  --bb-accent-press: #2a6bc5;
+  --bb-accent-link:  #6a9fd4;
+  --bb-accent-tint:  #0f1a2e;
+  --bb-accent-light: #6ea8f0;  /* jasny niebieski - antibot selected */
+
+  /* --- Secret (gold/amber) --- */
+  --bb-secret:       #f0c060;
+  --bb-secret-ink:   #d4922a;
+
+  /* --- Success (green) --- */
+  --bb-success:      #7d7;
+  --bb-success-light:#9d9;
+  --bb-success-mid:  #6b6;
+  --bb-success-ink:  #4a4;
+  --bb-success-bg:   #0c1a0c;
+  --bb-success-bg-2: #0a1a0a;
+  --bb-success-border:#1a3a1a;
+  --bb-success-hover:#1e3a1e;
+  --bb-success-button:#142814;
+
+  /* --- Danger (red) --- */
+  --bb-danger:       #c0392b;
+  --bb-danger-light: #e74c3c;
+
+  /* --- Fonts (stack do etapu 2) --- */
+  --bb-font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --bb-font-mono: 'Consolas', 'Monaco', 'Courier New', monospace;
+
+  /* --- Radii --- */
+  --bb-radius-xs: 4px;
+  --bb-radius-sm: 6px;
+  --bb-radius-md: 8px;   /* current default card */
+  --bb-radius-lg: 10px;
+
+  /* --- Spacing (optional, dla przyszlych etapow) --- */
+  --bb-space-1: 0.25rem;
+  --bb-space-2: 0.5rem;
+  --bb-space-3: 0.75rem;
+  --bb-space-4: 1rem;
+  --bb-space-5: 1.5rem;
+
+  /* --- Motion --- */
+  --bb-ease:     cubic-bezier(0.2, 0.6, 0.2, 1);
+  --bb-dur-fast: 120ms;
+  --bb-dur-base: 150ms;
+}

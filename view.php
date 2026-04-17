@@ -148,7 +148,7 @@ show_view_encrypted($t, $data, $encText, $encSecrets, $secretsExpired);
 function linkify_html(string $escapedHtml): string {
     return preg_replace(
         '#(https?://[^\s<>\'"&]+(?:&amp;[^\s<>\'"&]+)*)#',
-        '<a href="$1" target="_blank" rel="noopener" style="color:#6a9fd4;">$1</a>',
+        '<a href="$1" target="_blank" rel="noopener" style="color:var(--bb-accent-link);">$1</a>',
         $escapedHtml
     );
 }
@@ -174,6 +174,7 @@ function og_view_meta(array $t): void {
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="<?= htmlspecialchars($t['og_view_title']) ?>">
     <meta name="twitter:description" content="<?= htmlspecialchars($t['og_view_description']) ?>">
+    <link rel="stylesheet" href="/assets/tokens.css">
     <?php
 }
 
@@ -189,28 +190,28 @@ function show_password_form(array $t, string $slug, bool $wrongPassword = false)
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #0a0a0a; color: #e0e0e0;
+            background: var(--bb-bg); color: var(--bb-fg-1);
             min-height: 100vh; display: flex; align-items: center; justify-content: center;
         }
         .box { text-align: center; padding: 2rem; width: 100%; max-width: 380px; }
-        h1 { font-size: 1.4rem; font-weight: 300; color: #fff; margin-bottom: 0.3rem; }
-        .sub { color: #555; font-size: 0.78rem; margin-bottom: 1.5rem; }
+        h1 { font-size: 1.4rem; font-weight: 300; color: var(--bb-fg); margin-bottom: 0.3rem; }
+        .sub { color: var(--bb-fg-5); font-size: 0.78rem; margin-bottom: 1.5rem; }
         .pwd-input {
             width: 100%; padding: 0.6rem 0.8rem;
-            background: #111; border: 1px solid #252525; border-radius: 6px;
-            color: #fff; font-size: 0.9rem; outline: none; text-align: center;
+            background: var(--bb-surface-1); border: 1px solid var(--bb-border-mid); border-radius: 6px;
+            color: var(--bb-fg); font-size: 0.9rem; outline: none; text-align: center;
             font-family: monospace;
         }
-        .pwd-input:focus { border-color: #444; }
+        .pwd-input:focus { border-color: var(--bb-fg-6); }
         .pwd-btn {
             width: 100%; padding: 0.6rem; margin-top: 0.7rem;
             border-radius: 6px; border: none;
-            background: #3a7bd5; color: #fff; font-size: 0.85rem;
+            background: var(--bb-accent); color: var(--bb-fg); font-size: 0.85rem;
             cursor: pointer; transition: background 0.15s;
         }
-        .pwd-btn:hover { background: #4a8be5; }
-        .error { color: #d44; font-size: 0.75rem; margin-top: 0.5rem; }
-        .logo { color: #333; font-size: 0.75rem; margin-top: 2rem; letter-spacing: 0.1em; }
+        .pwd-btn:hover { background: var(--bb-accent-hover); }
+        .error { color: var(--bb-danger-light); font-size: 0.75rem; margin-top: 0.5rem; }
+        .logo { color: var(--bb-fg-7); font-size: 0.75rem; margin-top: 2rem; letter-spacing: 0.1em; }
     </style>
 </head>
 <body>
@@ -225,9 +226,9 @@ function show_password_form(array $t, string $slug, bool $wrongPassword = false)
             <?php endif; ?>
         </form>
         <div class="logo"><a href="/" style="color:inherit;text-decoration:none;"><?= htmlspecialchars($t['title']) ?></a></div>
-        <div style="position:fixed;bottom:0;left:0;right:0;z-index:100;background:#0a0a0a;border-top:1px solid #1a1a1a;padding:0.5rem 1rem;text-align:center;font-size:0.75rem;color:#555;white-space:nowrap;">
-            <a href="https://bitback.pl" target="_blank" rel="noopener" style="color:#6a9fd4;text-decoration:none;"><strong>bitback.pl</strong></a>
-            <span style="color:#2a2a2a;margin:0 0.5rem;">|</span>Kod źródłowy na <a href="https://github.com/bitback/bitback.one" target="_blank" rel="noopener" style="color:#6a9fd4;text-decoration:none;">GitHub</a>
+        <div style="position:fixed;bottom:0;left:0;right:0;z-index:100;background:var(--bb-bg);border-top:1px solid var(--bb-border-soft);padding:0.5rem 1rem;text-align:center;font-size:0.75rem;color:var(--bb-fg-5);white-space:nowrap;">
+            <a href="https://bitback.pl" target="_blank" rel="noopener" style="color:var(--bb-accent-link);text-decoration:none;"><strong>bitback.pl</strong></a>
+            <span style="color:var(--bb-fg-8);margin:0 0.5rem;">|</span>Kod źródłowy na <a href="https://github.com/bitback/bitback.one" target="_blank" rel="noopener" style="color:var(--bb-accent-link);text-decoration:none;">GitHub</a>
         </div>
     </div>
     <script>
@@ -253,7 +254,7 @@ function show_not_found(array $t): void {
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #0a0a0a; color: #e0e0e0;
+            background: var(--bb-bg); color: var(--bb-fg-1);
             min-height: 100vh; display: flex; align-items: center; justify-content: center;
             padding-bottom: 2.5rem;
         }
@@ -270,22 +271,22 @@ function show_not_found(array $t): void {
         .code {
             font-size: 3.5rem;
             font-weight: 200;
-            color: #222;
+            color: var(--bb-fg-7);
             letter-spacing: 0.15em;
             margin-bottom: 0.5rem;
         }
-        h1 { font-size: 1.2rem; font-weight: 400; color: #888; margin-bottom: 0.8rem; }
-        .sub { color: #444; font-size: 0.82rem; line-height: 1.6; margin-bottom: 0.5rem; }
-        .hint { color: #333; font-size: 0.72rem; margin-top: 1rem; }
-        .hint code { color: #f0c060; background: #1a1a0a; padding: 0.1em 0.3em; border-radius: 3px; }
+        h1 { font-size: 1.2rem; font-weight: 400; color: var(--bb-fg-4); margin-bottom: 0.8rem; }
+        .sub { color: var(--bb-fg-6); font-size: 0.82rem; line-height: 1.6; margin-bottom: 0.5rem; }
+        .hint { color: var(--bb-fg-7); font-size: 0.72rem; margin-top: 1rem; }
+        .hint code { color: var(--bb-secret); background: #1a1a0a; padding: 0.1em 0.3em; border-radius: 3px; }
         .home-link {
             display: inline-block; margin-top: 1.5rem;
             padding: 0.5rem 1.2rem; border-radius: 6px;
-            border: 1px solid #1e1e1e; background: #111;
-            color: #6a9fd4; text-decoration: none; font-size: 0.8rem;
+            border: 1px solid var(--bb-border); background: var(--bb-surface-1);
+            color: var(--bb-accent-link); text-decoration: none; font-size: 0.8rem;
             transition: background 0.15s;
         }
-        .home-link:hover { background: #161616; }
+        .home-link:hover { background: var(--bb-surface-2); }
     </style>
 </head>
 <body>
@@ -296,9 +297,9 @@ function show_not_found(array $t): void {
         <div class="sub"><?= htmlspecialchars($t['not_found_sub']) ?></div>
         <div class="hint"><?= htmlspecialchars($t['not_found_hint']) ?> <code>#</code></div>
         <a href="/" class="home-link"><?= htmlspecialchars($t['title']) ?> →</a>
-        <div style="position:fixed;bottom:0;left:0;right:0;z-index:100;background:#0a0a0a;border-top:1px solid #1a1a1a;padding:0.5rem 1rem;text-align:center;font-size:0.75rem;color:#555;white-space:nowrap;">
-            <a href="https://bitback.pl" target="_blank" rel="noopener" style="color:#6a9fd4;text-decoration:none;"><strong>bitback.pl</strong></a>
-            <span style="color:#2a2a2a;margin:0 0.5rem;">|</span>Kod źródłowy na <a href="https://github.com/bitback/bitback.one" target="_blank" rel="noopener" style="color:#6a9fd4;text-decoration:none;">GitHub</a>
+        <div style="position:fixed;bottom:0;left:0;right:0;z-index:100;background:var(--bb-bg);border-top:1px solid var(--bb-border-soft);padding:0.5rem 1rem;text-align:center;font-size:0.75rem;color:var(--bb-fg-5);white-space:nowrap;">
+            <a href="https://bitback.pl" target="_blank" rel="noopener" style="color:var(--bb-accent-link);text-decoration:none;"><strong>bitback.pl</strong></a>
+            <span style="color:var(--bb-fg-8);margin:0 0.5rem;">|</span>Kod źródłowy na <a href="https://github.com/bitback/bitback.one" target="_blank" rel="noopener" style="color:var(--bb-accent-link);text-decoration:none;">GitHub</a>
         </div>
     </div>
 </body>
@@ -333,14 +334,14 @@ function show_expired(array $t, ?string $killedAt = null, ?string $expiredManual
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #0a0a0a; color: #e0e0e0;
+            background: var(--bb-bg); color: var(--bb-fg-1);
             min-height: 100vh; display: flex; align-items: center; justify-content: center;
         }
         .box { text-align: center; padding: 2rem; }
-        h1 { font-size: 1.4rem; font-weight: 300; color: #fff; margin-bottom: 0.5rem; }
-        p { color: #555; font-size: 0.85rem; }
-        .manual-info { color: #d4922a; font-size: 0.8rem; margin-top: 0.5rem; }
-        .logo { color: #333; font-size: 0.75rem; margin-top: 2rem; letter-spacing: 0.1em; }
+        h1 { font-size: 1.4rem; font-weight: 300; color: var(--bb-fg); margin-bottom: 0.5rem; }
+        p { color: var(--bb-fg-5); font-size: 0.85rem; }
+        .manual-info { color: var(--bb-secret-ink); font-size: 0.8rem; margin-top: 0.5rem; }
+        .logo { color: var(--bb-fg-7); font-size: 0.75rem; margin-top: 2rem; letter-spacing: 0.1em; }
     </style>
 </head>
 <body>
@@ -351,9 +352,9 @@ function show_expired(array $t, ?string $killedAt = null, ?string $expiredManual
         <p class="manual-info"><?= htmlspecialchars($manualInfo) ?></p>
         <?php endif; ?>
         <div class="logo"><a href="/" style="color:inherit;text-decoration:none;"><?= htmlspecialchars($t['title']) ?></a></div>
-        <div style="position:fixed;bottom:0;left:0;right:0;z-index:100;background:#0a0a0a;border-top:1px solid #1a1a1a;padding:0.5rem 1rem;text-align:center;font-size:0.75rem;color:#555;white-space:nowrap;">
-            <a href="https://bitback.pl" target="_blank" rel="noopener" style="color:#6a9fd4;text-decoration:none;"><strong>bitback.pl</strong></a>
-            <span style="color:#2a2a2a;margin:0 0.5rem;">|</span>Kod źródłowy na <a href="https://github.com/bitback/bitback.one" target="_blank" rel="noopener" style="color:#6a9fd4;text-decoration:none;">GitHub</a>
+        <div style="position:fixed;bottom:0;left:0;right:0;z-index:100;background:var(--bb-bg);border-top:1px solid var(--bb-border-soft);padding:0.5rem 1rem;text-align:center;font-size:0.75rem;color:var(--bb-fg-5);white-space:nowrap;">
+            <a href="https://bitback.pl" target="_blank" rel="noopener" style="color:var(--bb-accent-link);text-decoration:none;"><strong>bitback.pl</strong></a>
+            <span style="color:var(--bb-fg-8);margin:0 0.5rem;">|</span>Kod źródłowy na <a href="https://github.com/bitback/bitback.one" target="_blank" rel="noopener" style="color:var(--bb-accent-link);text-decoration:none;">GitHub</a>
         </div>
     </div>
 </body>
@@ -365,45 +366,45 @@ function show_expired(array $t, ?string $killedAt = null, ?string $expiredManual
 function view_css(): string {
     return '
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0a0a0a; color: #e0e0e0; min-height: 100vh; padding-bottom: 2.5rem; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bb-bg); color: var(--bb-fg-1); min-height: 100vh; padding-bottom: 2.5rem; }
         .header { text-align: center; padding: 2rem 1rem 1.5rem; }
-        .header h1 { font-size: 1.4rem; font-weight: 300; letter-spacing: 0.08em; color: #fff; }
+        .header h1 { font-size: 1.4rem; font-weight: 300; letter-spacing: 0.08em; color: var(--bb-fg); }
         .container { max-width: 700px; margin: 0 auto; padding: 0 1rem 3rem; }
-        .expired-banner { background: #1a1410; border: 1px solid #3a2a10; border-radius: 8px; padding: 0.7rem 1rem; margin-bottom: 1rem; font-size: 0.8rem; color: #d4922a; }
-        .error-banner { background: #1a1010; border: 1px solid #3a1010; border-radius: 8px; padding: 0.7rem 1rem; margin-bottom: 1rem; font-size: 0.8rem; color: #d44; }
-        .content-box { background: #111; border: 1px solid #1e1e1e; border-radius: 8px; padding: 1rem; font-family: "Consolas", "Monaco", "Courier New", monospace; font-size: 0.85rem; line-height: 1.7; white-space: pre-wrap; word-break: break-word; }
-        .s-text { color: #ddd; }
-        .s-text a { color: #6a9fd4; }
-        .s-secret { background: rgba(212, 146, 42, 0.15); color: #f0c060; border-radius: 3px; padding: 0.05em 0.2em; border-bottom: 2px solid rgba(212, 146, 42, 0.4); }
+        .expired-banner { background: #1a1410; border: 1px solid #3a2a10; border-radius: 8px; padding: 0.7rem 1rem; margin-bottom: 1rem; font-size: 0.8rem; color: var(--bb-secret-ink); }
+        .error-banner { background: #1a1010; border: 1px solid #3a1010; border-radius: 8px; padding: 0.7rem 1rem; margin-bottom: 1rem; font-size: 0.8rem; color: var(--bb-danger-light); }
+        .content-box { background: var(--bb-surface-1); border: 1px solid var(--bb-border); border-radius: 8px; padding: 1rem; font-family: "Consolas", "Monaco", "Courier New", monospace; font-size: 0.85rem; line-height: 1.7; white-space: pre-wrap; word-break: break-word; }
+        .s-text { color: var(--bb-fg-2); }
+        .s-text a { color: var(--bb-accent-link); }
+        .s-secret { background: rgba(212, 146, 42, 0.15); color: var(--bb-secret); border-radius: 3px; padding: 0.05em 0.2em; border-bottom: 2px solid rgba(212, 146, 42, 0.4); }
         .s-secret a { color: inherit; }
-        .s-masked { background: rgba(100, 100, 100, 0.2); color: #555; border-radius: 3px; padding: 0.05em 0.2em; letter-spacing: 0.1em; }
-        .loading { text-align: center; padding: 2rem; color: #555; font-size: 0.85rem; }
-        .loading .spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid #333; border-top-color: #888; border-radius: 50%; animation: spin 0.6s linear infinite; margin-right: 0.5rem; vertical-align: middle; }
+        .s-masked { background: rgba(100, 100, 100, 0.2); color: var(--bb-fg-5); border-radius: 3px; padding: 0.05em 0.2em; letter-spacing: 0.1em; }
+        .loading { text-align: center; padding: 2rem; color: var(--bb-fg-5); font-size: 0.85rem; }
+        .loading .spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid var(--bb-fg-7); border-top-color: var(--bb-fg-4); border-radius: 50%; animation: spin 0.6s linear infinite; margin-right: 0.5rem; vertical-align: middle; }
         @keyframes spin { to { transform: rotate(360deg); } }
-        .meta { margin-top: 1.2rem; display: flex; justify-content: space-between; align-items: flex-end; gap: 1rem; font-size: 0.72rem; color: #444; }
-        .meta-big { font-size: 1.6rem; font-weight: 200; color: #555; line-height: 1; }
-        .meta-big.warn { color: #d4922a; }
-        .meta-sub { font-size: 0.65rem; color: #333; margin-top: 0.15rem; }
-        .expire-info { background: #111; border: 1px solid #1e1e1e; border-radius: 8px; padding: 0.7rem 1rem; margin-top: 1rem; font-size: 0.75rem; color: #555; display: flex; justify-content: space-between; align-items: center; }
-        .expire-info .date { color: #888; }
-        .zt-badge { margin-top: 1.5rem; text-align: center; font-size: 0.65rem; color: #2a2a2a; }
-        .zt-badge span { color: #333; }
+        .meta { margin-top: 1.2rem; display: flex; justify-content: space-between; align-items: flex-end; gap: 1rem; font-size: 0.72rem; color: var(--bb-fg-6); }
+        .meta-big { font-size: 1.6rem; font-weight: 200; color: var(--bb-fg-5); line-height: 1; }
+        .meta-big.warn { color: var(--bb-secret-ink); }
+        .meta-sub { font-size: 0.65rem; color: var(--bb-fg-7); margin-top: 0.15rem; }
+        .expire-info { background: var(--bb-surface-1); border: 1px solid var(--bb-border); border-radius: 8px; padding: 0.7rem 1rem; margin-top: 1rem; font-size: 0.75rem; color: var(--bb-fg-5); display: flex; justify-content: space-between; align-items: center; }
+        .expire-info .date { color: var(--bb-fg-4); }
+        .zt-badge { margin-top: 1.5rem; text-align: center; font-size: 0.65rem; color: var(--bb-fg-8); }
+        .zt-badge span { color: var(--bb-fg-7); }
         .expire-now-wrap { margin-top: 1rem; display: flex; flex-direction: column; align-items: center; gap: 0.6rem; }
         .expire-now-confirm { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.65rem 1.5rem; border: 1.5px solid transparent; border-radius: 8px; transition: border-color 0.2s; cursor: pointer; font-size: 0.85rem; line-height: 1.2; box-sizing: border-box; }
-        .expire-now-confirm input[type="checkbox"] { accent-color: #d4922a; width: 16px; height: 16px; cursor: pointer; flex-shrink: 0; }
-        .expire-now-confirm label { color: #888; font-size: 0.85rem; cursor: pointer; user-select: none; line-height: 1.2; }
-        .expire-now-confirm.shake { border-color: #c0392b; animation: shakeBox 0.4s ease; }
+        .expire-now-confirm input[type="checkbox"] { accent-color: var(--bb-secret-ink); width: 16px; height: 16px; cursor: pointer; flex-shrink: 0; }
+        .expire-now-confirm label { color: var(--bb-fg-4); font-size: 0.85rem; cursor: pointer; user-select: none; line-height: 1.2; }
+        .expire-now-confirm.shake { border-color: var(--bb-danger); animation: shakeBox 0.4s ease; }
         @keyframes shakeBox { 0%,100% { transform: translateX(0); } 20%,60% { transform: translateX(-4px); } 40%,80% { transform: translateX(4px); } }
-        .expire-now-btn { background: rgba(212, 146, 42, 0.12); border: 1.5px solid #d4922a; color: #f0c060; font-size: 0.85rem; line-height: 1.2; padding: 0.65rem 1.5rem; border-radius: 8px; cursor: pointer; transition: all 0.15s; font-weight: 500; letter-spacing: 0.01em; box-sizing: border-box; }
-        .expire-now-btn:hover { background: rgba(212, 146, 42, 0.22); border-color: #f0c060; color: #ffe0a0; }
+        .expire-now-btn { background: rgba(212, 146, 42, 0.12); border: 1.5px solid var(--bb-secret-ink); color: var(--bb-secret); font-size: 0.85rem; line-height: 1.2; padding: 0.65rem 1.5rem; border-radius: 8px; cursor: pointer; transition: all 0.15s; font-weight: 500; letter-spacing: 0.01em; box-sizing: border-box; }
+        .expire-now-btn:hover { background: rgba(212, 146, 42, 0.22); border-color: var(--bb-secret); color: #ffe0a0; }
         .expire-now-btn:disabled { opacity: 0.4; cursor: default; }
         .expire-now-btn.done { background: rgba(74, 138, 74, 0.12); border-color: #4a8a4a; color: #6aba6a; }
-        .expire-now-btn.kill { background: rgba(192, 57, 43, 0.10); border-color: #8b3a3a; color: #c0392b; font-size: 0.75rem; padding: 0.45rem 1.2rem; }
-        .expire-now-btn.kill:hover { background: rgba(192, 57, 43, 0.20); border-color: #c0392b; color: #e74c3c; }
-        .site-footer { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; background: #0a0a0a; border-top: 1px solid #1a1a1a; padding: 0.5rem 1rem; text-align: center; font-size: 0.75rem; color: #555; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .site-footer a { color: #6a9fd4; text-decoration: none; }
+        .expire-now-btn.kill { background: rgba(192, 57, 43, 0.10); border-color: #8b3a3a; color: var(--bb-danger); font-size: 0.75rem; padding: 0.45rem 1.2rem; }
+        .expire-now-btn.kill:hover { background: rgba(192, 57, 43, 0.20); border-color: var(--bb-danger); color: var(--bb-danger-light); }
+        .site-footer { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; background: var(--bb-bg); border-top: 1px solid var(--bb-border-soft); padding: 0.5rem 1rem; text-align: center; font-size: 0.75rem; color: var(--bb-fg-5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .site-footer a { color: var(--bb-accent-link); text-decoration: none; }
         .site-footer a:hover { color: #8abcf0; text-decoration: underline; }
-        .site-footer .sep { color: #2a2a2a; margin: 0 0.5rem; }
+        .site-footer .sep { color: var(--bb-fg-8); margin: 0 0.5rem; }
     ';
 }
 
@@ -590,7 +591,7 @@ function show_view_encrypted(array $t, array $data, string $encText, ?string $en
         <div class="expired-banner">
             <?= htmlspecialchars($t['secrets_expired']) ?> — <?= htmlspecialchars($t['secrets_expired_info']) ?>
             <?php if (isset($data['_expired_manually'])): ?>
-            <br><small style="color:#d4922a;"><?= $lang === 'pl'
+            <br><small style="color:var(--bb-secret-ink);"><?= $lang === 'pl'
                 ? 'Ręcznie wygaszone dnia ' . substr($data['_expired_manually'], 0, 10) . '.'
                 : 'Manually expired on ' . substr($data['_expired_manually'], 0, 10) . '.' ?></small>
             <?php endif; ?>
@@ -724,7 +725,7 @@ function show_view_encrypted(array $t, array $data, string $encText, ?string $en
         return escapedHtml.replace(
             /https?:\/\/[^\s<>'"]+/g,
             function(match) {
-                return '<a href="' + match + '" target="_blank" rel="noopener" style="color:#6a9fd4;">' + match + '</a>';
+                return '<a href="' + match + '" target="_blank" rel="noopener" style="color:var(--bb-accent-link);">' + match + '</a>';
             }
         );
     }
@@ -800,7 +801,7 @@ function show_view_encrypted_v2(array $t, array $data, string $encryptedPayload,
         <div class="expired-banner">
             <?= htmlspecialchars($t['secrets_expired']) ?> — <?= htmlspecialchars($t['secrets_expired_info']) ?>
             <?php if (isset($data['_expired_manually'])): ?>
-            <br><small style="color:#d4922a;"><?= $lang === 'pl'
+            <br><small style="color:var(--bb-secret-ink);"><?= $lang === 'pl'
                 ? 'Ręcznie wygaszone dnia ' . substr($data['_expired_manually'], 0, 10) . '.'
                 : 'Manually expired on ' . substr($data['_expired_manually'], 0, 10) . '.' ?></small>
             <?php endif; ?>
@@ -854,7 +855,7 @@ function show_view_encrypted_v2(array $t, array $data, string $encryptedPayload,
     function escapeHtml(str) { const d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
     function linkify(escapedHtml) {
         return escapedHtml.replace(/https?:\/\/[^\s<>'"]+/g, function(m) {
-            return '<a href="' + m + '" target="_blank" rel="noopener" style="color:#6a9fd4;">' + m + '</a>';
+            return '<a href="' + m + '" target="_blank" rel="noopener" style="color:var(--bb-accent-link);">' + m + '</a>';
         });
     }
     async function expireNow(btn, action) {
@@ -905,7 +906,7 @@ function show_view_legacy(array $t, array $data, array $sections, bool $expired)
         <div class="expired-banner">
             <?= htmlspecialchars($t['secrets_expired']) ?> — <?= htmlspecialchars($t['secrets_expired_info']) ?>
             <?php if (isset($data['_expired_manually'])): ?>
-            <br><small style="color:#d4922a;"><?= $ll === 'pl'
+            <br><small style="color:var(--bb-secret-ink);"><?= $ll === 'pl'
                 ? 'Ręcznie wygaszone dnia ' . substr($data['_expired_manually'], 0, 10) . '.'
                 : 'Manually expired on ' . substr($data['_expired_manually'], 0, 10) . '.' ?></small>
             <?php endif; ?>
