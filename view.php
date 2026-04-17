@@ -240,6 +240,8 @@ function show_password_form(array $t, string $slug, bool $wrongPassword = false)
         this.action = '/' + <?= json_encode($slug) ?> + window.location.hash;
     });
     </script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons();</script>
 </body>
 </html><?php
     exit;
@@ -295,7 +297,7 @@ function show_not_found(array $t): void {
 </head>
 <body>
     <div class="box">
-        <div class="ghost">👻</div>
+        <div class="ghost"><i data-lucide="ghost"></i></div>
         <div class="code">404</div>
         <h1><?= htmlspecialchars($t['not_found_title']) ?></h1>
         <div class="sub"><?= htmlspecialchars($t['not_found_sub']) ?></div>
@@ -306,6 +308,8 @@ function show_not_found(array $t): void {
             <span style="color:var(--bb-fg-8);margin:0 0.5rem;">|</span>Kod źródłowy na <a href="https://github.com/bitback/bitback.one" target="_blank" rel="noopener" style="color:var(--bb-accent-link);text-decoration:none;">GitHub</a>
         </div>
     </div>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons();</script>
 </body>
 </html><?php
     exit;
@@ -361,6 +365,8 @@ function show_expired(array $t, ?string $killedAt = null, ?string $expiredManual
             <span style="color:var(--bb-fg-8);margin:0 0.5rem;">|</span>Kod źródłowy na <a href="https://github.com/bitback/bitback.one" target="_blank" rel="noopener" style="color:var(--bb-accent-link);text-decoration:none;">GitHub</a>
         </div>
     </div>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons();</script>
 </body>
 </html><?php
     exit;
@@ -471,7 +477,7 @@ function view_meta_html(array $t, array $data, bool $expired): string {
     $ztText = $lang === 'pl'
         ? 'Zero-trust: deszyfrowanie odbyło się w Twojej przeglądarce. Serwer nie miał dostępu do klucza.'
         : 'Zero-trust: decryption happened in your browser. The server never had access to the key.';
-    $html .= '<div class="zt-badge"><span>&#128274;</span> ' . $ztText . '</div>';
+    $html .= '<div class="zt-badge"><i data-lucide="lock"></i> ' . $ztText . '</div>';
 
     // Przyciski natychmiastowego wygaszenia/ubicia — tylko gdy sekrety aktywne i nie jest to ostatni widok
     global $lastView;
@@ -776,6 +782,8 @@ function show_view_encrypted(array $t, array $data, string $encText, ?string $en
         }
     }
     </script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons();</script>
 </body>
 </html><?php
 }
@@ -876,6 +884,8 @@ function show_view_encrypted_v2(array $t, array $data, string $encryptedPayload,
         } catch(e) { btn.textContent = btn.dataset.error; document.querySelectorAll('.expire-now-btn').forEach(b => b.disabled = false); cb.disabled = false; }
     }
     </script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons();</script>
 </body>
 </html><?php
 }
@@ -945,6 +955,8 @@ function show_view_legacy(array $t, array $data, array $sections, bool $expired)
         } catch(e) { btn.textContent = btn.dataset.error; document.querySelectorAll('.expire-now-btn').forEach(b => b.disabled = false); cb.disabled = false; }
     }
     </script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons();</script>
 </body>
 </html><?php
 }

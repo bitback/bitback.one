@@ -66,7 +66,7 @@ http_response_code(404);
 </head>
 <body>
     <div class="box">
-        <div class="ghost">👻</div>
+        <div class="ghost"><i data-lucide="ghost"></i></div>
         <div class="code">404</div>
         <h1><?= htmlspecialchars($t['not_found_title']) ?></h1>
         <div class="sub"><?= htmlspecialchars($t['not_found_sub']) ?></div>
@@ -77,5 +77,7 @@ http_response_code(404);
             <span style="color:var(--bb-fg-8);margin:0 0.5rem;">|</span>Kod źródłowy na <a href="https://github.com/bitback/bitback.one" target="_blank" rel="noopener" style="color:var(--bb-accent-link);text-decoration:none;">GitHub</a>
         </div>
     </div>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons();</script>
 </body>
 </html>

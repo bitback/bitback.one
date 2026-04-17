@@ -463,17 +463,17 @@ $t = get_strings($lang);
     <div class="trust-box">
         <div class="trust-grid">
             <div class="trust-item">
-                <div class="trust-icon">&#128274;</div>
+                <div class="trust-icon"><i data-lucide="lock"></i></div>
                 <div class="trust-title"><?= htmlspecialchars($t['trust1_title']) ?></div>
                 <div class="trust-desc"><?= htmlspecialchars($t['trust1_desc']) ?></div>
             </div>
             <div class="trust-item">
-                <div class="trust-icon">&#128337;</div>
+                <div class="trust-icon"><i data-lucide="clock"></i></div>
                 <div class="trust-title"><?= htmlspecialchars($t['trust2_title']) ?></div>
                 <div class="trust-desc"><?= htmlspecialchars($t['trust2_desc']) ?></div>
             </div>
             <div class="trust-item">
-                <div class="trust-icon">&#128421;</div>
+                <div class="trust-icon"><i data-lucide="monitor"></i></div>
                 <div class="trust-title"><?= htmlspecialchars($t['trust3_title']) ?></div>
                 <div class="trust-desc"><?= htmlspecialchars($t['trust3_desc']) ?></div>
             </div>
@@ -494,7 +494,7 @@ $t = get_strings($lang);
                     <span class="hint-text"><?= $t['hint_text'] ?></span>
                 </div>
                 <div class="editor" id="editor" contenteditable="true" spellcheck="false"></div>
-                <button type="button" class="mark-secret-btn" onmousedown="event.preventDefault()" onclick="toggleSecret()">&#128274; <?= htmlspecialchars($t['mark_secret_btn']) ?></button>
+                <button type="button" class="mark-secret-btn" onmousedown="event.preventDefault()" onclick="toggleSecret()"><i data-lucide="lock"></i> <?= htmlspecialchars($t['mark_secret_btn']) ?></button>
 
                 <!-- podgląd pod edytorem -->
                 <div class="preview-section">
@@ -958,5 +958,7 @@ $t = get_strings($lang);
     updatePreview();
 </script>
 
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons();</script>
 </body>
 </html>

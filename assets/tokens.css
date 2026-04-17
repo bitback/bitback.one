@@ -96,6 +96,21 @@
    Komponenty bazowe
    ========================================================================= */
 
+/* Lucide icons - domyslne rozmiary i zachowanie */
+[data-lucide] {
+  width: 1em;
+  height: 1em;
+  stroke-width: 1.5;
+  vertical-align: -0.15em;
+  display: inline-block;
+}
+/* Trust bar icons - wieksze, 22px */
+.trust-icon [data-lucide] { width: 22px; height: 22px; vertical-align: middle; }
+/* Ghost na 404 i expired - duzy */
+.ghost [data-lucide] { width: 64px; height: 64px; stroke-width: 1.2; }
+/* Zt-badge kłódka - mała */
+.zt-badge [data-lucide] { width: 10px; height: 10px; vertical-align: -0.1em; }
+
 /* Logo - uzywane w naglowkach stron */
 .bb-logo {
   margin: 0;
