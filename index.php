@@ -365,6 +365,7 @@ $t = get_strings($lang);
             transform: translateY(0);
             filter: brightness(0.95);
         }
+        .mark-secret-btn [data-lucide] { width: 18px; height: 18px; stroke-width: 2; }
 
         /* ====== PODGLĄD WYGAŚNIĘCIA ====== */
         .preview-section {
