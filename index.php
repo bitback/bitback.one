@@ -84,14 +84,15 @@ $t = get_strings($lang);
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.06em;
-            color: var(--bb-fg-4);
+            color: #b8c5d8; /* cool tinted, dostrojony do aurora cool tla */
             margin-bottom: 0.25rem;
         }
         .trust-desc {
             font-size: 0.7rem;
-            color: var(--bb-fg-6);
+            color: #8090a8; /* cool tinted, jasniejszy niz poprzednio */
             line-height: 1.5;
         }
+        .trust-box .trust-icon [data-lucide] { color: #b8c5d8; }
 
         /* ====== HINT BAR ====== */
         .hint-bar {
