@@ -129,3 +129,47 @@
 @media (max-width: 480px) {
   .bb-logo img { height: 36px; }
 }
+
+/* =========================================================================
+   Globalne style strony (etap 5 polish)
+   ========================================================================= */
+
+/* Zloty highlight przy zaznaczaniu tekstu - echo brand color */
+::selection {
+  background: rgba(212, 146, 42, 0.35);
+  color: var(--bb-fg);
+}
+::-moz-selection {
+  background: rgba(212, 146, 42, 0.35);
+  color: var(--bb-fg);
+}
+
+/* Spojny scrollbar - ciemny, dyskretny */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bb-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--bb-surface-3);
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--bb-border-hover);
+}
+
+/* Focus ring dla focusowalnych elementow (klawiatura) - ten sam outline system */
+:focus-visible {
+  outline: 2px solid var(--bb-accent);
+  outline-offset: 2px;
+}
+/* Ale: inputy, buttony i linki z wlasnym focusem (np. border change) - bez outline */
+input:focus-visible,
+button:focus-visible,
+a:focus-visible,
+.antibot-opt:focus-visible,
+[contenteditable]:focus-visible {
+  outline: none;
+}
