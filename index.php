@@ -65,12 +65,12 @@ $t = get_strings($lang);
             background: var(--bb-surface-trust);
             border: 1px solid var(--bb-border-soft);
             border-radius: 10px;
-            padding: 1.2rem 1.5rem;
+            padding: 1rem;
         }
         .trust-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 1.2rem;
+            gap: 1rem;
         }
         @media (max-width: 768px) {
             .trust-grid { grid-template-columns: 1fr; }
@@ -169,7 +169,7 @@ $t = get_strings($lang);
             cursor: text;
             transition: border-color 0.15s;
         }
-        .editor:focus { border-color: var(--bb-fg-7); }
+        .editor:focus { border-color: var(--bb-accent); box-shadow: 0 0 0 3px rgba(58, 123, 213, 0.12); }
         .editor:empty::before {
             content: '<?= str_replace("'", "\\'", str_replace("\n", "\\A", $t['editor_placeholder'])) ?>';
             color: var(--bb-fg-7);
@@ -230,7 +230,7 @@ $t = get_strings($lang);
             text-align: center;
             outline: none;
         }
-        .config-input:focus { border-color: var(--bb-fg-6); }
+        .config-input:focus { border-color: var(--bb-accent); box-shadow: 0 0 0 3px rgba(58, 123, 213, 0.12); }
 
         .config-unit {
             font-size: 0.72rem;
@@ -286,46 +286,85 @@ $t = get_strings($lang);
             pointer-events: none;
         }
 
-        /* przycisk generuj */
+        /* przycisk generuj - diagonal gradient + gold hairline leading edge + hover halo */
         .generate-btn {
+            position: relative;
             width: 100%;
             padding: 0.75rem;
             margin-top: 1rem;
             border-radius: 6px;
-            border: none;
-            background: var(--bb-accent);
+            border: 1px solid transparent;
+            background: linear-gradient(135deg, #4a8be8 0%, #3574d0 45%, #2862b8 100%);
+            box-shadow:
+              inset 0 0 0 1px rgba(255,255,255,0.12),
+              inset 1px 0 0 rgba(240,192,96,0.55),
+              inset 0 -1px 0 rgba(0,0,0,0.25);
             color: var(--bb-fg);
             font-size: 0.9rem;
             font-weight: 500;
             cursor: pointer;
-            transition: background 0.15s;
+            transition: transform 160ms var(--bb-ease), filter 160ms var(--bb-ease);
             letter-spacing: 0.02em;
+            isolation: isolate;
         }
-        .generate-btn:hover { background: var(--bb-accent-hover); }
-        .generate-btn:active { background: var(--bb-accent-press); }
+        .generate-btn::after {
+            content: "";
+            position: absolute;
+            inset: -4px;
+            border-radius: 10px;
+            background: var(--bb-accent);
+            filter: blur(10px);
+            opacity: 0;
+            z-index: -1;
+            transition: opacity 220ms var(--bb-ease);
+        }
+        .generate-btn:hover { transform: translateY(-1px); }
+        .generate-btn:hover::after { opacity: 0.28; }
+        .generate-btn:active { transform: translateY(0); filter: brightness(0.95); }
+        .generate-btn:active::after { opacity: 0.15; }
+        .generate-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .generate-btn:disabled::after { opacity: 0; }
 
-        /* przycisk oznaczania poufnych */
+        /* przycisk oznaczania poufnych - diagonal gold gradient z dark text */
         .mark-secret-btn {
-            display: block;
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5em;
             width: 270px;
             padding: 0.6rem 1rem;
             margin-top: 0.6rem;
             border-radius: 6px;
-            border: 1px solid rgba(212, 146, 42, 0.4);
-            background: rgba(212, 146, 42, 0.12);
-            color: var(--bb-secret);
+            border: 1px solid rgba(240,192,96,0.7);
+            background: linear-gradient(135deg, #ffe48a 0%, #f0c060 48%, #c8902e 100%);
+            box-shadow:
+              inset 0 0 0 1px rgba(255,240,200,0.3),
+              inset 0 -8px 12px -8px rgba(80,50,10,0.35);
+            color: #2a1d08;
             font-size: 0.82rem;
             font-weight: 500;
             cursor: pointer;
-            transition: background 0.15s, border-color 0.15s;
+            transition: transform 160ms var(--bb-ease), filter 160ms var(--bb-ease);
             letter-spacing: 0.02em;
+            justify-content: center;
+            isolation: isolate;
         }
-        .mark-secret-btn:hover {
-            background: rgba(212, 146, 42, 0.22);
-            border-color: rgba(212, 146, 42, 0.6);
+        .mark-secret-btn::after {
+            content: "";
+            position: absolute;
+            inset: -4px;
+            border-radius: 10px;
+            background: var(--bb-secret);
+            filter: blur(10px);
+            opacity: 0;
+            z-index: -1;
+            transition: opacity 220ms var(--bb-ease);
         }
+        .mark-secret-btn:hover { transform: translateY(-1px); }
+        .mark-secret-btn:hover::after { opacity: 0.28; }
         .mark-secret-btn:active {
-            background: rgba(212, 146, 42, 0.30);
+            transform: translateY(0);
+            filter: brightness(0.95);
         }
 
         /* ====== PODGLĄD WYGAŚNIĘCIA ====== */

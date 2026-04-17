@@ -207,14 +207,26 @@ function show_password_form(array $t, string $slug, bool $wrongPassword = false)
             color: var(--bb-fg); font-size: 0.9rem; outline: none; text-align: center;
             font-family: var(--bb-font-mono);
         }
-        .pwd-input:focus { border-color: var(--bb-fg-6); }
+        .pwd-input:focus { border-color: var(--bb-accent); box-shadow: 0 0 0 3px rgba(58, 123, 213, 0.12); }
         .pwd-btn {
-            width: 100%; padding: 0.6rem; margin-top: 0.7rem;
-            border-radius: 6px; border: none;
-            background: var(--bb-accent); color: var(--bb-fg); font-size: 0.85rem;
-            cursor: pointer; transition: background 0.15s;
+            position: relative; width: 100%; padding: 0.6rem; margin-top: 0.7rem;
+            border-radius: 6px; border: 1px solid transparent;
+            background: linear-gradient(135deg, #4a8be8 0%, #3574d0 45%, #2862b8 100%);
+            box-shadow:
+              inset 0 0 0 1px rgba(255,255,255,0.12),
+              inset 1px 0 0 rgba(240,192,96,0.55),
+              inset 0 -1px 0 rgba(0,0,0,0.25);
+            color: var(--bb-fg); font-size: 0.85rem;
+            cursor: pointer; transition: transform 160ms var(--bb-ease);
+            isolation: isolate;
         }
-        .pwd-btn:hover { background: var(--bb-accent-hover); }
+        .pwd-btn::after {
+            content: ""; position: absolute; inset: -4px; border-radius: 10px;
+            background: var(--bb-accent); filter: blur(10px); opacity: 0; z-index: -1;
+            transition: opacity 220ms var(--bb-ease);
+        }
+        .pwd-btn:hover { transform: translateY(-1px); }
+        .pwd-btn:hover::after { opacity: 0.28; }
         .error { color: var(--bb-danger-light); font-size: 0.75rem; margin-top: 0.5rem; }
         .logo { color: var(--bb-fg-7); font-size: 0.75rem; margin-top: 2rem; letter-spacing: 0.1em; }
     </style>

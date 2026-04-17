@@ -104,8 +104,8 @@
   vertical-align: -0.15em;
   display: inline-block;
 }
-/* Trust bar icons - wieksze, 22px */
-.trust-icon [data-lucide] { width: 22px; height: 22px; vertical-align: middle; }
+/* Trust bar icons - 18px zgodnie z design spec */
+.trust-icon [data-lucide] { width: 18px; height: 18px; stroke-width: 1.6; color: var(--bb-fg-4); vertical-align: middle; }
 /* Ghost na 404 i expired - duzy */
 .ghost [data-lucide] { width: 64px; height: 64px; stroke-width: 1.2; }
 /* Zt-badge kłódka - mała */
