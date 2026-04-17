@@ -91,3 +91,26 @@
   --bb-dur-fast: 120ms;
   --bb-dur-base: 150ms;
 }
+
+/* =========================================================================
+   Komponenty bazowe
+   ========================================================================= */
+
+/* Logo - uzywane w naglowkach stron */
+.bb-logo {
+  margin: 0;
+  line-height: 0;
+}
+.bb-logo a {
+  display: inline-block;
+  text-decoration: none;
+  line-height: 0;
+}
+.bb-logo img {
+  height: 44px;
+  width: auto;
+  display: block;
+}
+@media (max-width: 480px) {
+  .bb-logo img { height: 36px; }
+}

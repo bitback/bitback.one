@@ -9,6 +9,7 @@ $t = get_strings($lang);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
     <title><?= htmlspecialchars($t['meta_title']) ?></title>
     <!-- Open Graph -->
     <meta property="og:type" content="website">
@@ -454,7 +455,7 @@ $t = get_strings($lang);
 <body>
 
 <div class="header">
-    <h1><a href="https://bitback.one" style="color:inherit;text-decoration:none;">bitback.one</a></h1>
+    <h1 class="bb-logo"><a href="https://bitback.one"><img src="/assets/logo.svg" alt="bitback.one"></a></h1>
     <p><?= htmlspecialchars($t['subtitle']) ?></p>
 </div>
 

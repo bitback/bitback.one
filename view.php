@@ -174,6 +174,7 @@ function og_view_meta(array $t): void {
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="<?= htmlspecialchars($t['og_view_title']) ?>">
     <meta name="twitter:description" content="<?= htmlspecialchars($t['og_view_description']) ?>">
+    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -219,7 +220,7 @@ function show_password_form(array $t, string $slug, bool $wrongPassword = false)
 </head>
 <body>
     <div class="box">
-        <h1><a href="/" style="color:inherit;text-decoration:none;"><?= htmlspecialchars($t['title']) ?></a></h1>
+        <h1 class="bb-logo"><a href="/"><img src="/assets/logo.svg" alt="<?= htmlspecialchars($t['title']) ?>"></a></h1>
         <div class="sub"><?= htmlspecialchars($t['password_required'] ?? 'This link is password protected') ?></div>
         <form method="POST" action="/<?= htmlspecialchars($slug) ?>" id="pwdForm">
             <input type="password" name="password" class="pwd-input" placeholder="<?= htmlspecialchars($t['password_placeholder'] ?? 'Enter password') ?>" autofocus required>
@@ -588,7 +589,7 @@ function show_view_encrypted(array $t, array $data, string $encText, ?string $en
     <style><?= view_css() ?></style>
 </head>
 <body>
-    <div class="header"><h1><a href="/" style="color:inherit;text-decoration:none;"><?= htmlspecialchars($t['title']) ?></a></h1></div>
+    <div class="header"><h1 class="bb-logo"><a href="/"><img src="/assets/logo.svg" alt="<?= htmlspecialchars($t['title']) ?>"></a></h1></div>
     <div class="container">
         <?php if ($expired): ?>
         <div class="expired-banner">
@@ -798,7 +799,7 @@ function show_view_encrypted_v2(array $t, array $data, string $encryptedPayload,
     <style><?= view_css() ?></style>
 </head>
 <body>
-    <div class="header"><h1><a href="/" style="color:inherit;text-decoration:none;"><?= htmlspecialchars($t['title']) ?></a></h1></div>
+    <div class="header"><h1 class="bb-logo"><a href="/"><img src="/assets/logo.svg" alt="<?= htmlspecialchars($t['title']) ?>"></a></h1></div>
     <div class="container">
         <?php if ($expired): ?>
         <div class="expired-banner">
@@ -903,7 +904,7 @@ function show_view_legacy(array $t, array $data, array $sections, bool $expired)
     <style><?= view_css() ?></style>
 </head>
 <body>
-    <div class="header"><h1><a href="/" style="color:inherit;text-decoration:none;"><?= htmlspecialchars($t['title']) ?></a></h1></div>
+    <div class="header"><h1 class="bb-logo"><a href="/"><img src="/assets/logo.svg" alt="<?= htmlspecialchars($t['title']) ?>"></a></h1></div>
     <div class="container">
         <?php if ($expired): $ll = detect_lang(); ?>
         <div class="expired-banner">
