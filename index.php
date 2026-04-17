@@ -409,8 +409,11 @@ $t = get_strings($lang);
             background: var(--bb-surface-2);
         }
         .preview-box {
-            background: var(--bb-surface-1);
-            border: 1px solid var(--bb-border);
+            background:
+                radial-gradient(70% 120% at 0% 0%, rgba(255,80,180,0.04) 0%, transparent 55%),
+                radial-gradient(80% 120% at 100% 100%, rgba(60,220,200,0.05) 0%, transparent 55%),
+                #0d0d12;
+            border: 1px solid #1a1a24;
             border-radius: 10px;
             padding: 0.8rem;
             font-family: var(--bb-font-mono);
