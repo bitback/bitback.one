@@ -150,6 +150,106 @@
   color: var(--bb-fg);
 }
 
+/* =========================================================================
+   Hero surfaces - radial spotlights (dla landing, result, trust)
+   Sygnaturowy gold-on-black + warianty: fresh/cool/hot
+   Uzywaj oszczednie, tylko na kontenerach wyroznionych
+   ========================================================================= */
+
+.bb-hero-gold {
+  position: relative;
+  background:
+    radial-gradient(120% 180% at 15% 120%, rgba(240,192,96,0.22) 0%, rgba(240,192,96,0) 55%),
+    radial-gradient(100% 140% at 95% -20%, rgba(255,220,140,0.12) 0%, rgba(255,220,140,0) 50%),
+    var(--bb-bg);
+  border: 1px solid #252018;
+}
+
+.bb-hero-fresh {
+  position: relative;
+  background:
+    radial-gradient(90% 160% at 20% 100%, rgba(120,200,120,0.18) 0%, rgba(120,200,120,0) 55%),
+    radial-gradient(110% 140% at 90% 0%, rgba(80,180,120,0.10) 0%, rgba(80,180,120,0) 55%),
+    #0a0f0a;
+  border: 1px solid #1a2a1a;
+}
+
+.bb-hero-cool {
+  position: relative;
+  background:
+    radial-gradient(80% 120% at 20% 100%, rgba(58,123,213,0.22) 0%, rgba(58,123,213,0) 55%),
+    radial-gradient(90% 120% at 100% 0%, rgba(160,120,220,0.12) 0%, rgba(160,120,220,0) 55%),
+    #0a0c14;
+  border: 1px solid #1a2030;
+}
+
+/* =========================================================================
+   Bajeranckie cards - 2 warstwy: radial color bloom + vertical gradient
+   + top inset highlight + gradient top line
+   ========================================================================= */
+.bb-card {
+  position: relative;
+  overflow: hidden;
+}
+.bb-card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.bb-card-default {
+  background:
+    radial-gradient(120% 140% at 0% 0%, rgba(255,255,255,0.025) 0%, rgba(255,255,255,0) 55%),
+    linear-gradient(180deg, #141414 0%, #0f0f0f 100%);
+  border: 1px solid var(--bb-border);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+}
+
+.bb-card-success {
+  background:
+    radial-gradient(140% 160% at 10% 120%, rgba(125,215,125,0.14) 0%, rgba(125,215,125,0) 55%),
+    linear-gradient(180deg, #0e1a0e 0%, #0a140a 100%);
+  border: 1px solid var(--bb-success-border);
+  box-shadow: inset 0 1px 0 rgba(160,230,160,0.06);
+}
+
+.bb-card-secret {
+  background:
+    radial-gradient(140% 170% at 110% 120%, rgba(240,192,96,0.16) 0%, rgba(240,192,96,0) 55%),
+    linear-gradient(180deg, rgba(240,192,96,0.06) 0%, rgba(240,192,96,0.02) 100%),
+    #0d0b08;
+  border: 1px solid rgba(240,192,96,0.35);
+  box-shadow: inset 0 1px 0 rgba(255,230,160,0.08);
+}
+
+.bb-card-accent {
+  background:
+    radial-gradient(120% 160% at 0% 100%, rgba(58,123,213,0.14) 0%, rgba(58,123,213,0) 55%),
+    linear-gradient(180deg, #0f1420 0%, #0b101a 100%);
+  border: 1px solid #1a2540;
+  box-shadow: inset 0 1px 0 rgba(120,170,240,0.06);
+}
+
+/* Subtelny gold glow w rogu body - sygnaturowy detal landingu */
+body.bb-landing::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 50vw;
+  height: 50vh;
+  background: radial-gradient(80% 100% at 100% 0%, rgba(240,192,96,0.06) 0%, rgba(240,192,96,0) 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+body.bb-landing > * { position: relative; z-index: 1; }
+
 /* Spojny scrollbar - ciemny, dyskretny */
 ::-webkit-scrollbar {
   width: 10px;

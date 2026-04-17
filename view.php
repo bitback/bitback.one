@@ -393,7 +393,7 @@ function view_css(): string {
         .header { text-align: center; padding: 2rem 1rem 1.5rem; }
         .header h1 { font-size: 1.4rem; font-weight: 300; letter-spacing: 0.08em; color: var(--bb-fg); }
         .container { max-width: 700px; margin: 0 auto; padding: 0 1rem 3rem; }
-        .expired-banner { background: #1a1410; border: 1px solid #3a2a10; border-radius: 8px; padding: 0.7rem 1rem; margin-bottom: 1rem; font-size: 0.8rem; color: var(--bb-secret-ink); }
+        .expired-banner { border-radius: 10px; padding: 0.7rem 1rem; margin-bottom: 1rem; font-size: 0.8rem; color: var(--bb-secret-ink); /* background i border z bb-card-secret */ }
         .error-banner { background: #1a1010; border: 1px solid #3a1010; border-radius: 8px; padding: 0.7rem 1rem; margin-bottom: 1rem; font-size: 0.8rem; color: var(--bb-danger-light); }
         .content-box { background: var(--bb-surface-1); border: 1px solid var(--bb-border); border-radius: 8px; padding: 1rem; font-family: var(--bb-font-mono); font-size: 0.85rem; line-height: 1.7; white-space: pre-wrap; word-break: break-word; }
         .s-text { color: var(--bb-fg-2); }
@@ -655,7 +655,7 @@ function show_view_encrypted(array $t, array $data, string $encText, ?string $en
     <div class="header"><?= render_logo($t['title'], '/') ?></div>
     <div class="container">
         <?php if ($expired): ?>
-        <div class="expired-banner">
+        <div class="expired-banner bb-card bb-card-secret">
             <?= htmlspecialchars($t['secrets_expired']) ?> — <?= htmlspecialchars($t['secrets_expired_info']) ?>
             <?php if (isset($data['_expired_manually'])): ?>
             <br><small style="color:var(--bb-secret-ink);"><?= $lang === 'pl'
@@ -867,7 +867,7 @@ function show_view_encrypted_v2(array $t, array $data, string $encryptedPayload,
     <div class="header"><?= render_logo($t['title'], '/') ?></div>
     <div class="container">
         <?php if ($expired): ?>
-        <div class="expired-banner">
+        <div class="expired-banner bb-card bb-card-secret">
             <?= htmlspecialchars($t['secrets_expired']) ?> — <?= htmlspecialchars($t['secrets_expired_info']) ?>
             <?php if (isset($data['_expired_manually'])): ?>
             <br><small style="color:var(--bb-secret-ink);"><?= $lang === 'pl'
@@ -974,7 +974,7 @@ function show_view_legacy(array $t, array $data, array $sections, bool $expired)
     <div class="header"><?= render_logo($t['title'], '/') ?></div>
     <div class="container">
         <?php if ($expired): $ll = detect_lang(); ?>
-        <div class="expired-banner">
+        <div class="expired-banner bb-card bb-card-secret">
             <?= htmlspecialchars($t['secrets_expired']) ?> — <?= htmlspecialchars($t['secrets_expired_info']) ?>
             <?php if (isset($data['_expired_manually'])): ?>
             <br><small style="color:var(--bb-secret-ink);"><?= $ll === 'pl'

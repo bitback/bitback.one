@@ -62,10 +62,9 @@ $t = get_strings($lang);
             padding: 0 1rem;
         }
         .trust-box {
-            background: var(--bb-surface-trust);
-            border: 1px solid var(--bb-border-soft);
             border-radius: 10px;
             padding: 1rem;
+            /* background i border z bb-card-default */
         }
         .trust-grid {
             display: grid;
@@ -432,10 +431,9 @@ $t = get_strings($lang);
         .result.show { display: block; }
 
         .result-box {
-            background: var(--bb-success-bg);
-            border: 1px solid var(--bb-success-border);
-            border-radius: 8px;
+            border-radius: 10px;
             padding: 0.8rem 1rem;
+            /* background i border z bb-card-success */
         }
         .result-label {
             font-size: 0.68rem;
@@ -506,7 +504,7 @@ $t = get_strings($lang);
 
     </style>
 </head>
-<body>
+<body class="bb-landing">
 
 <div class="header">
     <?= render_logo('bitback.one', 'https://bitback.one') ?>
@@ -514,7 +512,7 @@ $t = get_strings($lang);
 </div>
 
 <div class="trust">
-    <div class="trust-box">
+    <div class="trust-box bb-card bb-card-default">
         <div class="trust-grid">
             <div class="trust-item">
                 <div class="trust-icon"><i data-lucide="lock"></i></div>
@@ -613,7 +611,7 @@ $t = get_strings($lang);
     </form>
 
     <div class="result" id="result">
-        <div class="result-box">
+        <div class="result-box bb-card bb-card-success">
             <div class="result-label"><?= htmlspecialchars($t['your_link']) ?></div>
             <div class="result-link">
                 <input type="text" class="result-url" id="resultUrl" readonly>
