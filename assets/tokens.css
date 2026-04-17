@@ -127,13 +127,13 @@
   line-height: 0;
 }
 .bb-logo svg {
-  height: 32px !important;
+  height: 64px !important;
   width: auto;
   display: inline-block;
   vertical-align: middle;
 }
 @media (max-width: 480px) {
-  .bb-logo svg { height: 28px !important; }
+  .bb-logo svg { height: 56px !important; }
 }
 
 /* =========================================================================
