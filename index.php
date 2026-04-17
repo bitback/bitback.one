@@ -304,7 +304,7 @@ $t = get_strings($lang);
             background: linear-gradient(135deg, #5fe0d0 0%, #2fc0b0 48%, #0e9080 100%);
             box-shadow:
               inset 0 0 0 1px rgba(255,255,255,0.10),
-              inset 1px 0 0 rgba(255,80,180,0.55),
+              inset 1px 0 0 rgba(160,120,220,0.55),
               inset 0 -1px 0 rgba(0,0,0,0.25);
             color: #07272a;
             font-size: 0.9rem;
@@ -342,12 +342,12 @@ $t = get_strings($lang);
             padding: 0.6rem 1rem;
             margin-top: 0.6rem;
             border-radius: 6px;
-            border: 1px solid rgba(255,128,200,0.7);
-            background: linear-gradient(135deg, #ff80c8 0%, #e060a0 48%, #a03870 100%);
+            border: 1px solid rgba(120,140,220,0.6);
+            background: linear-gradient(135deg, #5aa0e8 0%, #7080d8 48%, #a078dc 100%);
             box-shadow:
-              inset 0 0 0 1px rgba(255,200,230,0.3),
-              inset 0 -8px 12px -8px rgba(60,10,40,0.45);
-            color: #2a0818;
+              inset 0 0 0 1px rgba(200,220,255,0.25),
+              inset 0 -8px 12px -8px rgba(20,20,60,0.45);
+            color: #fff;
             font-size: 0.82rem;
             font-weight: 500;
             cursor: pointer;
@@ -361,7 +361,7 @@ $t = get_strings($lang);
             position: absolute;
             inset: -4px;
             border-radius: 10px;
-            background: rgba(255,80,180,1);
+            background: rgba(90,160,232,1);
             filter: blur(10px);
             opacity: 0;
             z-index: -1;
