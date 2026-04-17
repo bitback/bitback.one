@@ -515,7 +515,7 @@ $t = get_strings($lang);
 </div>
 
 <div class="trust">
-    <div class="trust-box bb-card bb-card-default">
+    <div class="trust-box bb-card bb-hero-gold">
         <div class="trust-grid">
             <div class="trust-item">
                 <div class="trust-icon"><i data-lucide="lock"></i></div>
