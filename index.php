@@ -194,8 +194,9 @@ $t = get_strings($lang);
         .config-panel {
             background: var(--bb-surface-1);
             border: 1px solid var(--bb-border);
-            border-radius: 8px;
+            border-radius: 10px;
             padding: 1rem;
+            box-shadow: var(--bb-shadow-sm);
         }
 
         .config-group {
@@ -250,7 +251,7 @@ $t = get_strings($lang);
         }
         .antibot-options {
             display: flex;
-            gap: 0.4rem;
+            gap: 0.5rem;
         }
         .antibot-opt {
             flex: 1;
@@ -400,7 +401,7 @@ $t = get_strings($lang);
         .preview-box {
             background: var(--bb-surface-1);
             border: 1px solid var(--bb-border);
-            border-radius: 8px;
+            border-radius: 10px;
             padding: 0.8rem;
             font-family: var(--bb-font-mono);
             font-size: 0.85rem;
@@ -408,6 +409,7 @@ $t = get_strings($lang);
             white-space: pre-wrap;
             word-break: break-word;
             min-height: 60px;
+            box-shadow: var(--bb-shadow-sm);
         }
         .preview-box .masked {
             background: rgba(100, 100, 100, 0.2);

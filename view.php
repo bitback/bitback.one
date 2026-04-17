@@ -394,7 +394,7 @@ function view_css(): string {
         .header h1 { font-size: 1.4rem; font-weight: 300; letter-spacing: 0.08em; color: var(--bb-fg); }
         .container { max-width: 700px; margin: 0 auto; padding: 0 1rem 3rem; }
         .expired-banner { border-radius: 10px; padding: 0.7rem 1rem; margin-bottom: 1rem; font-size: 0.8rem; color: var(--bb-secret-ink); /* background i border z bb-card-secret */ }
-        .error-banner { background: #1a1010; border: 1px solid #3a1010; border-radius: 8px; padding: 0.7rem 1rem; margin-bottom: 1rem; font-size: 0.8rem; color: var(--bb-danger-light); }
+        .error-banner { background: var(--bb-danger-bg); border: 1px solid var(--bb-danger-border); border-radius: 10px; padding: 0.7rem 1rem; margin-bottom: 1rem; font-size: 0.8rem; color: var(--bb-danger-light); }
         .content-box { background: var(--bb-surface-1); border: 1px solid var(--bb-border); border-radius: 8px; padding: 1rem; font-family: var(--bb-font-mono); font-size: 0.85rem; line-height: 1.7; white-space: pre-wrap; word-break: break-word; }
         .s-text { color: var(--bb-fg-2); }
         .s-text a { color: var(--bb-accent-link); }
@@ -405,7 +405,7 @@ function view_css(): string {
         .loading .spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid var(--bb-fg-7); border-top-color: var(--bb-fg-4); border-radius: 50%; animation: spin 0.6s linear infinite; margin-right: 0.5rem; vertical-align: middle; }
         @keyframes spin { to { transform: rotate(360deg); } }
         .meta { margin-top: 1.2rem; display: flex; justify-content: space-between; align-items: flex-end; gap: 1rem; font-size: 0.72rem; color: var(--bb-fg-6); }
-        .meta-big { font-size: 1.6rem; font-weight: 200; color: var(--bb-fg-5); line-height: 1; }
+        .meta-big { font-size: 2rem; font-weight: 200; color: var(--bb-fg-5); line-height: 1; }
         .meta-big.warn { color: var(--bb-secret-ink); }
         .meta-sub { font-size: 0.65rem; color: var(--bb-fg-7); margin-top: 0.15rem; }
         .expire-info { background: var(--bb-surface-1); border: 1px solid var(--bb-border); border-radius: 8px; padding: 0.7rem 1rem; margin-top: 1rem; font-size: 0.75rem; color: var(--bb-fg-5); display: flex; justify-content: space-between; align-items: center; }

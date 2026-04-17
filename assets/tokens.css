@@ -66,6 +66,23 @@
   /* --- Danger (red) --- */
   --bb-danger:       #c0392b;
   --bb-danger-light: #e74c3c;
+  --bb-danger-ink:   #8b3a3a;
+  --bb-danger-bg:    #1a1010;
+  --bb-danger-border:#3a1010;
+
+  /* --- Warn (alias for secret) --- */
+  --bb-warn:         var(--bb-secret);
+  --bb-warn-ink:     var(--bb-secret-ink);
+
+  /* --- Mask (expired placeholder) --- */
+  --bb-mask-bg:      rgba(100, 100, 100, 0.2);
+  --bb-mask-fg:      #555;
+
+  /* --- Shadows (sparingly) --- */
+  --bb-shadow-sm:    0 1px 2px rgba(0,0,0,0.6);
+  --bb-shadow-md:    0 4px 12px rgba(0,0,0,0.55), 0 1px 2px rgba(0,0,0,0.6);
+  --bb-shadow-glow-accent: 0 0 0 1px rgba(58,123,213,0.25), 0 8px 24px rgba(58,123,213,0.12);
+  --bb-shadow-glow-secret: 0 0 0 1px rgba(240,192,96,0.28), 0 8px 24px rgba(240,192,96,0.12);
 
   /* --- Fonts ---
      Geist + Geist Mono laduja sie z Google Fonts przez <link> w <head>.
