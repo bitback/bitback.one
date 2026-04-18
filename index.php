@@ -50,10 +50,7 @@ $t = get_strings($lang);
             color: var(--bb-fg);
         }
         .header p {
-            background: linear-gradient(135deg, #2fc0b0 0%, #5aa0e8 50%, #a078dc 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
+            color: var(--bb-fg);
             font-size: 0.9rem;
             font-weight: 500;
             letter-spacing: 0.02em;
