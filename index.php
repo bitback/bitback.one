@@ -76,7 +76,15 @@ $t = get_strings($lang);
         @media (max-width: 768px) {
             .trust-grid { grid-template-columns: 1fr; }
         }
-        .trust-item { }
+        .trust-item {
+            padding: 0.4rem;
+            border-radius: 6px;
+            transition: background 220ms var(--bb-ease), transform 220ms var(--bb-ease);
+        }
+        .trust-item:hover {
+            background: rgba(120,140,200,0.06);
+            transform: translateY(-1px);
+        }
         .trust-icon {
             font-size: 1.1rem;
             margin-bottom: 0.3rem;
@@ -96,13 +104,10 @@ $t = get_strings($lang);
         }
         .trust-box .trust-icon [data-lucide] { color: #b8c5d8; }
 
-        /* ====== HINT BAR (cyber delikatny) ====== */
+        /* ====== HINT BAR ====== */
         .hint-bar {
-            background:
-                radial-gradient(80% 150% at 0% 50%, rgba(255,80,180,0.05) 0%, transparent 55%),
-                radial-gradient(80% 150% at 100% 50%, rgba(60,220,200,0.07) 0%, transparent 55%),
-                #0a0a0a;
-            border: 1px solid #1a1a24;
+            background: #0d0d10;
+            border: 1px solid #1c1c22;
             border-radius: 8px;
             padding: 0.6rem 0.8rem;
             margin-bottom: 0.6rem;
@@ -110,21 +115,21 @@ $t = get_strings($lang);
             align-items: center;
             gap: 0.6rem;
             font-size: 0.75rem;
-            color: #9aa0b0;
+            color: var(--bb-fg-4);
         }
         .hint-bar kbd {
             display: inline-block;
             padding: 0.15em 0.5em;
-            background: #0e1a1e;
-            border: 1px solid rgba(60,220,200,0.3);
+            background: #14141c;
+            border: 1px solid #2a2a36;
             border-radius: 4px;
             font-family: var(--bb-font-mono);
             font-size: 0.8rem;
-            color: #6fd9c8;
+            color: #c8d0e8;
             white-space: nowrap;
         }
-        .hint-bar .hint-text { color: #9aa0b0; }
-        .hint-bar .hint-text strong { color: #6fd9c8; font-weight: 500; }
+        .hint-bar .hint-text { color: var(--bb-fg-4); }
+        .hint-bar .hint-text strong { color: #c8d0e8; font-weight: 500; }
 
         .main {
             max-width: 1100px;
@@ -156,16 +161,13 @@ $t = get_strings($lang);
 
         /* placeholder edytora */
 
-        /* edytor contenteditable - delikatny cyber gradient */
+        /* edytor contenteditable - czysty dark, akcent przez focus i secret highlight */
         .editor {
             width: 100%;
             min-height: 220px;
             padding: 0.8rem;
-            background:
-                radial-gradient(60% 100% at 0% 0%, rgba(255,80,180,0.04) 0%, transparent 55%),
-                radial-gradient(60% 100% at 100% 100%, rgba(60,220,200,0.05) 0%, transparent 55%),
-                #0a0a0f;
-            border: 1px solid #1a1a24;
+            background: #0d0d10;
+            border: 1px solid #1c1c22;
             border-radius: 10px;
             color: var(--bb-fg-2);
             font-family: var(--bb-font-mono);
@@ -201,11 +203,8 @@ $t = get_strings($lang);
         }
 
         .config-panel {
-            background:
-                radial-gradient(70% 120% at 0% 0%, rgba(255,80,180,0.04) 0%, transparent 55%),
-                radial-gradient(80% 120% at 100% 100%, rgba(60,220,200,0.05) 0%, transparent 55%),
-                #0d0d12;
-            border: 1px solid #1a1a24;
+            background: #0d0d10;
+            border: 1px solid #1c1c22;
             border-radius: 10px;
             padding: 1rem;
             box-shadow: var(--bb-shadow-sm);
@@ -334,8 +333,20 @@ $t = get_strings($lang);
         .generate-btn:hover::after { opacity: 0.28; }
         .generate-btn:active { transform: translateY(0); filter: brightness(0.95); }
         .generate-btn:active::after { opacity: 0.15; }
-        .generate-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .generate-btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
         .generate-btn:disabled::after { opacity: 0; }
+        .generate-btn .spinner {
+            display: inline-block;
+            width: 0.9em;
+            height: 0.9em;
+            border: 2px solid rgba(255,255,255,0.25);
+            border-top-color: var(--bb-fg);
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            vertical-align: -0.15em;
+            margin-right: 0.5em;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
         /* przycisk oznaczania poufnych - diagonal gold gradient z dark text */
         .mark-secret-btn {
@@ -347,12 +358,12 @@ $t = get_strings($lang);
             padding: 0.6rem 1rem;
             margin-top: 0.6rem;
             border-radius: 6px;
-            border: 1px solid rgba(90,110,180,0.5);
-            background: linear-gradient(135deg, #2a508a 0%, #353070 48%, #452870 100%);
+            border: 1px solid rgba(90,140,200,0.5);
+            background: linear-gradient(135deg, #2a4a78 0%, #1e3860 48%, #15264a 100%);
             box-shadow:
-              inset 0 0 0 1px rgba(200,220,255,0.15),
-              inset 0 -8px 12px -8px rgba(10,10,40,0.5);
-            color: #dde5ff;
+              inset 0 0 0 1px rgba(200,220,255,0.12),
+              inset 0 -8px 12px -8px rgba(0,0,20,0.5);
+            color: #d8e5f5;
             font-size: 0.82rem;
             font-weight: 500;
             cursor: pointer;
@@ -366,7 +377,7 @@ $t = get_strings($lang);
             position: absolute;
             inset: -4px;
             border-radius: 10px;
-            background: rgba(90,160,232,1);
+            background: rgba(90,160,232,0.8);
             filter: blur(10px);
             opacity: 0;
             z-index: -1;
@@ -411,11 +422,8 @@ $t = get_strings($lang);
             background: var(--bb-surface-2);
         }
         .preview-box {
-            background:
-                radial-gradient(70% 120% at 0% 0%, rgba(255,80,180,0.04) 0%, transparent 55%),
-                radial-gradient(80% 120% at 100% 100%, rgba(60,220,200,0.05) 0%, transparent 55%),
-                #0d0d12;
-            border: 1px solid #1a1a24;
+            background: #0d0d10;
+            border: 1px solid #1c1c22;
             border-radius: 10px;
             padding: 0.8rem;
             font-family: var(--bb-font-mono);
@@ -440,13 +448,36 @@ $t = get_strings($lang);
             padding: 0.05em 0.15em;
             border-bottom: 2px solid rgba(212, 146, 42, 0.4);
         }
+        .preview-empty {
+            color: var(--bb-fg-6);
+            font-style: italic;
+            font-size: 0.78rem;
+        }
 
         /* ====== WYNIK ====== */
         .result {
             margin-top: 1.5rem;
             display: none;
         }
-        .result.show { display: block; }
+        .result.show {
+            display: block;
+            animation: result-reveal 480ms cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+        .result.show .result-box {
+            animation: result-pulse 1800ms ease-out 200ms both;
+        }
+        @keyframes result-reveal {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes result-pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(125,215,125,0); }
+            30%      { box-shadow: 0 0 0 8px rgba(125,215,125,0.18); }
+            70%      { box-shadow: 0 0 0 4px rgba(125,215,125,0.06); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .result.show, .result.show .result-box { animation: none; }
+        }
 
         .result-box {
             border-radius: 10px;
@@ -662,7 +693,9 @@ $t = get_strings($lang);
         your_password: <?= json_encode($t['your_password']) ?>,
         copied: <?= json_encode($t['copied']) ?>,
         copy: <?= json_encode($t['copy']) ?>,
-        generate_btn: <?= json_encode($t['generate_btn']) ?>
+        generate_btn: <?= json_encode($t['generate_btn']) ?>,
+        generating: <?= json_encode($t['generating']) ?>,
+        preview_empty: <?= json_encode($t['preview_empty']) ?>
     };
     const editor = document.getElementById('editor');
     let mathA, mathB;
@@ -837,6 +870,12 @@ $t = get_strings($lang);
     function updatePreview() {
         const previewBox = document.getElementById('preview');
         const html = editor.innerHTML;
+        const isEmpty = editor.textContent.trim().length === 0;
+
+        if (isEmpty) {
+            previewBox.innerHTML = '<span class="preview-empty">' + (T.preview_empty || '') + '</span>';
+            return;
+        }
 
         if (previewMode === 'expired') {
             // DOM-based replacement - safe for any content inside .secret
@@ -954,8 +993,9 @@ $t = get_strings($lang);
         });
 
         const btn = document.querySelector('.generate-btn');
+        const btnOriginalHTML = btn.innerHTML;
         btn.disabled = true;
-        btn.textContent = '...';
+        btn.innerHTML = '<span class="spinner"></span>' + (T.generating || 'Szyfrowanie...');
 
         try {
             // Szyfruj w przeglądarce
@@ -1010,7 +1050,7 @@ $t = get_strings($lang);
             alert(T.error_connection);
         } finally {
             btn.disabled = false;
-            btn.textContent = T.generate_btn;
+            btn.innerHTML = btnOriginalHTML;
         }
     }
 
@@ -1019,8 +1059,14 @@ $t = get_strings($lang);
         input.select();
         navigator.clipboard.writeText(input.value).then(() => {
             const btn = document.querySelector('.copy-btn');
-            btn.textContent = T.copied;
-            setTimeout(() => btn.textContent = T.copy, 2000);
+            const original = btn.innerHTML;
+            btn.innerHTML = '<i data-lucide="check" style="width:1em;height:1em;vertical-align:-0.15em;margin-right:0.3em;"></i>' + T.copied;
+            btn.classList.add('copied');
+            if (window.lucide) lucide.createIcons();
+            setTimeout(() => {
+                btn.innerHTML = original;
+                btn.classList.remove('copied');
+            }, 1800);
         });
     }
 
