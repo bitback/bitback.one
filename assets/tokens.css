@@ -87,10 +87,10 @@
   --bb-shadow-glow-secret: 0 0 0 1px rgba(240,192,96,0.28), 0 8px 24px rgba(240,192,96,0.12);
 
   /* --- Fonts ---
-     Geist + Geist Mono laduja sie z Google Fonts przez <link> w <head>.
-     Jesli sie nie zaladuja (offline, blokowane), fallback do system stack. */
-  --bb-font-sans: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --bb-font-mono: 'Geist Mono', 'Consolas', 'Monaco', 'Courier New', monospace;
+     Open Sans (sans) + JetBrains Mono (mono) z Google Fonts.
+     Fallback do system stack jesli offline/blokowane. */
+  --bb-font-sans: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --bb-font-mono: 'JetBrains Mono', 'Consolas', 'Monaco', 'Courier New', monospace;
 
   /* --- Radii --- */
   --bb-radius-xs: 4px;

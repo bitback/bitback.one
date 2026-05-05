@@ -29,8 +29,8 @@ function render_logo(string $alt = 'bitback.one', string $href = '/'): string {
     <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
     <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
   </g>
-  <text x="60" y="38" font-family="Geist, -apple-system, 'Segoe UI', sans-serif" font-size="26" font-weight="300" letter-spacing="-0.4" fill="url(#bbWord)">bitback</text>
-  <text x="149" y="38" font-family="Geist, -apple-system, 'Segoe UI', sans-serif" font-size="26" font-weight="400" fill="url(#bbGold)">.one</text>
+  <text x="60" y="38" font-family="Open Sans, -apple-system, 'Segoe UI', sans-serif" font-size="26" font-weight="300" letter-spacing="-0.4" fill="url(#bbWord)">bitback</text>
+  <text x="149" y="38" font-family="Open Sans, -apple-system, 'Segoe UI', sans-serif" font-size="26" font-weight="400" fill="url(#bbGold)">.one</text>
 </svg>
 SVG;
     return '<h1 class="bb-logo"><a href="' . $hrefEsc . '">' . $svg . '</a></h1>';
