@@ -524,12 +524,12 @@ $t = get_strings($lang);
 </head>
 <body class="bb-landing">
 
-<div class="header">
+<div class="header bb-rise-1">
     <?= render_logo('bitback.one', 'https://bitback.one') ?>
     <p><?= htmlspecialchars($t['subtitle']) ?></p>
 </div>
 
-<div class="trust">
+<div class="trust bb-rise-2">
     <div class="trust-box bb-card bb-hero-cool">
         <div class="trust-grid">
             <div class="trust-item">
@@ -551,7 +551,7 @@ $t = get_strings($lang);
     </div>
 </div>
 
-<div class="main">
+<div class="main bb-rise-3">
     <form id="createForm" autocomplete="off" onsubmit="return false;">
         <input type="text" name="website_url" class="ohnohoney" tabindex="-1" autocomplete="off">
 

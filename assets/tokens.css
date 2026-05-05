@@ -257,17 +257,29 @@
   box-shadow: inset 0 1px 0 rgba(120,170,240,0.08);
 }
 
-/* Statyczny cyber-neon gradient na tle strony - magenta+teal plasma.
-   Mocniej niz poprzedni gold/blue (user chce "ciekawe"), ale zmiekczony
-   vs design card (0.20/0.22) zeby fullscreen nie przytlaczal oczu.
-   Fixed attachment zeby gradient nie scrollowal sie z trescia. */
+/* Solid dark background - bez gradientow w tle.
+   Atmosfera i glebia idzie w kontenery (bb-card-*, bb-hero-*, buttony).
+   Uzywamy bardzo subtelnego linear gradient pionowego (top->bottom o 5 punktow ciemniej)
+   zeby uniknac zupelnie plaskiego "powerpoint dark", ale nadal czyste tlo. */
 html, body {
-  background:
-    radial-gradient(70% 120% at 10% 20%, rgba(255,80,180,0.14) 0%, rgba(255,80,180,0) 55%),
-    radial-gradient(90% 140% at 95% 110%, rgba(60,220,200,0.16) 0%, rgba(60,220,200,0) 55%),
-    #0b0a10 !important;
+  background: linear-gradient(180deg, #0c0c0e 0%, #08080a 100%) !important;
   background-attachment: fixed !important;
   min-height: 100vh;
+}
+
+/* Staggered page-load reveal - subtelny fade-up dla glownych sekcji
+   na landing. Jedna dobrze orkiestrowana animacja > 10 micro-interakcji. */
+@keyframes bb-rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.bb-rise-1 { animation: bb-rise 480ms cubic-bezier(0.16, 1, 0.3, 1) 0ms both; }
+.bb-rise-2 { animation: bb-rise 480ms cubic-bezier(0.16, 1, 0.3, 1) 80ms both; }
+.bb-rise-3 { animation: bb-rise 480ms cubic-bezier(0.16, 1, 0.3, 1) 160ms both; }
+.bb-rise-4 { animation: bb-rise 480ms cubic-bezier(0.16, 1, 0.3, 1) 240ms both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .bb-rise-1, .bb-rise-2, .bb-rise-3, .bb-rise-4 { animation: none; }
 }
 
 /* Spojny scrollbar - ciemny, dyskretny */
