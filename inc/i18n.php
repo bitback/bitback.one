@@ -14,7 +14,7 @@ function detect_lang(): string {
     return 'en';
 }
 
-function get_strings(string $lang = null): array {
+function get_strings(?string $lang = null): array {
     if ($lang === null) $lang = detect_lang();
 
     $strings = [
