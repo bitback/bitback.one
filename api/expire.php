@@ -46,17 +46,29 @@ if (!in_array($action, ['expire', 'kill'], true)) {
 
 $file = DATA_DIR . '/' . $uuid . '.json';
 
-if (!file_exists($file)) {
+// Atomowy read-modify-write pod exclusive lockiem (jak view.php) -
+// inaczej rownoczesny view.php/expire.php moglby sie nadpisac.
+$fp = @fopen($file, 'r+');
+if ($fp === false) {
     http_response_code(404);
     echo json_encode(['error' => 'Not found']);
     exit;
 }
-
-$data = json_decode(file_get_contents($file), true);
-if (!$data) {
+flock($fp, LOCK_EX);
+$data = json_decode(stream_get_contents($fp), true);
+if (!is_array($data)) {
+    fclose($fp);
     http_response_code(500);
     echo json_encode(['error' => 'Read error']);
     exit;
+}
+
+function save_locked($fp, array $data): void {
+    $json = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    rewind($fp);
+    ftruncate($fp, 0);
+    fwrite($fp, $json);
+    fflush($fp);
 }
 
 $manualDate = gmdate('Y-m-d\TH:i:s\Z');
@@ -65,6 +77,7 @@ $manualDate = gmdate('Y-m-d\TH:i:s\Z');
 if ($action === 'kill') {
     // Już usunięty?
     if (isset($data['_killed_manually'])) {
+        fclose($fp);
         echo json_encode(['ok' => true, 'already_killed' => true]);
         exit;
     }
@@ -78,7 +91,8 @@ if ($action === 'kill') {
     $data['_secrets_expired_at'] = $data['_secrets_expired_at'] ?? time();
     $data['_killed_manually'] = $manualDate;
 
-    file_put_contents($file, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE), LOCK_EX);
+    save_locked($fp, $data);
+    fclose($fp);
     echo json_encode(['ok' => true, 'killed' => true]);
     exit;
 }
@@ -87,6 +101,7 @@ if ($action === 'kill') {
 
 // Już wygaszone?
 if ($data['encrypted_secrets'] === null) {
+    fclose($fp);
     echo json_encode(['ok' => true, 'already_expired' => true]);
     exit;
 }
@@ -97,6 +112,7 @@ $data['_expired_manually'] = $manualDate;
 
 // Permanentne usunięcie od razu jeśli delete_after_days == 0
 if (($data['delete_after_days'] ?? 30) == 0) {
+    fclose($fp); // zwolnij lock przed rename (Windows nie przenosi otwartego pliku)
     if (!is_dir(TRASH_DIR)) {
         mkdir(TRASH_DIR, 0755, true);
     }
@@ -105,6 +121,7 @@ if (($data['delete_after_days'] ?? 30) == 0) {
     exit;
 }
 
-file_put_contents($file, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE), LOCK_EX);
+save_locked($fp, $data);
+fclose($fp);
 
 echo json_encode(['ok' => true]);

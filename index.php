@@ -2,8 +2,10 @@
 require_once __DIR__ . '/inc/config.php';
 require_once __DIR__ . '/inc/i18n.php';
 require_once __DIR__ . '/inc/logo.php';
+require_once __DIR__ . '/inc/antibot.php';
 $lang = detect_lang();
 $t = get_strings($lang);
+$challenge = antibot_challenge();
 ?>
 <!DOCTYPE html>
 <html lang="<?= $lang ?>">
@@ -698,19 +700,18 @@ $t = get_strings($lang);
         preview_empty: <?= json_encode($t['preview_empty']) ?>
     };
     const editor = document.getElementById('editor');
-    let mathA, mathB;
     let previewMode = 'expired';
 
-    // --- MATH ANTYBOT (klikalne opcje) ---
+    // --- MATH ANTYBOT ---
+    // Challenge generowany serwerowo i podpisany HMAC - klient nie zna logiki
+    // weryfikacji. Po wygenerowaniu linka pobieramy swiezy z /api/challenge.php.
+    let CH = <?= json_encode($challenge) ?>;
     let selectedAnswer = null;
 
     function generateMath() {
-        mathA = Math.floor(Math.random() * 15) + 1;
-        mathB = Math.floor(Math.random() * 15) + 1;
         selectedAnswer = null;
-
-        const correct = mathA + mathB;
-        // wygeneruj 2 fałszywe odpowiedzi (różne od poprawnej i od siebie)
+        const correct = CH.a + CH.b;
+        // 2 falszywe odpowiedzi to tylko UI (serwer i tak liczy sam)
         const fakes = new Set();
         while (fakes.size < 2) {
             const f = correct + (Math.floor(Math.random() * 7) - 3); // ±3
@@ -718,13 +719,12 @@ $t = get_strings($lang);
         }
 
         const options = [correct, ...fakes];
-        // shuffle
         for (let i = options.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [options[i], options[j]] = [options[j], options[i]];
         }
 
-        document.getElementById('mathQuestion').textContent = `${mathA} + ${mathB} = ?`;
+        document.getElementById('mathQuestion').textContent = `${CH.a} + ${CH.b} = ?`;
         const container = document.getElementById('mathOptions');
         container.innerHTML = '';
         options.forEach(val => {
@@ -741,6 +741,14 @@ $t = get_strings($lang);
         });
     }
     generateMath();
+
+    async function refreshChallenge() {
+        try {
+            const r = await fetch('/api/challenge.php');
+            CH = await r.json();
+        } catch (e) { /* zostaje stary - token wazny 15 min */ }
+        generateMath();
+    }
 
     // --- TOGGLE SECRET (oznacz / odznacz) ---
     function unwrapSecret(secretEl, sel) {
@@ -1016,7 +1024,10 @@ $t = get_strings($lang);
                     max_views: parseInt(document.getElementById('maxViews').value) || <?= DEFAULT_MAX_VIEWS ?>,
                     delete_after_days: parseInt(document.getElementById('deleteDays').value) || <?= DEFAULT_DELETE_DAYS ?>,
                     password: document.getElementById('linkPassword').value.trim() || '',
-                    math_expected: mathA + mathB,
+                    math_a: CH.a,
+                    math_b: CH.b,
+                    math_exp: CH.exp,
+                    math_token: CH.token,
                     math_answer: selectedAnswer,
                 }),
             });
@@ -1037,12 +1048,12 @@ $t = get_strings($lang);
                     pwdEl.classList.remove('show');
                     pwdEl.innerHTML = '';
                 }
-                generateMath();
+                refreshChallenge();
             } else if (result.error === 'ratelimit') {
                 alert(T.error_ratelimit);
             } else if (result.error === 'math') {
                 alert(T.error_math);
-                generateMath();
+                refreshChallenge();
             } else {
                 alert(result.error || T.error_server);
             }

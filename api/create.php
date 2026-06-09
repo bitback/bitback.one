@@ -12,6 +12,23 @@ header('Content-Type: application/json; charset=utf-8');
 require_once __DIR__ . '/../inc/config.php';
 require_once __DIR__ . '/../inc/crypto.php';  // generate_uuid()
 require_once __DIR__ . '/../inc/ratelimit.php';
+require_once __DIR__ . '/../inc/antibot.php';
+
+/**
+ * Host do generowanych URL-i. HTTP_HOST jest kontrolowany przez klienta
+ * (header injection / phishing) - przyjmujemy tylko poprawny hostname[:port],
+ * inaczej fallback do SERVER_NAME. APP_HOST w config.php wymusza na sztywno.
+ */
+function safe_host(): string {
+    if (defined('APP_HOST') && APP_HOST !== '') {
+        return APP_HOST;
+    }
+    $host = $_SERVER['HTTP_HOST'] ?? '';
+    if (preg_match('/^[a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?(:\d{1,5})?$/', $host)) {
+        return $host;
+    }
+    return $_SERVER['SERVER_NAME'] ?? 'localhost';
+}
 
 // tylko POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -31,14 +48,18 @@ if (!$input) {
 if (!empty($input['website_url'])) {
     // cichy sukces dla bota
     $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-    echo json_encode(['url' => $scheme . '://' . $_SERVER['HTTP_HOST'] . '/ok']);
+    echo json_encode(['url' => $scheme . '://' . safe_host() . '/ok']);
     exit;
 }
 
-// --- MATH ANTYBOT ---
-$mathExpected = $input['math_expected'] ?? null;
-$mathAnswer = $input['math_answer'] ?? null;
-if ($mathExpected === null || $mathAnswer === null || (int)$mathAnswer !== (int)$mathExpected) {
+// --- MATH ANTYBOT (challenge podpisany HMAC przez serwer) ---
+if (!antibot_verify(
+    $input['math_a'] ?? 0,
+    $input['math_b'] ?? 0,
+    $input['math_exp'] ?? 0,
+    $input['math_token'] ?? '',
+    $input['math_answer'] ?? null
+)) {
     http_response_code(400);
     echo json_encode(['error' => 'math']);
     exit;
@@ -120,7 +141,7 @@ file_put_contents($file, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_U
 
 // --- ZWROT URL (bez klucza! klucz dodaje przeglądarka jako #fragment) ---
 $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-$url = $scheme . '://' . $_SERVER['HTTP_HOST'] . '/' . $uuid;
+$url = $scheme . '://' . safe_host() . '/' . $uuid;
 
 echo json_encode([
     'ok' => true,

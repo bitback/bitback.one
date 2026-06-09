@@ -177,11 +177,12 @@ define('DEFAULT_EXPIRE_DAYS', 14);    // Secret data expiration
 define('DEFAULT_MAX_VIEWS', 5);       // Max views before secrets expire
 define('DEFAULT_DELETE_DAYS', 90);    // Days until permanent deletion
 define('RATE_LIMIT_MAX', 10);         // Max links per IP per hour
+// define('APP_HOST', 'bitback.one'); // Optional: pin the host used in generated URLs
 ```
 
 ### Custom branding
 
-The app auto-detects its domain from HTTP headers - generated URLs always match your server. To change the app name shown in titles and headers, edit `APP_NAME` in `inc/config.php`. The main page (`index.php`) has two hardcoded references to update manually.
+The app auto-detects its domain from the request host - generated URLs always match your server. The host is validated against a hostname pattern before use; if you sit behind an untrusted proxy or want to pin it, set `APP_HOST` in `inc/config.php`. To change the app name shown in titles and headers, edit `APP_NAME`. The main page (`index.php`) has two hardcoded references to update manually.
 
 ## i18n
 

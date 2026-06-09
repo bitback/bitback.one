@@ -27,27 +27,42 @@ if (!preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-
 
 $uuid = $slug;
 
-// --- WCZYTAJ PLIK ---
+// --- WCZYTAJ PLIK (z exclusive lockiem - atomowy read-modify-write) ---
+// Bez locka dwa rownoczesne wejscia na ostatnie wyswietlenie moglyby:
+// oba zobaczyc sekrety, albo jeden wskrzesic skasowany blob nadpisujac plik.
 $file = DATA_DIR . '/' . $uuid . '.json';
-if (!file_exists($file)) {
+$fp = @fopen($file, 'r+');
+if ($fp === false) {
+    show_not_found($t);
+    exit;
+}
+flock($fp, LOCK_EX);
+$data = json_decode(stream_get_contents($fp), true);
+if (!is_array($data)) {
+    fclose($fp); // zwalnia tez lock
     show_not_found($t);
     exit;
 }
 
-$data = json_decode(file_get_contents($file), true);
-if (!$data) {
-    show_not_found($t);
-    exit;
+// Zapis danych pod trzymanym lockiem (nadpisanie w miejscu).
+function save_locked($fp, array $data): void {
+    $json = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    rewind($fp);
+    ftruncate($fp, 0);
+    fwrite($fp, $json);
+    fflush($fp);
 }
 
 // --- HASŁO (jeśli ustawione) ---
 if (!empty($data['password_hash'])) {
     $submittedPassword = $_POST['password'] ?? null;
     if ($submittedPassword === null) {
+        fclose($fp);
         show_password_form($t, $slug);
         exit;
     }
     if (!password_verify($submittedPassword, $data['password_hash'])) {
+        fclose($fp);
         show_password_form($t, $slug, true);
         exit;
     }
@@ -61,6 +76,7 @@ $secretsExpired = (strtotime($data['expires_secrets']) <= $now)
 
 // permanentne usunięcie (delete_after_days == 0 → od razu)
 if ($secretsExpired && $data['delete_after_days'] == 0) {
+    fclose($fp); // zwolnij lock przed rename (Windows nie przenosi otwartego pliku)
     move_to_trash($file, $uuid);
     show_expired($t, $data['_killed_manually'] ?? null, $data['_expired_manually'] ?? null);
     exit;
@@ -74,6 +90,7 @@ if ($secretsExpired && $data['delete_after_days'] > 0) {
     }
 
     if ($now >= ($deleteAt ?? $now + ($data['delete_after_days'] * 86400))) {
+        fclose($fp);
         move_to_trash($file, $uuid);
         show_expired($t, $data['_killed_manually'] ?? null, $data['_expired_manually'] ?? null);
         exit;
@@ -103,6 +120,10 @@ if (!$secretsExpired) {
         'time' => gmdate('Y-m-d\TH:i:s\Z'),
         'ip_hash' => substr(hash('sha256', ($_SERVER['REMOTE_ADDR'] ?? '0.0.0.0') . IP_HASH_SALT), 0, 12),
     ];
+    // ogranicz dlugosc logu (przy duzym max_views plik nie puchnie bez limitu)
+    if (count($data['view_log']) > 100) {
+        $data['view_log'] = array_slice($data['view_log'], -100);
+    }
 
     if ($data['current_views'] >= $data['max_views']) {
         // To jest ostatnie dozwolone wyświetlenie — user jeszcze widzi dane,
@@ -116,8 +137,9 @@ if (!$secretsExpired) {
 }
 
 if ($needSave) {
-    file_put_contents($file, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE), LOCK_EX);
+    save_locked($fp, $data);
 }
+fclose($fp); // zwolnij lock przed renderowaniem strony
 
 // --- BACKWARD COMPAT: stary format (encrypted_payload lub sections) ---
 if (isset($data['encrypted_payload'])) {
