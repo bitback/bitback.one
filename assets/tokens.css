@@ -20,7 +20,6 @@
   --bb-border-soft:  #1a1a1a;
   --bb-border-mid:   #252525;  /* input borders */
   --bb-border-hover: #333;
-  --bb-border-strong:#444;
 
   /* --- Text ---
      Rozjasnione o ~25-30% od oryginalu, zeby apka miala wiecej zycia.
@@ -36,11 +35,6 @@
   --bb-fg-8:         #3d3d3d;  /* separator dots +20 */
   --bb-fg-body:      #d8d8d8;  /* antibot hover text lift */
   --bb-fg-tab:       #bfbfbf;  /* active tab text lift */
-
-  /* --- Surfaces specyficzne --- */
-  --bb-surface-trust:#0d0d0d;  /* trust box bg (nieco ciemniejszy niz surface-1) */
-  --bb-surface-editor-bg:#161310;     /* swiadomy cieplawy tint edytora */
-  --bb-surface-editor-border:#352e1a; /* cieplawa ramka edytora */
 
   /* --- Brand / action (blue) --- */
   --bb-accent:       #3a7bd5;
