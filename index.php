@@ -330,18 +330,19 @@ $challenge = antibot_challenge();
             gap: 0.5rem;
         }
 
+        /* pola ustawien (m01): teal ramka + delikatny glow jak ramki sekcji */
         .config-input {
             width: 70px;
             padding: 0.45rem 0.5rem;
             background: var(--bb-surface-sunk);
-            border: 1px solid var(--bb-border-mid);
-            border-radius: 4px;
+            border: 1px solid var(--bb-neon-border);
             color: var(--bb-fg);
             font-size: 0.92rem;
             text-align: center;
             outline: none;
+            box-shadow: 0 0 10px rgba(37, 194, 168, 0.08);
         }
-        .config-input:focus { border-color: var(--bb-accent); box-shadow: 0 0 0 3px rgba(58, 123, 213, 0.12); }
+        .config-input:focus { border-color: var(--bb-teal); box-shadow: 0 0 12px rgba(37, 194, 168, 0.22); }
 
         .config-unit {
             font-size: 0.8rem;
