@@ -13,6 +13,10 @@ require_once __DIR__ . '/../inc/config.php';
 require_once __DIR__ . '/../inc/crypto.php';  // generate_uuid()
 require_once __DIR__ . '/../inc/ratelimit.php';
 require_once __DIR__ . '/../inc/antibot.php';
+require_once __DIR__ . '/../inc/harden.php';
+
+// Upewnij sie ze katalogi runtime maja aktualna blokade WWW (self-healing).
+harden_runtime_dirs();
 
 /**
  * Host do generowanych URL-i. HTTP_HOST jest kontrolowany przez klienta

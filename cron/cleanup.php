@@ -6,6 +6,10 @@
  */
 
 require_once __DIR__ . '/../inc/config.php';
+require_once __DIR__ . '/../inc/harden.php';
+
+// Codzienny backup self-healingu blokad WWW na katalogach runtime.
+harden_runtime_dirs();
 
 if (!is_dir(DATA_DIR)) exit;
 if (!is_dir(TRASH_DIR)) mkdir(TRASH_DIR, 0755, true);
