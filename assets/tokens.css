@@ -7,12 +7,14 @@
    ========================================================================= */
 
 :root {
-  /* --- Surfaces (chlodna granatowa rampa) --- */
-  --bb-bg:           #0b0d12;  /* page */
-  --bb-surface-1:    #141823;  /* card */
-  --bb-surface-2:    #1c2130;  /* hover/raised */
-  --bb-surface-3:    #1c2130;  /* input/raised */
-  --bb-surface-sunk: #0e1119;  /* sunken field (editor, url) */
+  /* --- Surfaces (rampa przyciemniona do mockupu m01: niemal czern
+         z chlodnym podtonem; zmierzono z m01.png: bg #04090e,
+         wnetrza boxow #000208-#04080e) --- */
+  --bb-bg:           #05080e;  /* page */
+  --bb-surface-1:    #10141f;  /* card */
+  --bb-surface-2:    #161b28;  /* hover/raised */
+  --bb-surface-3:    #161b28;  /* input/raised */
+  --bb-surface-sunk: #080c14;  /* sunken field (editor, url) */
 
   /* --- Borders / dividers --- */
   --bb-border:       #2a3040;
