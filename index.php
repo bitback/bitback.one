@@ -444,9 +444,9 @@ $challenge = antibot_challenge();
             padding: 2px;
             margin-top: 0.6rem;
             border: none;
-            background: linear-gradient(90deg, var(--bb-teal), var(--bb-violet));
+            background: linear-gradient(90deg, var(--bb-secret), var(--bb-secret-ink));
             clip-path: polygon(13px 0, 100% 0, 100% calc(100% - 13px), calc(100% - 13px) 100%, 0 100%, 0 13px);
-            filter: drop-shadow(0 0 9px rgba(122, 92, 230, 0.45));
+            filter: drop-shadow(0 0 9px rgba(240, 192, 96, 0.42));
             cursor: pointer;
             transition: filter 140ms var(--bb-ease);
         }
@@ -456,7 +456,7 @@ $challenge = antibot_challenge();
             justify-content: center;
             gap: 0.6em;
             padding: 0.6rem 1rem;
-            background: linear-gradient(90deg, #1b1233 0%, #0a0e15 50%, #0b2127 100%);
+            background: linear-gradient(90deg, #1c1508 0%, #0a0e15 50%, #1c1508 100%);
             clip-path: polygon(13px 0, 100% 0, 100% calc(100% - 13px), calc(100% - 13px) 100%, 0 100%, 0 13px);
             color: #fff;
             font-size: 0.86rem;
@@ -469,9 +469,9 @@ $challenge = antibot_challenge();
         .mark-row .mark-secret-btn { margin-top: 0; }
         .mark-row .generate-btn { margin-top: 0; width: auto; flex: 1; white-space: nowrap; letter-spacing: 0.08em; padding-left: 0.8rem; padding-right: 0.8rem; }
 
-        .mark-secret-btn:hover { filter: drop-shadow(0 0 11px rgba(122, 92, 230, 0.55)) brightness(1.12); }
-        .mark-secret-btn:active { filter: drop-shadow(0 0 5px rgba(122, 92, 230, 0.3)) brightness(0.92); }
-        .mark-secret-btn [data-lucide] { width: 18px; height: 18px; stroke-width: 2; }
+        .mark-secret-btn:hover { filter: drop-shadow(0 0 11px rgba(240, 192, 96, 0.55)) brightness(1.1); }
+        .mark-secret-btn:active { filter: drop-shadow(0 0 5px rgba(240, 192, 96, 0.3)) brightness(0.92); }
+        .mark-secret-btn [data-lucide] { width: 18px; height: 18px; stroke-width: 2; color: var(--bb-secret); }
 
         /* ====== PODGLĄD WYGAŚNIĘCIA ====== */
         .preview-section {
