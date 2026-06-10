@@ -321,6 +321,20 @@
   border: 1px solid var(--bb-neon-border) !important;
   box-shadow: var(--bb-neon-glow) !important;
 }
+/* sciety narozhnik top-left (m01): kwadrat w kolorze tla obrocony 45deg
+   zakrywa rog ramki, jego border-bottom rysuje diagonal. Dziala bo
+   wnetrze ramki jest przezroczyste na tle strony. */
+.bb-frame::before {
+  content: "";
+  position: absolute;
+  top: -7px;
+  left: -7px;
+  width: 13px;
+  height: 13px;
+  background: var(--bb-bg);
+  border-bottom: 1px solid var(--bb-neon-border);
+  transform: rotate(45deg);
+}
 
 /* Tlo strony - solid FLAT, zero gradientow (zaakceptowane). */
 html, body {
