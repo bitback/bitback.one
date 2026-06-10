@@ -88,11 +88,11 @@
   --bb-font-sans: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --bb-font-mono: 'JetBrains Mono', 'Consolas', 'Monaco', 'Courier New', monospace;
 
-  /* --- Radii --- */
-  --bb-radius-xs: 4px;
-  --bb-radius-sm: 6px;
-  --bb-radius-md: 8px;   /* current default card */
-  --bb-radius-lg: 10px;
+  /* --- Radii: ZERO (zaakceptowane: ostre krawedzie wszedzie) --- */
+  --bb-radius-xs: 0;
+  --bb-radius-sm: 0;
+  --bb-radius-md: 0;
+  --bb-radius-lg: 0;
 
   /* --- Spacing (optional, dla przyszlych etapow) --- */
   --bb-space-1: 0.25rem;
@@ -257,6 +257,15 @@ html, body {
   background: var(--bb-bg) !important;
   min-height: 100vh;
 }
+
+/* Ostre krawedzie WSZEDZIE (zaakceptowane): przyciski, sekcje, pola,
+   bannery - zero zaokraglen. Globalna regula z !important wygrywa
+   z hardkodowanymi border-radius w inline <style> PHP.
+   Wyjatki: okragle chipy ikon i spinnery (celowo kola). */
+* { border-radius: 0 !important; }
+.bb-chip,
+.generate-btn .spinner,
+.loading .spinner { border-radius: 50% !important; }
 
 /* Staggered page-load reveal - subtelny fade-up dla glownych sekcji
    na landing. Jedna dobrze orkiestrowana animacja > 10 micro-interakcji. */
