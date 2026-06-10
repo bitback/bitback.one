@@ -52,7 +52,7 @@ http_response_code(404);
         h1 { font-size: 1.2rem; font-weight: 400; color: var(--bb-fg-4); margin-bottom: 0.8rem; }
         .sub { color: var(--bb-fg-6); font-size: 0.82rem; line-height: 1.6; margin-bottom: 0.5rem; }
         .hint { color: var(--bb-fg-7); font-size: 0.72rem; margin-top: 1rem; }
-        .hint code { color: var(--bb-secret); background: #1a1a0a; padding: 0.1em 0.3em; border-radius: 3px; }
+        .hint code { color: var(--bb-secret); background: var(--bb-surface-sunk); padding: 0.1em 0.3em; border-radius: 3px; }
         .home-link {
             display: inline-block; margin-top: 1.5rem;
             padding: 0.5rem 1.2rem; border-radius: 6px;

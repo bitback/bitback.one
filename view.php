@@ -221,34 +221,25 @@ function show_password_form(array $t, string $slug, bool $wrongPassword = false)
         }
         .box { text-align: center; padding: 2rem; width: 100%; max-width: 380px; }
         h1 { font-size: 1.4rem; font-weight: 300; color: var(--bb-fg); margin-bottom: 0.3rem; }
-        .sub { color: var(--bb-fg-5); font-size: 0.78rem; margin-bottom: 1.5rem; }
+        .sub { color: var(--bb-fg-3); font-size: 0.88rem; margin-bottom: 1.5rem; }
         .pwd-input {
-            width: 100%; padding: 0.6rem 0.8rem;
-            background: var(--bb-surface-1); border: 1px solid var(--bb-border-mid); border-radius: 6px;
-            color: var(--bb-fg); font-size: 0.9rem; outline: none; text-align: center;
+            width: 100%; padding: 0.65rem 0.85rem;
+            background: var(--bb-surface-sunk); border: 1px solid var(--bb-border-mid); border-radius: 8px;
+            color: var(--bb-fg); font-size: 0.95rem; outline: none; text-align: center;
             font-family: var(--bb-font-mono);
         }
-        .pwd-input:focus { border-color: var(--bb-accent); box-shadow: 0 0 0 3px rgba(58, 123, 213, 0.12); }
+        .pwd-input:focus { border-color: var(--bb-accent); box-shadow: 0 0 0 3px rgba(61, 130, 232, 0.15); }
+        /* FLAT solid blue */
         .pwd-btn {
-            position: relative; width: 100%; padding: 0.6rem; margin-top: 0.7rem;
-            border-radius: 6px; border: 1px solid transparent;
-            background: linear-gradient(135deg, #4a8be8 0%, #3574d0 45%, #2862b8 100%);
-            box-shadow:
-              inset 0 0 0 1px rgba(255,255,255,0.12),
-              inset 1px 0 0 rgba(240,192,96,0.55),
-              inset 0 -1px 0 rgba(0,0,0,0.25);
-            color: var(--bb-fg); font-size: 0.85rem;
-            cursor: pointer; transition: transform 160ms var(--bb-ease);
-            isolation: isolate;
+            width: 100%; padding: 0.7rem; margin-top: 0.7rem;
+            border-radius: 8px; border: none;
+            background: var(--bb-accent);
+            color: #fff; font-size: 0.92rem; font-weight: 700;
+            cursor: pointer; transition: background 140ms var(--bb-ease), transform 140ms var(--bb-ease);
         }
-        .pwd-btn::after {
-            content: ""; position: absolute; inset: -4px; border-radius: 10px;
-            background: var(--bb-accent); filter: blur(10px); opacity: 0; z-index: -1;
-            transition: opacity 220ms var(--bb-ease);
-        }
-        .pwd-btn:hover { transform: translateY(-1px); }
-        .pwd-btn:hover::after { opacity: 0.28; }
-        .error { color: var(--bb-danger-light); font-size: 0.75rem; margin-top: 0.5rem; }
+        .pwd-btn:hover { background: var(--bb-accent-hover); transform: translateY(-1px); }
+        .pwd-btn:active { background: var(--bb-accent-press); transform: translateY(0); }
+        .error { color: var(--bb-danger-light); font-size: 0.84rem; margin-top: 0.5rem; }
         .logo { color: var(--bb-fg-7); font-size: 0.75rem; margin-top: 2rem; letter-spacing: 0.1em; }
     </style>
 </head>
@@ -408,9 +399,9 @@ function view_css(): string {
         .header { text-align: center; padding: 2rem 1rem 1.5rem; }
         .header h1 { font-size: 1.4rem; font-weight: 300; letter-spacing: 0.08em; color: var(--bb-fg); }
         .container { max-width: 700px; margin: 0 auto; padding: 0 1rem 3rem; }
-        .expired-banner { border-radius: 10px; padding: 0.7rem 1rem; margin-bottom: 1rem; font-size: 0.8rem; color: var(--bb-secret-ink); /* background i border z bb-card-secret */ }
-        .error-banner { background: var(--bb-danger-bg); border: 1px solid var(--bb-danger-border); border-radius: 10px; padding: 0.7rem 1rem; margin-bottom: 1rem; font-size: 0.8rem; color: var(--bb-danger-light); }
-        .content-box { background: var(--bb-surface-1); border: 1px solid var(--bb-border); border-radius: 8px; padding: 1rem; font-family: var(--bb-font-mono); font-size: 0.85rem; line-height: 1.7; white-space: pre-wrap; word-break: break-word; }
+        .expired-banner { border-radius: 10px; padding: 0.75rem 1rem; margin-bottom: 1rem; font-size: 0.88rem; color: var(--bb-secret); /* background i border z bb-card-secret */ }
+        .error-banner { background: var(--bb-danger-bg); border: 1px solid var(--bb-danger-border); border-radius: 10px; padding: 0.75rem 1rem; margin-bottom: 1rem; font-size: 0.88rem; color: var(--bb-danger-light); }
+        .content-box { background: var(--bb-surface-sunk); border: 1px solid var(--bb-border); border-radius: 10px; padding: 1rem; font-family: var(--bb-font-mono); font-size: 0.95rem; line-height: 1.7; white-space: pre-wrap; word-break: break-word; }
         .s-text { color: var(--bb-fg-2); }
         .s-text a { color: var(--bb-accent-link); }
         .s-secret { background: rgba(212, 146, 42, 0.15); color: var(--bb-secret); border-radius: 3px; padding: 0.05em 0.2em; border-bottom: 2px solid rgba(212, 146, 42, 0.4); }
@@ -419,71 +410,46 @@ function view_css(): string {
         .loading { text-align: center; padding: 2rem; color: var(--bb-fg-5); font-size: 0.85rem; }
         .loading .spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid var(--bb-fg-7); border-top-color: var(--bb-fg-4); border-radius: 50%; animation: spin 0.6s linear infinite; margin-right: 0.5rem; vertical-align: middle; }
         @keyframes spin { to { transform: rotate(360deg); } }
-        .meta { margin-top: 1.2rem; display: flex; justify-content: space-between; align-items: flex-end; gap: 1rem; font-size: 0.72rem; color: var(--bb-fg-6); }
-        .meta-big { font-size: 2rem; font-weight: 200; color: var(--bb-fg-5); line-height: 1; }
-        .meta-big.warn { color: var(--bb-secret-ink); }
-        .meta-sub { font-size: 0.65rem; color: var(--bb-fg-7); margin-top: 0.15rem; }
-        .expire-info { background: var(--bb-surface-1); border: 1px solid var(--bb-border); border-radius: 8px; padding: 0.7rem 1rem; margin-top: 1rem; font-size: 0.75rem; color: var(--bb-fg-5); display: flex; justify-content: space-between; align-items: center; }
-        .expire-info .date { color: var(--bb-fg-4); }
-        .zt-badge { margin-top: 1.5rem; text-align: center; font-size: 0.65rem; color: var(--bb-fg-8); }
-        .zt-badge span { color: var(--bb-fg-7); }
+        .meta { margin-top: 1.2rem; display: flex; justify-content: space-between; align-items: flex-end; gap: 1rem; font-size: 0.8rem; color: var(--bb-fg-5); }
+        .meta-big { font-size: 2rem; font-weight: 300; color: var(--bb-fg-3); line-height: 1; }
+        .meta-big.warn { color: var(--bb-secret); }
+        .meta-sub { font-size: 0.72rem; color: var(--bb-fg-6); margin-top: 0.15rem; }
+        .expire-info { background: var(--bb-surface-1); border: 1px solid var(--bb-border); border-radius: 10px; padding: 0.75rem 1rem; margin-top: 1rem; font-size: 0.84rem; color: var(--bb-fg-5); display: flex; justify-content: space-between; align-items: center; }
+        .expire-info .date { color: var(--bb-fg-3); }
+        .zt-badge { margin-top: 1.5rem; text-align: center; font-size: 0.72rem; color: var(--bb-fg-7); }
+        .zt-badge span { color: var(--bb-fg-6); }
         .expire-now-wrap { margin-top: 1rem; display: flex; flex-direction: column; align-items: center; gap: 0.6rem; }
         .expire-now-confirm { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.65rem 1.5rem; border: 1.5px solid transparent; border-radius: 8px; transition: border-color 0.2s; cursor: pointer; font-size: 0.85rem; line-height: 1.2; box-sizing: border-box; }
         .expire-now-confirm input[type="checkbox"] { accent-color: var(--bb-secret-ink); width: 16px; height: 16px; cursor: pointer; flex-shrink: 0; }
         .expire-now-confirm label { color: var(--bb-fg-4); font-size: 0.85rem; cursor: pointer; user-select: none; line-height: 1.2; }
         .expire-now-confirm.shake { border-color: var(--bb-danger); animation: shakeBox 0.4s ease; }
         @keyframes shakeBox { 0%,100% { transform: translateX(0); } 20%,60% { transform: translateX(-4px); } 40%,80% { transform: translateX(4px); } }
-        /* expire-now: gold gradient (secret color theme), hover halo, press lift */
+        /* expire-now: FLAT solid gold (akcja secret) */
         .expire-now-btn {
-          position: relative; isolation: isolate;
-          padding: 0.65rem 1.5rem; border-radius: 8px;
-          border: 1px solid rgba(240,192,96,0.7);
-          background: linear-gradient(135deg, #ffe48a 0%, #f0c060 48%, #c8902e 100%);
-          box-shadow:
-            inset 0 0 0 1px rgba(255,240,200,0.3),
-            inset 0 -8px 12px -8px rgba(80,50,10,0.35);
+          padding: 0.7rem 1.5rem; border-radius: 8px; border: none;
+          background: var(--bb-secret);
           color: #2a1d08;
-          font-size: 0.85rem; font-weight: 500; line-height: 1.2; letter-spacing: 0.01em;
+          font-size: 0.92rem; font-weight: 700; line-height: 1.2; letter-spacing: 0.01em;
           cursor: pointer; box-sizing: border-box;
-          transition: transform 160ms var(--bb-ease), filter 160ms var(--bb-ease);
+          transition: filter 140ms var(--bb-ease), transform 140ms var(--bb-ease);
         }
-        .expire-now-btn::after {
-          content: ""; position: absolute; inset: -4px; border-radius: 12px;
-          background: var(--bb-secret); filter: blur(10px); opacity: 0; z-index: -1;
-          transition: opacity 220ms var(--bb-ease);
-        }
-        .expire-now-btn:hover { transform: translateY(-1px); }
-        .expire-now-btn:hover::after { opacity: 0.28; }
-        .expire-now-btn:active { transform: translateY(0); filter: brightness(0.95); }
+        .expire-now-btn:hover { filter: brightness(1.07); transform: translateY(-1px); }
+        .expire-now-btn:active { filter: brightness(0.93); transform: translateY(0); }
         .expire-now-btn:disabled { opacity: 0.4; cursor: default; transform: none; }
-        .expire-now-btn:disabled::after { opacity: 0; }
 
-        /* done state: green gradient (success) */
+        /* done state: FLAT solid green (sukces) */
         .expire-now-btn.done {
-          border: 1px solid transparent;
-          background: linear-gradient(135deg, #2a5a2a 0%, #1a3a1a 50%, #0e2210 100%);
-          box-shadow:
-            inset 0 0 0 1px rgba(160,230,160,0.2),
-            inset 1px 0 0 rgba(160,230,160,0.4),
-            inset 0 -1px 0 rgba(0,0,0,0.3);
-          color: #d0f0c8;
+          background: var(--bb-success);
+          color: var(--bb-success-ink);
         }
-        .expire-now-btn.done::after { background: #4aa04a; }
 
-        /* kill variant: danger gradient (blood-red wash on dark plate) */
+        /* kill variant: FLAT solid red (danger) */
         .expire-now-btn.kill {
-          border: 1px solid rgba(200,60,50,0.5);
-          background:
-            linear-gradient(135deg, rgba(192,57,43,0.35) 0%, rgba(100,20,15,0.15) 60%, rgba(10,10,10,0) 100%),
-            #140a0a;
-          box-shadow:
-            inset 0 0 0 1px rgba(255,120,100,0.08),
-            inset 0 -1px 0 rgba(0,0,0,0.5);
-          color: #f28080;
-          font-size: 0.75rem; padding: 0.45rem 1.2rem;
+          background: var(--bb-danger);
+          color: #fff;
+          font-size: 0.84rem; padding: 0.5rem 1.2rem;
         }
-        .expire-now-btn.kill::after { background: #c03a2a; }
-        .site-footer { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; background: var(--bb-bg); border-top: 1px solid var(--bb-border-soft); padding: 0.5rem 1rem; text-align: center; font-size: 0.75rem; color: var(--bb-fg-5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .site-footer { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; background: var(--bb-bg); border-top: 1px solid var(--bb-border-soft); padding: 0.5rem 1rem; text-align: center; font-size: 0.8rem; color: var(--bb-fg-5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .site-footer a { color: var(--bb-accent-link); text-decoration: none; }
         .site-footer a:hover { color: #8abcf0; text-decoration: underline; }
         .site-footer .sep { color: var(--bb-fg-8); margin: 0 0.5rem; }

@@ -1,89 +1,91 @@
 /* =========================================================================
    bitback.one - Design Tokens
-   Etap 1 design refresh: zmienne CSS odpowiadajace obecnym wartosciom HEX.
-   Zero zmiany wizualnej - te same kolory/rozmiary, tylko nazwane.
-
-   Fonty dojda w etapie 2.
-   Przejscie na OKLCH mozliwe w przyszlosci - HEX gwarantuje parity 1:1.
+   Paleta FLAT (zaakceptowana na mockupie temp/palette-preview.html):
+   zero gradientow CSS, konkretne nasycone kolory z rolami, chlodna
+   granatowa rampa powierzchni. Atmosfere niosa bitmapy narozne
+   (assets/art/), nie gradienty.
    ========================================================================= */
 
 :root {
-  /* --- Surfaces --- */
-  --bb-bg:           #0a0a0a;  /* page */
-  --bb-surface-1:    #111;     /* card */
-  --bb-surface-2:    #161616;  /* hover/raised */
-  --bb-surface-3:    #1e1e1e;  /* input/raised */
-  --bb-surface-sunk: #080808;  /* sunken field */
+  /* --- Surfaces (chlodna granatowa rampa) --- */
+  --bb-bg:           #0b0d12;  /* page */
+  --bb-surface-1:    #141823;  /* card */
+  --bb-surface-2:    #1c2130;  /* hover/raised */
+  --bb-surface-3:    #1c2130;  /* input/raised */
+  --bb-surface-sunk: #0e1119;  /* sunken field (editor, url) */
 
   /* --- Borders / dividers --- */
-  --bb-border:       #1e1e1e;
-  --bb-border-soft:  #1a1a1a;
-  --bb-border-mid:   #252525;  /* input borders */
-  --bb-border-hover: #333;
+  --bb-border:       #2a3040;
+  --bb-border-soft:  #232838;
+  --bb-border-mid:   #2a3040;  /* input borders */
+  --bb-border-hover: #3d4458;
 
-  /* --- Text ---
-     Rozjasnione o ~25-30% od oryginalu, zeby apka miala wiecej zycia.
-     Nie tykam fg, fg-1, fg-2 (juz jasne). Ciemniejsze rozjasnione mocniej. */
-  --bb-fg:           #fff;     /* primary */
-  --bb-fg-1:         #e8e8e8;  /* body (lekki lift) */
-  --bb-fg-2:         #e0e0e0;  /* lekki lift */
-  --bb-fg-3:         #c8c8c8;  /* +7 */
-  --bb-fg-4:         #a0a0a0;  /* tertiary +24 */
-  --bb-fg-5:         #707070;  /* muted +27 */
-  --bb-fg-6:         #5c5c5c;  /* +24 */
-  --bb-fg-7:         #4d4d4d;  /* quiet +26 */
-  --bb-fg-8:         #3d3d3d;  /* separator dots +20 */
-  --bb-fg-body:      #d8d8d8;  /* antibot hover text lift */
-  --bb-fg-tab:       #bfbfbf;  /* active tab text lift */
+  /* --- Text (chlodna rampa, czytelna) --- */
+  --bb-fg:           #eef1f6;  /* primary */
+  --bb-fg-1:         #e2e6ee;  /* body */
+  --bb-fg-2:         #d4d9e4;
+  --bb-fg-3:         #aab2c2;
+  --bb-fg-4:         #aab2c2;  /* tertiary */
+  --bb-fg-5:         #6b7385;  /* muted */
+  --bb-fg-6:         #5d6477;
+  --bb-fg-7:         #4c5366;  /* quiet */
+  --bb-fg-8:         #3a4154;  /* separator dots */
+  --bb-fg-body:      #d4d9e4;  /* antibot hover text */
+  --bb-fg-tab:       #c3cad8;  /* active tab text */
 
-  /* --- Brand / action (blue) --- */
-  --bb-accent:       #3a7bd5;
-  --bb-accent-hover: #4a8be5;
-  --bb-accent-press: #2a6bc5;
-  --bb-accent-link:  #6a9fd4;
-  --bb-accent-tint:  #0f1a2e;
-  --bb-accent-light: #6ea8f0;  /* jasny niebieski - antibot selected */
+  /* --- Akcja (blue - przyciski primary) --- */
+  --bb-accent:       #3d82e8;
+  --bb-accent-hover: #5694ee;
+  --bb-accent-press: #2f6fd0;
+  --bb-accent-link:  #7fb0f5;
+  --bb-accent-tint:  #14223a;
+  --bb-accent-light: #7fb0f5;  /* antibot selected */
 
-  /* --- Secret (gold/amber) --- */
+  /* --- Akcent (teal - kbd, logo .one) --- */
+  --bb-teal:         #25c2a8;
+  --bb-teal-ink:     #04302a;
+
+  /* --- Info (violet - trzeci filar) --- */
+  --bb-violet:       #9b7ce8;
+
+  /* --- Secret (gold - sygnatura, NIETYKANE) --- */
   --bb-secret:       #f0c060;
   --bb-secret-ink:   #d4922a;
 
-  /* --- Success (green) --- */
-  --bb-success:      #7d7;
-  --bb-success-light:#9d9;
-  --bb-success-mid:  #6b6;
-  --bb-success-ink:  #4a4;
-  --bb-success-bg:   #0c1a0c;
-  --bb-success-bg-2: #0a1a0a;
-  --bb-success-border:#1a3a1a;
-  --bb-success-hover:#1e3a1e;
-  --bb-success-button:#142814;
+  /* --- Sukces (green) --- */
+  --bb-success:      #46c46e;
+  --bb-success-light:#7ddb98;
+  --bb-success-mid:  #5fcd82;
+  --bb-success-ink:  #06310f;
+  --bb-success-bg:   #11271a;
+  --bb-success-bg-2: #0e2015;
+  --bb-success-border:#1f4030;
+  --bb-success-hover:#56d07c;
+  --bb-success-button:#46c46e;
 
   /* --- Danger (red) --- */
-  --bb-danger:       #c0392b;
-  --bb-danger-light: #e74c3c;
-  --bb-danger-ink:   #8b3a3a;
-  --bb-danger-bg:    #1a1010;
-  --bb-danger-border:#3a1010;
+  --bb-danger:       #e8554a;
+  --bb-danger-light: #f07a72;
+  --bb-danger-ink:   #5a1d18;
+  --bb-danger-bg:    #271414;
+  --bb-danger-border:#45211e;
 
   /* --- Warn (alias for secret) --- */
   --bb-warn:         var(--bb-secret);
   --bb-warn-ink:     var(--bb-secret-ink);
 
   /* --- Mask (expired placeholder) --- */
-  --bb-mask-bg:      rgba(100, 100, 100, 0.2);
-  --bb-mask-fg:      #555;
+  --bb-mask-bg:      rgba(107, 115, 133, 0.22);
+  --bb-mask-fg:      #6b7385;
 
   /* --- Shadows (sparingly) --- */
-  --bb-shadow-sm:    0 1px 2px rgba(0,0,0,0.6);
-  --bb-shadow-md:    0 4px 12px rgba(0,0,0,0.55), 0 1px 2px rgba(0,0,0,0.6);
-  --bb-shadow-glow-accent: 0 0 0 1px rgba(58,123,213,0.25), 0 8px 24px rgba(58,123,213,0.12);
-  --bb-shadow-glow-secret: 0 0 0 1px rgba(240,192,96,0.28), 0 8px 24px rgba(240,192,96,0.12);
+  --bb-shadow-sm:    0 1px 2px rgba(0,0,0,0.5);
+  --bb-shadow-md:    0 4px 12px rgba(0,0,0,0.45), 0 1px 2px rgba(0,0,0,0.5);
 
   /* --- Fonts ---
-     Open Sans (sans) + JetBrains Mono (mono) z Google Fonts.
-     Fallback do system stack jesli offline/blokowane. */
-  --bb-font-sans: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+     Manrope (UI, zaakceptowana na mockupie) + JetBrains Mono (dane).
+     Self-hosted w assets/fonts/, fallback system stack. */
+  --bb-font-sans: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --bb-font-mono: 'JetBrains Mono', 'Consolas', 'Monaco', 'Courier New', monospace;
 
   /* --- Radii --- */
@@ -117,8 +119,24 @@
   vertical-align: -0.15em;
   display: inline-block;
 }
-/* Trust bar icons - 18px zgodnie z design spec */
-.trust-icon [data-lucide] { width: 18px; height: 18px; stroke-width: 1.6; color: var(--bb-fg-4); vertical-align: middle; }
+/* Okragle chipy ikon (zaakceptowane na mockupie): solid kolor z palety
+   + biala ikona. Gold dostaje ciemna ikone (jasne tlo). */
+.bb-chip {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+.bb-chip [data-lucide] { width: 19px; height: 19px; stroke-width: 2; vertical-align: middle; }
+.bb-chip-blue   { background: var(--bb-accent); }
+.bb-chip-teal   { background: var(--bb-teal); }
+.bb-chip-violet { background: var(--bb-violet); }
+.bb-chip-green  { background: var(--bb-success); color: var(--bb-success-ink); }
+.bb-chip-gold   { background: var(--bb-secret); color: #241500; }
+.bb-chip-red    { background: var(--bb-danger); }
 /* Ghost na 404 i expired - duzy */
 .ghost [data-lucide] { width: 64px; height: 64px; stroke-width: 1.2; }
 /* Zt-badge kłódka - mała */
@@ -202,87 +220,40 @@
 .bb-art-green  { --bb-art: url('/assets/art/green-1.webp'); }
 
 /* =========================================================================
-   Hero surfaces - radial spotlights (dla landing, result, trust)
-   Sygnaturowy gold-on-black + warianty: fresh/cool/hot
-   Uzywaj oszczednie, tylko na kontenerach wyroznionych
-   ========================================================================= */
-
-.bb-hero-gold {
-  position: relative;
-  background:
-    radial-gradient(120% 180% at 15% 120%, rgba(240,192,96,0.11) 0%, rgba(240,192,96,0) 55%),
-    radial-gradient(100% 140% at 95% -20%, rgba(255,220,140,0.06) 0%, rgba(255,220,140,0) 50%),
-    var(--bb-bg);
-  border: 1px solid #252018;
-}
-
-.bb-hero-fresh {
-  position: relative;
-  background:
-    radial-gradient(90% 160% at 20% 100%, rgba(120,200,120,0.18) 0%, rgba(120,200,120,0) 55%),
-    radial-gradient(110% 140% at 90% 0%, rgba(80,180,120,0.10) 0%, rgba(80,180,120,0) 55%),
-    #0a0f0a;
-  border: 1px solid #1a2a1a;
-}
-
-.bb-hero-cool {
-  position: relative;
-  background:
-    radial-gradient(80% 120% at 20% 100%, rgba(58,123,213,0.22) 0%, rgba(58,123,213,0) 55%),
-    radial-gradient(90% 120% at 100% 0%, rgba(160,120,220,0.12) 0%, rgba(160,120,220,0) 55%),
-    #0a0c14;
-  border: 1px solid #1a2030;
-}
-
-/* =========================================================================
-   Bajeranckie cards - 2 warstwy: radial color bloom + vertical gradient
-   + top inset highlight + gradient top line
+   Karty FLAT (zaakceptowane na mockupie): jednolita powierzchnia
+   --bb-surface-1 + border --bb-border. ZERO gradientow - tozsamosc
+   koloru niosa: chipy ikon, status-pille i bitmapy narozne (bb-art).
+   Warianty roznia sie wylacznie odcieniem ramki.
+   !important bo inline <style> w PHP laduje sie PO tokens.css.
    ========================================================================= */
 .bb-card {
   position: relative;
   overflow: hidden;
 }
 
-/* !important bo inline CSS w PHP (np. .trust-box { background: ... })
-   wygrywa przez kolejnosc ladowania - tokens.css loads first.
-   Bez bialej linii u gory i inset-highlightow - tla niosa tozsamosc,
-   nie dekoracyjna ramka. */
 .bb-card-default {
-  background:
-    radial-gradient(130% 160% at 0% 0%, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0) 55%),
-    linear-gradient(180deg, #15161a 0%, #0c0d11 100%) !important;
+  background: var(--bb-surface-1) !important;
   border: 1px solid var(--bb-border) !important;
 }
 
 .bb-card-success {
-  background:
-    radial-gradient(140% 160% at 10% 120%, rgba(125,215,125,0.18) 0%, rgba(125,215,125,0) 55%),
-    linear-gradient(180deg, #0f1e0f 0%, #0a140a 100%) !important;
+  background: var(--bb-surface-1) !important;
   border: 1px solid var(--bb-success-border) !important;
 }
 
 .bb-card-secret {
-  background:
-    radial-gradient(140% 170% at 110% 120%, rgba(240,192,96,0.20) 0%, rgba(240,192,96,0) 55%),
-    linear-gradient(180deg, rgba(240,192,96,0.07) 0%, rgba(240,192,96,0.02) 100%),
-    #0d0b08 !important;
-  border: 1px solid rgba(240,192,96,0.4) !important;
+  background: var(--bb-surface-1) !important;
+  border: 1px solid rgba(240, 192, 96, 0.35) !important;
 }
 
 .bb-card-accent {
-  background:
-    radial-gradient(120% 160% at 0% 100%, rgba(58,123,213,0.20) 0%, rgba(58,123,213,0) 55%),
-    linear-gradient(180deg, #0f1420 0%, #0b101a 100%) !important;
-  border: 1px solid #1a2540 !important;
+  background: var(--bb-surface-1) !important;
+  border: 1px solid var(--bb-border) !important;
 }
 
-/* Solid dark background - bez gradientow w tle.
-   Atmosfera i glebia idzie w kontenery (bb-card-*, bb-hero-*, buttony).
-   Uzywamy bardzo subtelnego linear gradient pionowego (top->bottom o 5 punktow ciemniej)
-   zeby uniknac zupelnie plaskiego "powerpoint dark", ale nadal czyste tlo. */
+/* Tlo strony - solid FLAT, zero gradientow (zaakceptowane). */
 html, body {
-  background: linear-gradient(180deg, #0c0c0e 0%, #08080a 100%) !important;
-  background-attachment: fixed !important;
+  background: var(--bb-bg) !important;
   min-height: 100vh;
 }
 

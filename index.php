@@ -52,8 +52,8 @@ $challenge = antibot_challenge();
         }
         .header p {
             color: var(--bb-fg);
-            font-size: 0.9rem;
-            font-weight: 500;
+            font-size: 1rem;
+            font-weight: 600;
             letter-spacing: 0.02em;
             margin-top: 0.5rem;
         }
@@ -83,54 +83,50 @@ $challenge = antibot_challenge();
             transition: background 220ms var(--bb-ease), transform 220ms var(--bb-ease);
         }
         .trust-item:hover {
-            background: rgba(120,140,200,0.06);
+            background: rgba(127, 176, 245, 0.06);
             transform: translateY(-1px);
         }
-        .trust-icon {
-            font-size: 1.1rem;
-            margin-bottom: 0.3rem;
-        }
+        .trust-item .bb-chip { margin-bottom: 0.55rem; }
         .trust-title {
-            font-size: 0.72rem;
-            font-weight: 600;
+            font-size: 0.78rem;
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.06em;
-            color: #b8c5d8; /* cool tinted, dostrojony do aurora cool tla */
-            margin-bottom: 0.25rem;
+            color: var(--bb-fg);
+            margin-bottom: 0.3rem;
         }
         .trust-desc {
-            font-size: 0.7rem;
-            color: #8090a8; /* cool tinted, jasniejszy niz poprzednio */
-            line-height: 1.5;
+            font-size: 0.8rem;
+            color: var(--bb-fg-3);
+            line-height: 1.55;
         }
-        .trust-box .trust-icon [data-lucide] { color: #b8c5d8; }
 
-        /* ====== HINT BAR ====== */
+        /* ====== HINT BAR (flat) ====== */
         .hint-bar {
-            background: #0d0d10;
-            border: 1px solid #1c1c22;
+            background: var(--bb-surface-1);
+            border: 1px solid var(--bb-border);
             border-radius: 8px;
-            padding: 0.6rem 0.8rem;
+            padding: 0.65rem 0.85rem;
             margin-bottom: 0.6rem;
             display: flex;
             align-items: center;
             gap: 0.6rem;
-            font-size: 0.75rem;
-            color: var(--bb-fg-4);
+            font-size: 0.85rem;
+            color: var(--bb-fg-3);
         }
         .hint-bar kbd {
             display: inline-block;
             padding: 0.15em 0.5em;
-            background: #14141c;
-            border: 1px solid #2a2a36;
+            background: var(--bb-surface-sunk);
+            border: 1px solid var(--bb-border);
             border-radius: 4px;
             font-family: var(--bb-font-mono);
-            font-size: 0.8rem;
-            color: #c8d0e8;
+            font-size: 0.84rem;
+            color: var(--bb-teal);
             white-space: nowrap;
         }
-        .hint-bar .hint-text { color: var(--bb-fg-4); }
-        .hint-bar .hint-text strong { color: #c8d0e8; font-weight: 500; }
+        .hint-bar .hint-text { color: var(--bb-fg-3); }
+        .hint-bar .hint-text strong { color: var(--bb-fg); font-weight: 600; }
 
         .main {
             max-width: 1100px;
@@ -150,7 +146,7 @@ $challenge = antibot_challenge();
         }
 
         .col-label {
-            font-size: 0.7rem;
+            font-size: 0.76rem;
             text-transform: uppercase;
             letter-spacing: 0.1em;
             color: var(--bb-fg-5);
@@ -162,17 +158,17 @@ $challenge = antibot_challenge();
 
         /* placeholder edytora */
 
-        /* edytor contenteditable - czysty dark, akcent przez focus i secret highlight */
+        /* edytor contenteditable - flat sunken, akcent przez focus i secret highlight */
         .editor {
             width: 100%;
             min-height: 220px;
-            padding: 0.8rem;
-            background: #0d0d10;
-            border: 1px solid #1c1c22;
+            padding: 0.85rem;
+            background: var(--bb-surface-sunk);
+            border: 1px solid var(--bb-border);
             border-radius: 10px;
             color: var(--bb-fg-2);
             font-family: var(--bb-font-mono);
-            font-size: 0.85rem;
+            font-size: 0.95rem;
             line-height: 1.7;
             outline: none;
             white-space: pre-wrap;
@@ -204,8 +200,8 @@ $challenge = antibot_challenge();
         }
 
         .config-panel {
-            background: #0d0d10;
-            border: 1px solid #1c1c22;
+            background: var(--bb-surface-1);
+            border: 1px solid var(--bb-border);
             border-radius: 10px;
             padding: 1rem;
             box-shadow: var(--bb-shadow-sm);
@@ -218,7 +214,7 @@ $challenge = antibot_challenge();
 
         .config-group label {
             display: block;
-            font-size: 0.68rem;
+            font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
             color: var(--bb-fg-5);
@@ -233,20 +229,20 @@ $challenge = antibot_challenge();
 
         .config-input {
             width: 70px;
-            padding: 0.4rem 0.5rem;
-            background: var(--bb-bg);
+            padding: 0.45rem 0.5rem;
+            background: var(--bb-surface-sunk);
             border: 1px solid var(--bb-border-mid);
             border-radius: 4px;
             color: var(--bb-fg);
-            font-size: 0.85rem;
+            font-size: 0.92rem;
             text-align: center;
             outline: none;
         }
         .config-input:focus { border-color: var(--bb-accent); box-shadow: 0 0 0 3px rgba(58, 123, 213, 0.12); }
 
         .config-unit {
-            font-size: 0.72rem;
-            color: var(--bb-fg-6);
+            font-size: 0.8rem;
+            color: var(--bb-fg-5);
         }
 
         .config-sep {
@@ -257,8 +253,8 @@ $challenge = antibot_challenge();
 
         /* antybot */
         .antibot-q {
-            font-size: 0.82rem;
-            color: var(--bb-fg-4);
+            font-size: 0.9rem;
+            color: var(--bb-fg-3);
             margin-bottom: 0.4rem;
         }
         .antibot-options {
@@ -267,12 +263,12 @@ $challenge = antibot_challenge();
         }
         .antibot-opt {
             flex: 1;
-            padding: 0.45rem;
+            padding: 0.5rem;
             border-radius: 5px;
             border: 1px solid var(--bb-border-mid);
-            background: var(--bb-bg);
-            color: var(--bb-fg-4);
-            font-size: 0.85rem;
+            background: var(--bb-surface-sunk);
+            color: var(--bb-fg-3);
+            font-size: 0.92rem;
             text-align: center;
             cursor: pointer;
             transition: all 0.15s;
@@ -298,44 +294,24 @@ $challenge = antibot_challenge();
             pointer-events: none;
         }
 
-        /* przycisk generuj - teal cyber gradient + magenta hairline leading edge */
+        /* przycisk generuj - FLAT solid blue (akcja) */
         .generate-btn {
-            position: relative;
             width: 100%;
-            padding: 0.75rem;
+            padding: 0.8rem;
             margin-top: 1rem;
-            border-radius: 6px;
-            border: 1px solid transparent;
-            background: linear-gradient(135deg, #2a9080 0%, #1a6a5e 48%, #0a4038 100%);
-            box-shadow:
-              inset 0 0 0 1px rgba(255,255,255,0.08),
-              inset 1px 0 0 rgba(160,120,220,0.45),
-              inset 0 -1px 0 rgba(0,0,0,0.35);
-            color: #d8f0ea;
-            font-size: 0.9rem;
-            font-weight: 600;
+            border-radius: 8px;
+            border: none;
+            background: var(--bb-accent);
+            color: #fff;
+            font-size: 0.95rem;
+            font-weight: 700;
             cursor: pointer;
-            transition: transform 160ms var(--bb-ease), filter 160ms var(--bb-ease);
-            letter-spacing: 0.02em;
-            isolation: isolate;
+            transition: background 140ms var(--bb-ease), transform 140ms var(--bb-ease);
+            letter-spacing: 0.01em;
         }
-        .generate-btn::after {
-            content: "";
-            position: absolute;
-            inset: -4px;
-            border-radius: 10px;
-            background: rgba(60,220,200,1);
-            filter: blur(10px);
-            opacity: 0;
-            z-index: -1;
-            transition: opacity 220ms var(--bb-ease);
-        }
-        .generate-btn:hover { transform: translateY(-1px); }
-        .generate-btn:hover::after { opacity: 0.28; }
-        .generate-btn:active { transform: translateY(0); filter: brightness(0.95); }
-        .generate-btn:active::after { opacity: 0.15; }
-        .generate-btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
-        .generate-btn:disabled::after { opacity: 0; }
+        .generate-btn:hover { background: var(--bb-accent-hover); transform: translateY(-1px); }
+        .generate-btn:active { background: var(--bb-accent-press); transform: translateY(0); }
+        .generate-btn:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
         .generate-btn .spinner {
             display: inline-block;
             width: 0.9em;
@@ -349,47 +325,27 @@ $challenge = antibot_challenge();
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* przycisk oznaczania poufnych - diagonal gold gradient z dark text */
+        /* przycisk oznaczania poufnych - FLAT solid gold (akcja secret) */
         .mark-secret-btn {
-            position: relative;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 0.5em;
             width: 270px;
-            padding: 0.6rem 1rem;
+            padding: 0.65rem 1rem;
             margin-top: 0.6rem;
-            border-radius: 6px;
-            border: 1px solid rgba(90,140,200,0.5);
-            background: linear-gradient(135deg, #2a4a78 0%, #1e3860 48%, #15264a 100%);
-            box-shadow:
-              inset 0 0 0 1px rgba(200,220,255,0.12),
-              inset 0 -8px 12px -8px rgba(0,0,20,0.5);
-            color: #d8e5f5;
-            font-size: 0.82rem;
-            font-weight: 500;
+            border-radius: 8px;
+            border: none;
+            background: var(--bb-secret);
+            color: #2a1d08;
+            font-size: 0.9rem;
+            font-weight: 700;
             cursor: pointer;
-            transition: transform 160ms var(--bb-ease), filter 160ms var(--bb-ease);
-            letter-spacing: 0.02em;
-            justify-content: center;
-            isolation: isolate;
+            transition: filter 140ms var(--bb-ease), transform 140ms var(--bb-ease);
+            letter-spacing: 0.01em;
         }
-        .mark-secret-btn::after {
-            content: "";
-            position: absolute;
-            inset: -4px;
-            border-radius: 10px;
-            background: rgba(90,160,232,0.8);
-            filter: blur(10px);
-            opacity: 0;
-            z-index: -1;
-            transition: opacity 220ms var(--bb-ease);
-        }
-        .mark-secret-btn:hover { transform: translateY(-1px); }
-        .mark-secret-btn:hover::after { opacity: 0.28; }
-        .mark-secret-btn:active {
-            transform: translateY(0);
-            filter: brightness(0.95);
-        }
+        .mark-secret-btn:hover { filter: brightness(1.07); transform: translateY(-1px); }
+        .mark-secret-btn:active { filter: brightness(0.93); transform: translateY(0); }
         .mark-secret-btn [data-lucide] { width: 18px; height: 18px; stroke-width: 2; }
 
         /* ====== PODGLĄD WYGAŚNIĘCIA ====== */
@@ -413,7 +369,7 @@ $challenge = antibot_challenge();
             border: 1px solid var(--bb-border);
             background: transparent;
             color: var(--bb-fg-6);
-            font-size: 0.65rem;
+            font-size: 0.72rem;
             cursor: pointer;
             transition: all 0.15s;
         }
@@ -423,12 +379,12 @@ $challenge = antibot_challenge();
             background: var(--bb-surface-2);
         }
         .preview-box {
-            background: #0d0d10;
-            border: 1px solid #1c1c22;
+            background: var(--bb-surface-sunk);
+            border: 1px solid var(--bb-border);
             border-radius: 10px;
-            padding: 0.8rem;
+            padding: 0.85rem;
             font-family: var(--bb-font-mono);
-            font-size: 0.85rem;
+            font-size: 0.92rem;
             line-height: 1.7;
             white-space: pre-wrap;
             word-break: break-word;
@@ -452,7 +408,7 @@ $challenge = antibot_challenge();
         .preview-empty {
             color: var(--bb-fg-6);
             font-style: italic;
-            font-size: 0.78rem;
+            font-size: 0.85rem;
         }
 
         /* ====== WYNIK ====== */
@@ -486,10 +442,11 @@ $challenge = antibot_challenge();
             /* background i border z bb-card-success */
         }
         .result-label {
-            font-size: 0.68rem;
+            font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 0.1em;
-            color: var(--bb-success-ink);
+            color: var(--bb-success);
+            font-weight: 700;
             margin-bottom: 0.4rem;
         }
         .result-link {
@@ -499,41 +456,30 @@ $challenge = antibot_challenge();
         }
         .result-url {
             flex: 1;
-            padding: 0.45rem 0.6rem;
+            padding: 0.5rem 0.65rem;
             background: var(--bb-surface-sunk);
             border: 1px solid var(--bb-border-mid);
             border-radius: 4px;
-            color: var(--bb-success);
+            color: var(--bb-success-light);
             font-family: var(--bb-font-mono);
-            font-size: 0.8rem;
+            font-size: 0.875rem;
             outline: none;
         }
+        /* kopiuj - FLAT solid green (sukces) */
         .copy-btn {
-            position: relative;
-            padding: 0.45rem 0.9rem;
-            border-radius: 6px;
-            border: 1px solid transparent;
-            background: linear-gradient(135deg, #2a5a2a 0%, #1a3a1a 50%, #0e2210 100%);
-            box-shadow:
-              inset 0 0 0 1px rgba(160,230,160,0.2),
-              inset 1px 0 0 rgba(160,230,160,0.4),
-              inset 0 -1px 0 rgba(0,0,0,0.3);
-            color: #d0f0c8;
-            font-size: 0.75rem;
-            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: none;
+            background: var(--bb-success);
+            color: var(--bb-success-ink);
+            font-size: 0.85rem;
+            font-weight: 700;
             cursor: pointer;
-            transition: transform 160ms var(--bb-ease), filter 160ms var(--bb-ease);
+            transition: filter 140ms var(--bb-ease), transform 140ms var(--bb-ease);
             white-space: nowrap;
-            isolation: isolate;
         }
-        .copy-btn::after {
-            content: ""; position: absolute; inset: -4px; border-radius: 10px;
-            background: #4aa04a; filter: blur(10px); opacity: 0; z-index: -1;
-            transition: opacity 220ms var(--bb-ease);
-        }
-        .copy-btn:hover { transform: translateY(-1px); }
-        .copy-btn:hover::after { opacity: 0.28; }
-        .copy-btn:active { transform: translateY(0); filter: brightness(0.95); }
+        .copy-btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
+        .copy-btn:active { filter: brightness(0.92); transform: translateY(0); }
 
         .result-password {
             margin-top: 0.6rem;
@@ -541,7 +487,7 @@ $challenge = antibot_challenge();
             background: var(--bb-success-bg-2);
             border: 1px solid var(--bb-success-border);
             border-radius: 4px;
-            font-size: 0.78rem;
+            font-size: 0.85rem;
             color: var(--bb-success-mid);
             display: none;
         }
@@ -562,20 +508,20 @@ $challenge = antibot_challenge();
 </div>
 
 <div class="trust bb-rise-2">
-    <div class="trust-box bb-card bb-hero-cool bb-art bb-art-aurora">
+    <div class="trust-box bb-card bb-card-default bb-art bb-art-aurora">
         <div class="trust-grid">
             <div class="trust-item">
-                <div class="trust-icon"><?= bb_icon('lock') ?></div>
+                <div class="bb-chip bb-chip-blue"><?= bb_icon('lock') ?></div>
                 <div class="trust-title"><?= htmlspecialchars($t['trust1_title']) ?></div>
                 <div class="trust-desc"><?= htmlspecialchars($t['trust1_desc']) ?></div>
             </div>
             <div class="trust-item">
-                <div class="trust-icon"><?= bb_icon('clock') ?></div>
+                <div class="bb-chip bb-chip-teal"><?= bb_icon('clock') ?></div>
                 <div class="trust-title"><?= htmlspecialchars($t['trust2_title']) ?></div>
                 <div class="trust-desc"><?= htmlspecialchars($t['trust2_desc']) ?></div>
             </div>
             <div class="trust-item">
-                <div class="trust-icon"><?= bb_icon('monitor') ?></div>
+                <div class="bb-chip bb-chip-violet"><?= bb_icon('monitor') ?></div>
                 <div class="trust-title"><?= htmlspecialchars($t['trust3_title']) ?></div>
                 <div class="trust-desc"><?= htmlspecialchars($t['trust3_desc']) ?></div>
             </div>
@@ -673,7 +619,7 @@ $challenge = antibot_challenge();
 
 </div>
 
-<div style="position:fixed;bottom:0;left:0;right:0;z-index:100;background:var(--bb-bg);border-top:1px solid var(--bb-border-soft);padding:0.5rem 1rem;text-align:center;font-size:0.75rem;color:var(--bb-fg-5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+<div style="position:fixed;bottom:0;left:0;right:0;z-index:100;background:var(--bb-bg);border-top:1px solid var(--bb-border-soft);padding:0.5rem 1rem;text-align:center;font-size:0.8rem;color:var(--bb-fg-5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
     <a href="https://bitback.pl" target="_blank" rel="noopener" style="color:var(--bb-accent-link);text-decoration:none;"><strong>bitback.pl</strong></a>
     <span style="color:var(--bb-fg-8);margin:0 0.5rem;">|</span><?= htmlspecialchars($t['footer_tagline']) ?>
     <span style="color:var(--bb-fg-8);margin:0 0.5rem;">|</span>Zbigniew Gralewski
