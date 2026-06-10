@@ -62,7 +62,7 @@ $challenge = antibot_challenge();
         /* ====== TRUST BAR ====== */
         .trust {
             max-width: 1100px;
-            margin: 0 auto 1.5rem;
+            margin: 0 auto 3.5rem;
             padding: 0 1rem;
         }
         /* trust bar (m01): neon ramka + ciemne wnetrze, corner streaks
@@ -177,7 +177,7 @@ $challenge = antibot_challenge();
             display: grid;
             grid-template-columns: 1fr 340px; /* proporcja kolumn jak w mockupie m01 */
             gap: 1.5rem;
-            align-items: start;
+            align-items: stretch;
         }
         @media (max-width: 768px) {
             .two-col { grid-template-columns: 1fr; }
@@ -209,7 +209,7 @@ $challenge = antibot_challenge();
         .frame-pad { padding: 0.85rem; }
 
         /* ====== LEWA KOLUMNA — EDYTOR ====== */
-        .col-left { min-width: 0; }
+        .col-left { min-width: 0; display: flex; flex-direction: column; }
 
         /* placeholder edytora */
 
@@ -275,10 +275,16 @@ $challenge = antibot_challenge();
         .col-right {
             position: sticky;
             top: 1.5rem;
+            display: flex;
+            flex-direction: column;
         }
 
         .config-panel {
             padding: 1rem;
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
         /* wiersz ustawien (m01): kwadratowy icon-chip z cienka ramka po
@@ -478,21 +484,20 @@ $challenge = antibot_challenge();
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 0.7em;
-            padding: 0.65rem 1.5rem;
+            gap: 0.6em;
+            padding: 0.6rem 1rem;
             background: linear-gradient(90deg, #1b1233 0%, #0a0e15 50%, #0b2127 100%);
             clip-path: polygon(13px 0, 100% 0, 100% calc(100% - 13px), calc(100% - 13px) 100%, 0 100%, 0 13px);
             color: #fff;
-            font-size: 0.9rem;
+            font-size: 0.86rem;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.04em;
         }
         /* wiersz przycisku + dekoracyjne sciezki circuit po prawej (m01) */
-        .mark-row { display: flex; align-items: center; gap: 1rem; margin-top: 0.6rem; }
+        .mark-row { display: flex; align-items: stretch; gap: 1rem; margin-top: 0.6rem; }
         .mark-row .mark-secret-btn { margin-top: 0; }
-        .circuit-deco { flex: 1; height: 56px; min-width: 0; }
-        @media (max-width: 768px) { .circuit-deco { display: none; } }
+        .mark-row .generate-btn { margin-top: 0; width: auto; flex: 1; white-space: nowrap; letter-spacing: 0.08em; padding-left: 0.8rem; padding-right: 0.8rem; }
 
         .mark-secret-btn:hover { filter: drop-shadow(0 0 11px rgba(122, 92, 230, 0.55)) brightness(1.12); }
         .mark-secret-btn:active { filter: drop-shadow(0 0 5px rgba(122, 92, 230, 0.3)) brightness(0.92); }
@@ -501,6 +506,9 @@ $challenge = antibot_challenge();
         /* ====== PODGLĄD WYGAŚNIĘCIA ====== */
         .preview-section {
             margin-top: 1.5rem;
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
         }
         .preview-bar {
             display: flex;
@@ -535,6 +543,8 @@ $challenge = antibot_challenge();
         }
         .preview-box {
             padding: 0.85rem;
+            flex: 1 1 auto;
+            min-height: 90px;
             font-family: var(--bb-font-mono);
             font-size: 0.92rem;
             line-height: 1.7;
@@ -663,28 +673,6 @@ $challenge = antibot_challenge();
     <p><?= htmlspecialchars($t['subtitle']) ?></p>
 </div>
 
-<div class="trust bb-rise-2">
-    <div class="trust-box bb-art bb-art-aurora bb-art-left bb-art-left-magenta">
-        <div class="trust-grid">
-            <div class="trust-item">
-                <div class="bb-chip bb-chip-teal"><?= bb_icon('lock') ?></div>
-                <div class="trust-title"><?= htmlspecialchars($t['trust1_title']) ?></div>
-                <div class="trust-desc"><?= htmlspecialchars($t['trust1_desc']) ?></div>
-            </div>
-            <div class="trust-item">
-                <div class="bb-chip bb-chip-teal"><?= bb_icon('clock') ?></div>
-                <div class="trust-title"><?= htmlspecialchars($t['trust2_title']) ?></div>
-                <div class="trust-desc"><?= htmlspecialchars($t['trust2_desc']) ?></div>
-            </div>
-            <div class="trust-item">
-                <div class="bb-chip bb-chip-violet"><?= bb_icon('monitor') ?></div>
-                <div class="trust-title"><?= htmlspecialchars($t['trust3_title']) ?></div>
-                <div class="trust-desc"><?= htmlspecialchars($t['trust3_desc']) ?></div>
-            </div>
-        </div>
-    </div>
-</div>
-
 <div class="main bb-rise-3">
     <form id="createForm" autocomplete="off" onsubmit="return false;">
         <input type="text" name="website_url" class="ohnohoney" tabindex="-1" autocomplete="off">
@@ -704,14 +692,7 @@ $challenge = antibot_challenge();
                     </div>
                     <div class="mark-row">
                         <button type="button" class="mark-secret-btn" onmousedown="event.preventDefault()" onclick="toggleSecret()"><span class="inner"><?= bb_icon('lock') ?> <?= htmlspecialchars($t['mark_secret_btn']) ?></span></button>
-                        <svg class="circuit-deco" viewBox="0 0 260 56" preserveAspectRatio="xMaxYMid meet" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M258,8 H150 L128,30 H58" fill="none" stroke="rgba(37,194,168,0.75)" stroke-width="1.5"/>
-                            <path d="M258,22 H170 L148,44 H96" fill="none" stroke="rgba(155,124,232,0.75)" stroke-width="1.5"/>
-                            <path d="M258,38 H200 L186,52 H160" fill="none" stroke="rgba(37,194,168,0.40)" stroke-width="1.5"/>
-                            <rect x="50" y="26" width="5" height="5" fill="rgba(37,194,168,0.9)"/>
-                            <rect x="88" y="40" width="5" height="5" fill="rgba(155,124,232,0.9)"/>
-                            <rect x="153" y="49" width="4" height="4" fill="rgba(37,194,168,0.55)"/>
-                        </svg>
+                        <button type="button" class="generate-btn" onclick="generateLink()"><span><?= htmlspecialchars($t['generate_btn']) ?></span><?= bb_icon('arrow-right') ?></button>
                     </div>
                 </div>
 
@@ -777,7 +758,6 @@ $challenge = antibot_challenge();
                     </div>
 
                 </div>
-                <button type="button" class="generate-btn" onclick="generateLink()"><span><?= htmlspecialchars($t['generate_btn']) ?></span><?= bb_icon('arrow-right') ?></button>
             </div>
         </div>
     </form>
@@ -793,6 +773,28 @@ $challenge = antibot_challenge();
         </div>
     </div>
 
+</div>
+
+<div class="trust bb-rise-3">
+    <div class="trust-box bb-art bb-art-aurora bb-art-left bb-art-left-magenta">
+        <div class="trust-grid">
+            <div class="trust-item">
+                <div class="bb-chip bb-chip-teal"><?= bb_icon('lock') ?></div>
+                <div class="trust-title"><?= htmlspecialchars($t['trust1_title']) ?></div>
+                <div class="trust-desc"><?= htmlspecialchars($t['trust1_desc']) ?></div>
+            </div>
+            <div class="trust-item">
+                <div class="bb-chip bb-chip-teal"><?= bb_icon('clock') ?></div>
+                <div class="trust-title"><?= htmlspecialchars($t['trust2_title']) ?></div>
+                <div class="trust-desc"><?= htmlspecialchars($t['trust2_desc']) ?></div>
+            </div>
+            <div class="trust-item">
+                <div class="bb-chip bb-chip-violet"><?= bb_icon('monitor') ?></div>
+                <div class="trust-title"><?= htmlspecialchars($t['trust3_title']) ?></div>
+                <div class="trust-desc"><?= htmlspecialchars($t['trust3_desc']) ?></div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div style="position:fixed;bottom:0;left:0;right:0;z-index:100;background:var(--bb-bg);border-top:1px solid var(--bb-border-soft);padding:0.5rem 1rem;text-align:center;font-size:0.8rem;color:var(--bb-fg-5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
