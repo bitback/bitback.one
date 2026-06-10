@@ -429,20 +429,25 @@ $challenge = antibot_challenge();
             display: flex;
             gap: 0.3rem;
         }
+        /* taby podgladu (m01): bordered, aktywny = teal z tintem i glow */
         .preview-tab {
-            padding: 0.2rem 0.6rem;
-            border-radius: 4px;
+            padding: 0.35rem 0.85rem;
             border: 1px solid var(--bb-border);
             background: transparent;
             color: var(--bb-fg-6);
             font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
             cursor: pointer;
             transition: all 0.15s;
         }
+        .preview-tab:hover { border-color: var(--bb-teal); color: var(--bb-fg-3); }
         .preview-tab.active {
-            border-color: var(--bb-fg-7);
-            color: var(--bb-fg-tab);
-            background: var(--bb-surface-2);
+            border-color: var(--bb-teal);
+            color: var(--bb-teal);
+            background: rgba(37, 194, 168, 0.08);
+            box-shadow: 0 0 10px rgba(37, 194, 168, 0.18);
         }
         .preview-box {
             padding: 0.85rem;
