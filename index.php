@@ -388,7 +388,9 @@ $challenge = antibot_challenge();
 
         /* przycisk generuj - CTA z mockupu m01: JEDYNY dozwolony gradient
            (user zaakceptowal mockup; reszta strony zero gradientow).
-           teal -> blue -> violet + neon glow + strzalka. */
+           Ciemny box + gradientowa ramka teal -> blue -> violet (trik
+           padding-box/border-box, bez zmian w HTML/JS - innerHTML swap
+           spinnera musi dzialac) + neon glow + strzalka. */
         .generate-btn {
             display: flex;
             align-items: center;
@@ -397,8 +399,9 @@ $challenge = antibot_challenge();
             width: 100%;
             padding: 0.95rem 1rem;
             margin-top: 1rem;
-            border: 1px solid rgba(155, 124, 232, 0.65);
-            background: linear-gradient(90deg, var(--bb-teal) 0%, var(--bb-accent) 50%, var(--bb-violet) 100%);
+            border: 2px solid transparent;
+            background: linear-gradient(#0a0e15, #0a0e15) padding-box,
+                        linear-gradient(90deg, var(--bb-teal) 0%, var(--bb-accent) 50%, var(--bb-violet) 100%) border-box;
             color: #fff;
             font-size: 0.95rem;
             font-weight: 800;
