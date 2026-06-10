@@ -301,9 +301,8 @@ $challenge = antibot_challenge();
         /* chipy ikon ustawien (m01): jasniejsza ikona ze swiecacym konturem */
         .config-chip {
             grid-row: span 2;
-            align-self: stretch;
-            width: 40px;
-            min-height: 38px;
+            width: 44px;
+            height: 44px;
             display: flex;
             align-items: center;
             justify-content: center;
