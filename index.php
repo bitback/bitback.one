@@ -300,11 +300,17 @@ $challenge = antibot_challenge();
             padding-top: 1.05rem;
         }
 
-        /* weryfikacja: pytanie i opcje pelna szerokosc */
-        .config-verify .antibot-q,
-        .config-verify .antibot-options { grid-column: 1 / -1; }
+        /* weryfikacja: osobna ramka pod panelem ustawien; col-right jest
+           flex-kolumna, config-panel flex:1 - dol ramki rowna sie z dolem
+           podgladu w lewej kolumnie */
+        .verify-panel {
+            margin-top: 1.5rem;
+            padding: 1rem;
+        }
+        .verify-panel label { margin-bottom: 0.45rem; }
 
-        .config-group label {
+        .config-group label,
+        .verify-panel label {
             display: block;
             font-size: 0.76rem;
             font-weight: 600;
@@ -336,12 +342,6 @@ $challenge = antibot_challenge();
         .config-unit {
             font-size: 0.8rem;
             color: var(--bb-fg-5);
-        }
-
-        .config-sep {
-            border: none;
-            border-top: 1px solid var(--bb-border-soft);
-            margin: 1rem 0;
         }
 
         /* antybot */
@@ -419,10 +419,12 @@ $challenge = antibot_challenge();
         }
         .generate-btn:active { filter: brightness(0.92); transform: translateY(0); }
 
-        /* guide: pulsuje sam glow, ramka i grubosc bez zmian */
+        /* guide: pulsuje sam glow, ramka i grubosc bez zmian.
+           drop-shadow zamiast box-shadow - bb-frame trzyma box-shadow
+           z !important, animacja by przegrala */
         @keyframes bb-guide-verify {
-            0%, 100% { box-shadow: 0 0 0 rgba(37, 194, 168, 0); }
-            50% { box-shadow: 0 0 18px rgba(37, 194, 168, 0.45); }
+            0%, 100% { filter: drop-shadow(0 0 2px rgba(37, 194, 168, 0.10)); }
+            50% { filter: drop-shadow(0 0 14px rgba(37, 194, 168, 0.65)); }
         }
         .config-verify.bb-guide { animation: bb-guide-verify 1.1s ease-in-out infinite; }
         @keyframes bb-guide-cta {
@@ -747,14 +749,12 @@ $challenge = antibot_challenge();
                         </div>
                     </div>
 
-                    <hr class="config-sep">
+                </div>
 
-                    <div class="config-group config-verify">
-                        <label><?= htmlspecialchars($t['verify_label']) ?></label>
-                        <div class="antibot-q" id="mathQuestion" aria-live="polite"></div>
-                        <div class="antibot-options" id="mathOptions" role="group" aria-label="<?= htmlspecialchars($t['verify_label']) ?>"></div>
-                    </div>
-
+                <div class="verify-panel bb-frame config-verify">
+                    <label><?= htmlspecialchars($t['verify_label']) ?></label>
+                    <div class="antibot-q" id="mathQuestion" aria-live="polite"></div>
+                    <div class="antibot-options" id="mathOptions" role="group" aria-label="<?= htmlspecialchars($t['verify_label']) ?>"></div>
                 </div>
             </div>
         </div>
