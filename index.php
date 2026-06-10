@@ -494,6 +494,9 @@ $challenge = antibot_challenge();
 </head>
 <body class="bb-landing">
 
+<div class="bb-page-art bb-page-art-tl" aria-hidden="true"></div>
+<div class="bb-page-art bb-page-art-tr" aria-hidden="true"></div>
+
 <div class="header bb-rise-1">
     <?= render_logo('bitback.one', 'https://bitback.one') ?>
     <p><?= htmlspecialchars($t['subtitle']) ?></p>

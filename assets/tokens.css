@@ -225,6 +225,36 @@
 .bb-art-green  { --bb-art: url('/assets/art/green-1.webp'); }
 
 /* =========================================================================
+   Smugi narozne na POZIOMIE STRONY (mockup m01): fixed bitmapy w gornych
+   rogach viewportu. Kanoniczne bitmapy maja art w prawym-dolnym rogu -
+   orientacje do rogu robi transform (maska radialna obraca sie razem
+   z elementem). z-index -1 = nad tlem canvas, pod cala trescia; solidne
+   tla kart zaslaniaja smugi, wiec zyja tylko na czarnym tle strony.
+   ========================================================================= */
+.bb-page-art {
+  position: fixed;
+  width: min(34vw, 520px);
+  aspect-ratio: 1 / 1;
+  pointer-events: none;
+  z-index: -1;
+  background: var(--bb-page-art, none) center / cover no-repeat;
+  mix-blend-mode: screen;
+  opacity: 0.9;
+  -webkit-mask-image: radial-gradient(130% 130% at 100% 100%, #000 30%, transparent 72%);
+  mask-image: radial-gradient(130% 130% at 100% 100%, #000 30%, transparent 72%);
+}
+.bb-page-art-tl {
+  top: 0; left: 0;
+  --bb-page-art: url('/assets/art/magenta-1.webp');
+  transform: rotate(180deg);
+}
+.bb-page-art-tr {
+  top: 0; right: 0;
+  --bb-page-art: url('/assets/art/aurora-2.webp');
+  transform: scaleY(-1);
+}
+
+/* =========================================================================
    Karty FLAT (zaakceptowane na mockupie): jednolita powierzchnia
    --bb-surface-1 + border --bb-border. ZERO gradientow - tozsamosc
    koloru niosa: chipy ikon, status-pille i bitmapy narozne (bb-art).
@@ -273,6 +303,10 @@ html, body {
   background: var(--bb-bg) !important;
   min-height: 100vh;
 }
+/* isolation: wlasny stacking context body - smugi bb-page-art (z-index -1)
+   laduja NAD tlem body, a POD cala trescia. Bez tego tlo body (in-flow)
+   maluje sie po negative-z dzieciach i calkowicie je zaslania. */
+body { isolation: isolate; }
 
 /* Ostre krawedzie WSZEDZIE (zaakceptowane): przyciski, sekcje, pola,
    bannery - zero zaokraglen. Globalna regula z !important wygrywa
