@@ -37,3 +37,7 @@ _new_design/
 
 # === Zrodlowe wersje grafik (duze PNG, nie produkcyjne) ===
 assets/art/_src/
+
+# === Lokalne notatki AI (repo publiczne) ===
+CLAUDE.md
+.claude/
