@@ -648,7 +648,7 @@ $challenge = antibot_challenge();
     <div class="trust-box bb-art bb-art-aurora bb-art-left bb-art-left-magenta">
         <div class="trust-grid">
             <div class="trust-item">
-                <div class="bb-chip bb-chip-blue"><?= bb_icon('lock') ?></div>
+                <div class="bb-chip bb-chip-teal"><?= bb_icon('lock') ?></div>
                 <div class="trust-title"><?= htmlspecialchars($t['trust1_title']) ?></div>
                 <div class="trust-desc"><?= htmlspecialchars($t['trust1_desc']) ?></div>
             </div>
