@@ -40,17 +40,19 @@ $challenge = antibot_challenge();
             padding-bottom: 2.5rem;
         }
 
-        /* logo do lewej, podtytul obok - header w jednej linii,
-           tresc apki wedruje w gore */
+        /* logo do lewej (z wcieciem), podtytul do prawej - jedna linia
+           wypelnia szerokosc, tresc apki wedruje w gore */
         .header {
             max-width: 1100px;
             margin: 0 auto;
             display: flex;
             align-items: center;
             flex-wrap: wrap;
+            justify-content: space-between;
             gap: 0.4rem 1.6rem;
-            padding: 1.3rem 1rem 1rem;
+            padding: 1.3rem 2.4rem 1rem;
         }
+        .header .bb-logo svg { width: 214px; height: auto; }
         .header h1 {
             font-size: 1.6rem;
             font-weight: 300;
@@ -412,17 +414,20 @@ $challenge = antibot_challenge();
             font-size: 0.95rem;
             font-weight: 800;
             cursor: pointer;
-            transition: filter 140ms var(--bb-ease), transform 140ms var(--bb-ease);
+            transition: filter 140ms var(--bb-ease);
             text-transform: uppercase;
             letter-spacing: 0.16em;
             filter: drop-shadow(0 0 9px rgba(122, 92, 230, 0.45));
         }
         .generate-btn [data-lucide] { width: 19px; height: 19px; stroke-width: 2.2; }
+        /* hover ujednolicony z mark-secret: bez ruchu, mocniejszy glow,
+           jasniejsze wnetrze */
         .generate-btn:hover {
-            filter: drop-shadow(0 0 11px rgba(122, 92, 230, 0.55)) brightness(1.12);
-            transform: translateY(-1px);
+            filter: drop-shadow(0 0 15px rgba(122, 92, 230, 0.80)) brightness(1.15);
+            background: linear-gradient(90deg, #2b1d50 0%, #141a2b 50%, #123640 100%) padding-box,
+                        linear-gradient(90deg, var(--bb-teal) 0%, var(--bb-accent) 50%, var(--bb-violet) 100%) border-box;
         }
-        .generate-btn:active { filter: brightness(0.92); transform: translateY(0); }
+        .generate-btn:active { filter: brightness(0.92); }
 
         /* guide: pulsuje sam glow, ramka i grubosc bez zmian.
            drop-shadow zamiast box-shadow - bb-frame trzyma box-shadow
@@ -450,7 +455,7 @@ $challenge = antibot_challenge();
             filter: none;
             animation: none;
         }
-        .generate-btn:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
+        .generate-btn:disabled { opacity: 0.65; cursor: not-allowed; }
         .generate-btn .spinner {
             display: inline-block;
             width: 0.9em;
@@ -502,7 +507,12 @@ $challenge = antibot_challenge();
         .mark-row .mark-secret-btn { margin-top: 0; }
         .mark-row .generate-btn { margin-top: 0; width: auto; flex: 1; white-space: nowrap; letter-spacing: 0.08em; padding-left: 0.8rem; padding-right: 0.8rem; }
 
-        .mark-secret-btn:hover { filter: drop-shadow(0 0 11px rgba(240, 192, 96, 0.55)) brightness(1.1); }
+        .mark-secret-btn:hover {
+            filter: drop-shadow(0 0 15px rgba(240, 192, 96, 0.80)) brightness(1.15);
+        }
+        .mark-secret-btn:hover .inner {
+            background: linear-gradient(90deg, #382a0d 0%, #18130a 50%, #382a0d 100%);
+        }
         .mark-secret-btn:active { filter: drop-shadow(0 0 5px rgba(240, 192, 96, 0.3)) brightness(0.92); }
         .mark-secret-btn [data-lucide] { width: 18px; height: 18px; stroke-width: 2; color: var(--bb-secret); }
 
