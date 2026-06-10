@@ -465,12 +465,12 @@ $challenge = antibot_challenge();
            za ksztaltem. */
         .mark-secret-btn {
             display: inline-block;
-            padding: 1px;
+            padding: 2px;
             margin-top: 0.6rem;
             border: none;
             background: linear-gradient(90deg, var(--bb-teal), var(--bb-violet));
             clip-path: polygon(13px 0, 100% 0, 100% calc(100% - 13px), calc(100% - 13px) 100%, 0 100%, 0 13px);
-            filter: drop-shadow(0 0 7px rgba(122, 92, 230, 0.35));
+            filter: drop-shadow(0 0 9px rgba(122, 92, 230, 0.45));
             cursor: pointer;
             transition: filter 140ms var(--bb-ease);
         }
