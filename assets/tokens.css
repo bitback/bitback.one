@@ -278,6 +278,17 @@
   --bb-page-art: url('/assets/art/aurora-2.webp');
   transform: scaleY(-1);
 }
+/* dolne rogi (m01): BR zywy teal, BL przyciszona magenta */
+.bb-page-art-br {
+  bottom: 0; right: 0;
+  --bb-page-art: url('/assets/art/aurora-1.webp');
+}
+.bb-page-art-bl {
+  bottom: 0; left: 0;
+  --bb-page-art: url('/assets/art/magenta-2.webp');
+  transform: scaleX(-1);
+  opacity: 0.75;
+}
 
 /* =========================================================================
    Karty FLAT (zaakceptowane na mockupie): jednolita powierzchnia

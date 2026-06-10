@@ -638,6 +638,8 @@ $challenge = antibot_challenge();
 
 <div class="bb-page-art bb-page-art-tl" aria-hidden="true"></div>
 <div class="bb-page-art bb-page-art-tr" aria-hidden="true"></div>
+<div class="bb-page-art bb-page-art-br" aria-hidden="true"></div>
+<div class="bb-page-art bb-page-art-bl" aria-hidden="true"></div>
 
 <div class="header bb-rise-1">
     <?= render_logo('bitback.one', 'https://bitback.one') ?>
