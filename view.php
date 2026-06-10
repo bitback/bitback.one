@@ -254,7 +254,7 @@ function show_password_form(array $t, string $slug, bool $wrongPassword = false)
 </head>
 <body>
     <?php bb_page_art(); ?>
-    <div class="box">
+    <div class="box bb-frame">
         <?= render_logo($t['title'], '/') ?>
         <div class="sub"><?= htmlspecialchars($t['password_required'] ?? 'This link is password protected') ?></div>
         <form method="POST" action="/<?= htmlspecialchars($slug) ?>" id="pwdForm">
@@ -330,7 +330,7 @@ function show_not_found(array $t): void {
 </head>
 <body>
     <?php bb_page_art(); ?>
-    <div class="box">
+    <div class="box bb-frame">
         <div class="ghost"><?= bb_icon('ghost') ?></div>
         <div class="code">404</div>
         <h1><?= htmlspecialchars($t['not_found_title']) ?></h1>
@@ -386,7 +386,7 @@ function show_expired(array $t, ?string $killedAt = null, ?string $expiredManual
 </head>
 <body>
     <?php bb_page_art(); ?>
-    <div class="box">
+    <div class="box bb-frame">
         <h1><?= htmlspecialchars($t['link_expired']) ?></h1>
         <p><?= htmlspecialchars($t['link_expired_info']) ?></p>
         <?php if ($manualInfo): ?>
