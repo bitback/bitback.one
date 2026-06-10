@@ -301,25 +301,26 @@ $challenge = antibot_challenge();
         /* chipy ikon ustawien (m01): jasniejsza ikona ze swiecacym konturem */
         .config-chip {
             grid-row: span 2;
-            width: 34px;
-            height: 34px;
+            align-self: stretch;
+            width: 40px;
+            min-height: 38px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 1px solid rgba(37, 194, 168, 0.60);
+            border: 1px solid rgba(37, 194, 168, 0.30);
             background: rgba(37, 194, 168, 0.10);
             color: var(--bb-teal);
-            box-shadow: 0 0 10px rgba(37, 194, 168, 0.12);
+            box-shadow: 0 0 8px rgba(37, 194, 168, 0.08);
         }
         .config-chip [data-lucide] {
             width: 17px; height: 17px; stroke-width: 2;
             filter: drop-shadow(0 0 4px rgba(37, 194, 168, 0.55));
         }
         .config-chip-violet {
-            border-color: rgba(155, 124, 232, 0.60);
+            border-color: rgba(155, 124, 232, 0.30);
             background: rgba(155, 124, 232, 0.10);
             color: var(--bb-violet);
-            box-shadow: 0 0 10px rgba(155, 124, 232, 0.12);
+            box-shadow: 0 0 8px rgba(155, 124, 232, 0.08);
         }
         .config-chip-violet [data-lucide] {
             filter: drop-shadow(0 0 4px rgba(155, 124, 232, 0.55));
@@ -425,7 +426,7 @@ $challenge = antibot_challenge();
             padding: 0.95rem 1rem;
             margin-top: 1rem;
             border: 3px solid transparent;
-            background: linear-gradient(90deg, #0c1517 0%, #0a0e15 50%, #120e1f 100%) padding-box,
+            background: linear-gradient(90deg, #1b1233 0%, #0a0e15 50%, #0b2127 100%) padding-box,
                         linear-gradient(90deg, var(--bb-teal) 0%, var(--bb-accent) 50%, var(--bb-violet) 100%) border-box;
             color: #fff;
             font-size: 0.95rem;
@@ -480,7 +481,7 @@ $challenge = antibot_challenge();
             justify-content: center;
             gap: 0.7em;
             padding: 0.65rem 1.5rem;
-            background: #0a0e15;
+            background: linear-gradient(90deg, #1b1233 0%, #0a0e15 50%, #0b2127 100%);
             clip-path: polygon(13px 0, 100% 0, 100% calc(100% - 13px), calc(100% - 13px) 100%, 0 100%, 0 13px);
             color: #fff;
             font-size: 0.9rem;

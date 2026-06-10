@@ -85,8 +85,8 @@
   --bb-shadow-md:    0 4px 12px rgba(0,0,0,0.45), 0 1px 2px rgba(0,0,0,0.5);
 
   /* --- Neon frame (mockup m01): cienka teal ramka sekcji + glow --- */
-  --bb-neon-border: rgba(37, 194, 168, 0.50);
-  --bb-neon-glow: 0 0 16px rgba(37, 194, 168, 0.10), inset 0 0 22px rgba(37, 194, 168, 0.05);
+  --bb-neon-border: rgba(37, 194, 168, 0.25);
+  --bb-neon-glow: 0 0 16px rgba(37, 194, 168, 0.05), inset 0 0 22px rgba(37, 194, 168, 0.025);
 
   /* --- Fonts ---
      Manrope (UI, zaakceptowana na mockupie) + JetBrains Mono (dane).
@@ -291,7 +291,9 @@
   bottom: 0; left: 0;
   --bb-page-art: url('/assets/art/magenta-2.webp');
   transform: scaleX(-1);
-  opacity: 0.75;
+  opacity: 0.5;
+  -webkit-mask-image: radial-gradient(90% 90% at 100% 100%, #000 18%, transparent 56%);
+  mask-image: radial-gradient(90% 90% at 100% 100%, #000 18%, transparent 56%);
 }
 
 /* =========================================================================
@@ -337,7 +339,7 @@
      z coverem notcha ::before, wiec diagonal bez szwu */
   background: var(--bb-bg) !important;
   border: 1px solid var(--bb-neon-border) !important;
-  border-image: linear-gradient(90deg, var(--bb-neon-border) 55%, rgba(155, 124, 232, 0.55) 100%) 1 !important;
+  border-image: linear-gradient(90deg, var(--bb-neon-border) 55%, rgba(155, 124, 232, 0.28) 100%) 1 !important;
   box-shadow: var(--bb-neon-glow) !important;
 }
 /* sciety narozhnik top-left (m01): kwadrat w kolorze tla obrocony 45deg
