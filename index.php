@@ -562,7 +562,7 @@ $challenge = antibot_challenge();
 </div>
 
 <div class="trust bb-rise-2">
-    <div class="trust-box bb-card bb-hero-cool">
+    <div class="trust-box bb-card bb-hero-cool bb-art bb-art-aurora">
         <div class="trust-grid">
             <div class="trust-item">
                 <div class="trust-icon"><?= bb_icon('lock') ?></div>
@@ -661,7 +661,7 @@ $challenge = antibot_challenge();
     </form>
 
     <div class="result" id="result">
-        <div class="result-box bb-card bb-card-success">
+        <div class="result-box bb-card bb-card-success bb-art bb-art-green">
             <div class="result-label"><?= htmlspecialchars($t['your_link']) ?></div>
             <div class="result-link">
                 <input type="text" class="result-url" id="resultUrl" readonly>

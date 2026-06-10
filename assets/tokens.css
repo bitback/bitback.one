@@ -173,23 +173,22 @@
 .bb-art {
   position: relative;
   overflow: hidden;
+  /* wlasny stacking context: ::after z z-index -1 laduje NAD tlem karty
+     a POD cala trescia (takze golymi text node'ami, ktorych z-index
+     nie podniesie) i blend nie przebija na strone */
+  isolation: isolate;
 }
 .bb-art::after {
   content: "";
   position: absolute;
   right: 0;
   bottom: 0;
-  width: 60%;
-  height: 90%;
-  background: var(--bb-art, none) right bottom / contain no-repeat;
+  width: 55%;
+  height: 100%;
+  background: var(--bb-art, none) right bottom / cover no-repeat;
   mix-blend-mode: screen;
   pointer-events: none;
-  z-index: 0;
-}
-/* tresc karty nad grafika */
-.bb-art > * {
-  position: relative;
-  z-index: 1;
+  z-index: -1;
 }
 /* warianty - URL podpinane po wygenerowaniu bitmap */
 .bb-art-aurora { --bb-art: url('/assets/art/aurora-1.webp'); }

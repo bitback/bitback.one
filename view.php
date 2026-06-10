@@ -670,7 +670,7 @@ function show_view_encrypted(array $t, array $data, string $encText, ?string $en
     <div class="header"><?= render_logo($t['title'], '/') ?></div>
     <div class="container">
         <?php if ($expired): ?>
-        <div class="expired-banner bb-card bb-card-secret">
+        <div class="expired-banner bb-card bb-card-secret bb-art bb-art-gold">
             <?= htmlspecialchars($t['secrets_expired']) ?> — <?= htmlspecialchars($t['secrets_expired_info']) ?>
             <?php if (isset($data['_expired_manually'])): ?>
             <br><small style="color:var(--bb-secret-ink);"><?= $lang === 'pl'
@@ -884,7 +884,7 @@ function show_view_encrypted_v2(array $t, array $data, string $encryptedPayload,
     <div class="header"><?= render_logo($t['title'], '/') ?></div>
     <div class="container">
         <?php if ($expired): ?>
-        <div class="expired-banner bb-card bb-card-secret">
+        <div class="expired-banner bb-card bb-card-secret bb-art bb-art-gold">
             <?= htmlspecialchars($t['secrets_expired']) ?> — <?= htmlspecialchars($t['secrets_expired_info']) ?>
             <?php if (isset($data['_expired_manually'])): ?>
             <br><small style="color:var(--bb-secret-ink);"><?= $lang === 'pl'
@@ -992,7 +992,7 @@ function show_view_legacy(array $t, array $data, array $sections, bool $expired)
     <div class="header"><?= render_logo($t['title'], '/') ?></div>
     <div class="container">
         <?php if ($expired): $ll = detect_lang(); ?>
-        <div class="expired-banner bb-card bb-card-secret">
+        <div class="expired-banner bb-card bb-card-secret bb-art bb-art-gold">
             <?= htmlspecialchars($t['secrets_expired']) ?> — <?= htmlspecialchars($t['secrets_expired_info']) ?>
             <?php if (isset($data['_expired_manually'])): ?>
             <br><small style="color:var(--bb-secret-ink);"><?= $ll === 'pl'
