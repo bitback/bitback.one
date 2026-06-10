@@ -125,8 +125,8 @@
   vertical-align: -0.15em;
   display: inline-block;
 }
-/* Okragle chipy ikon (m01): ciemne wnetrze + neonowy kontur + ikona
-   w kolorze konturu, subtelny glow. */
+/* Okragle chipy ikon (m01): solidne kolorowe kolo, ciemna ikona,
+   bez ramki, subtelny glow. */
 .bb-chip {
   width: 40px;
   height: 40px;
@@ -134,16 +134,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--bb-surface-sunk);
-  border: 1px solid;
+  color: var(--bb-bg);
 }
-.bb-chip [data-lucide] { width: 19px; height: 19px; stroke-width: 2; vertical-align: middle; }
-.bb-chip-blue   { color: var(--bb-accent); border-color: rgba(58, 123, 213, 0.60); box-shadow: 0 0 10px rgba(58, 123, 213, 0.22); }
-.bb-chip-teal   { color: var(--bb-teal); border-color: rgba(37, 194, 168, 0.60); box-shadow: 0 0 10px rgba(37, 194, 168, 0.22); }
-.bb-chip-violet { color: var(--bb-violet); border-color: rgba(155, 124, 232, 0.60); box-shadow: 0 0 10px rgba(155, 124, 232, 0.22); }
-.bb-chip-green  { color: var(--bb-success); border-color: currentColor; }
-.bb-chip-gold   { color: var(--bb-secret); border-color: currentColor; }
-.bb-chip-red    { color: var(--bb-danger); border-color: currentColor; }
+.bb-chip [data-lucide] { width: 19px; height: 19px; stroke-width: 2.2; vertical-align: middle; }
+.bb-chip-blue   { background: var(--bb-accent); box-shadow: 0 0 10px rgba(58, 123, 213, 0.22); }
+.bb-chip-teal   { background: var(--bb-teal); box-shadow: 0 0 10px rgba(37, 194, 168, 0.22); }
+.bb-chip-violet { background: var(--bb-violet); box-shadow: 0 0 10px rgba(155, 124, 232, 0.22); }
+.bb-chip-green  { background: var(--bb-success); }
+.bb-chip-gold   { background: var(--bb-secret); }
+.bb-chip-red    { background: var(--bb-danger); }
 /* Ghost na 404 i expired - duzy */
 .ghost [data-lucide] { width: 64px; height: 64px; stroke-width: 1.2; }
 /* Zt-badge kłódka - mała */
