@@ -34,3 +34,6 @@ _new_design/
 # === Env ===
 .env
 .env.local
+
+# === Zrodlowe wersje grafik (duze PNG, nie produkcyjne) ===
+assets/art/_src/
