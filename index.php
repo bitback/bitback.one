@@ -95,23 +95,28 @@ $challenge = antibot_challenge();
         @media (max-width: 768px) {
             .trust-grid { grid-template-columns: 1fr; }
         }
+        /* item trust bara (m01): chip inline po lewej tytulu,
+           opis pod spodem na calej szerokosci */
         .trust-item {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            column-gap: 0.65rem;
+            row-gap: 0.45rem;
+            align-items: center;
             padding: 0.4rem;
-            border-radius: 6px;
             transition: background 220ms var(--bb-ease), transform 220ms var(--bb-ease);
         }
         .trust-item:hover {
             background: rgba(127, 176, 245, 0.06);
             transform: translateY(-1px);
         }
-        .trust-item .bb-chip { margin-bottom: 0.55rem; }
+        .trust-item .trust-desc { grid-column: 1 / -1; }
         .trust-title {
             font-size: 0.78rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.06em;
             color: var(--bb-fg);
-            margin-bottom: 0.3rem;
         }
         .trust-desc {
             font-size: 0.8rem;
