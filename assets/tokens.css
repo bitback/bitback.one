@@ -82,6 +82,10 @@
   --bb-shadow-sm:    0 1px 2px rgba(0,0,0,0.5);
   --bb-shadow-md:    0 4px 12px rgba(0,0,0,0.45), 0 1px 2px rgba(0,0,0,0.5);
 
+  /* --- Neon frame (mockup m01): cienka teal ramka sekcji + glow --- */
+  --bb-neon-border: rgba(37, 194, 168, 0.50);
+  --bb-neon-glow: 0 0 16px rgba(37, 194, 168, 0.10), inset 0 0 22px rgba(37, 194, 168, 0.05);
+
   /* --- Fonts ---
      Manrope (UI, zaakceptowana na mockupie) + JetBrains Mono (dane).
      Self-hosted w assets/fonts/, fallback system stack. */
@@ -250,6 +254,18 @@
 .bb-card-accent {
   background: var(--bb-surface-1) !important;
   border: 1px solid var(--bb-border) !important;
+}
+
+/* =========================================================================
+   Neonowa ramka sekcji (mockup m01): 1px teal + delikatny glow, wnetrze
+   przezroczyste (czarne tlo strony). Padding daje element/strona.
+   !important jak bb-card - inline <style> w PHP laduje sie PO tokens.css.
+   ========================================================================= */
+.bb-frame {
+  position: relative;
+  background: transparent !important;
+  border: 1px solid var(--bb-neon-border) !important;
+  box-shadow: var(--bb-neon-glow) !important;
 }
 
 /* Tlo strony - solid FLAT, zero gradientow (zaakceptowane). */

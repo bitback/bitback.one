@@ -101,13 +101,9 @@ $challenge = antibot_challenge();
             line-height: 1.55;
         }
 
-        /* ====== HINT BAR (flat) ====== */
+        /* ====== HINT BAR - bez wlasnego boxa, siedzi w neonowej ramce ====== */
         .hint-bar {
-            background: var(--bb-surface-1);
-            border: 1px solid var(--bb-border);
-            border-radius: 8px;
-            padding: 0.65rem 0.85rem;
-            margin-bottom: 0.6rem;
+            padding: 0.1rem 0 0.7rem;
             display: flex;
             align-items: center;
             gap: 0.6rem;
@@ -146,12 +142,16 @@ $challenge = antibot_challenge();
         }
 
         .col-label {
-            font-size: 0.76rem;
+            font-size: 0.78rem;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--bb-fg-5);
-            margin-bottom: 0.6rem;
+            letter-spacing: 0.22em;
+            color: var(--bb-fg-2);
+            margin-bottom: 0.45rem;
         }
+
+        /* wnetrze neonowej ramki sekcji (bb-frame w tokens.css) */
+        .frame-pad { padding: 0.85rem; }
 
         /* ====== LEWA KOLUMNA — EDYTOR ====== */
         .col-left { min-width: 0; }
@@ -200,11 +200,7 @@ $challenge = antibot_challenge();
         }
 
         .config-panel {
-            background: var(--bb-surface-1);
-            border: 1px solid var(--bb-border);
-            border-radius: 10px;
             padding: 1rem;
-            box-shadow: var(--bb-shadow-sm);
         }
 
         .config-group {
@@ -379,9 +375,6 @@ $challenge = antibot_challenge();
             background: var(--bb-surface-2);
         }
         .preview-box {
-            background: var(--bb-surface-sunk);
-            border: 1px solid var(--bb-border);
-            border-radius: 10px;
             padding: 0.85rem;
             font-family: var(--bb-font-mono);
             font-size: 0.92rem;
@@ -389,7 +382,6 @@ $challenge = antibot_challenge();
             white-space: pre-wrap;
             word-break: break-word;
             min-height: 60px;
-            box-shadow: var(--bb-shadow-sm);
         }
         .preview-box .masked {
             background: rgba(100, 100, 100, 0.2);
@@ -537,12 +529,14 @@ $challenge = antibot_challenge();
             <!-- LEWA — edytor -->
             <div class="col-left">
                 <div class="col-label"><?= htmlspecialchars($t['content_label']) ?></div>
-                <div class="hint-bar">
-                    <kbd>Ctrl+E</kbd>
-                    <span class="hint-text"><?= $t['hint_text'] ?></span>
+                <div class="bb-frame frame-pad">
+                    <div class="hint-bar">
+                        <kbd>Ctrl+E</kbd>
+                        <span class="hint-text"><?= $t['hint_text'] ?></span>
+                    </div>
+                    <div class="editor" id="editor" contenteditable="true" spellcheck="false" role="textbox" aria-multiline="true" aria-label="<?= htmlspecialchars($t['content_label']) ?>"></div>
+                    <button type="button" class="mark-secret-btn" onmousedown="event.preventDefault()" onclick="toggleSecret()"><?= bb_icon('lock') ?> <?= htmlspecialchars($t['mark_secret_btn']) ?></button>
                 </div>
-                <div class="editor" id="editor" contenteditable="true" spellcheck="false" role="textbox" aria-multiline="true" aria-label="<?= htmlspecialchars($t['content_label']) ?>"></div>
-                <button type="button" class="mark-secret-btn" onmousedown="event.preventDefault()" onclick="toggleSecret()"><?= bb_icon('lock') ?> <?= htmlspecialchars($t['mark_secret_btn']) ?></button>
 
                 <!-- podgląd pod edytorem -->
                 <div class="preview-section">
@@ -553,14 +547,14 @@ $challenge = antibot_challenge();
                             <button type="button" class="preview-tab" onclick="setPreview('active', this)"><?= htmlspecialchars($t['preview_active']) ?></button>
                         </div>
                     </div>
-                    <div class="preview-box" id="preview"></div>
+                    <div class="preview-box bb-frame" id="preview"></div>
                 </div>
             </div>
 
             <!-- PRAWA — konfiguracja -->
             <div class="col-right">
                 <div class="col-label"><?= htmlspecialchars($t['settings_label']) ?></div>
-                <div class="config-panel">
+                <div class="config-panel bb-frame">
                     <div class="config-group">
                         <label><?= htmlspecialchars($t['expire_label']) ?></label>
                         <div class="config-row">
