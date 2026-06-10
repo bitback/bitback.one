@@ -184,6 +184,9 @@ $challenge = antibot_challenge();
         }
 
         .col-label {
+            display: flex;
+            align-items: center;
+            gap: 0.9em;
             font-size: 0.78rem;
             font-weight: 700;
             text-transform: uppercase;
@@ -191,6 +194,16 @@ $challenge = antibot_challenge();
             color: var(--bb-fg-2);
             margin-bottom: 0.45rem;
         }
+        /* m01: gradientowa linia za etykieta sekcji, konczy sie zagieciem
+           45deg w dol (clip-path: pozioma belka 2px + diagonalny hak) */
+        .col-label::after {
+            content: '';
+            flex: 1;
+            height: 9px;
+            background: linear-gradient(90deg, rgba(37, 194, 168, 0.45), rgba(155, 124, 232, 0.85));
+            clip-path: polygon(0 0, calc(100% - 9px) 0, 100% 9px, calc(100% - 2px) 9px, calc(100% - 9px) 2px, 0 2px);
+        }
+        .preview-bar .col-label::after { content: none; }
 
         /* wnetrze neonowej ramki sekcji (bb-frame w tokens.css) */
         .frame-pad { padding: 0.85rem; }
