@@ -226,11 +226,11 @@ $challenge = antibot_challenge();
             width: 2.5rem;
             padding: 0.85rem 0.55rem 0.85rem 0;
             background: var(--bb-bg);
-            border-right: 1px solid var(--bb-border-soft);
+            border-right: 1px solid rgba(37, 194, 168, 0.25);
             font-family: var(--bb-font-mono);
             font-size: 0.95rem;
             line-height: 1.7;
-            color: var(--bb-fg-6);
+            color: rgba(37, 194, 168, 0.70);
             text-align: right;
             white-space: pre-line;
             user-select: none;
@@ -242,8 +242,8 @@ $challenge = antibot_challenge();
             min-height: 220px;
             padding: 0.85rem 0.85rem 0.85rem 3.3rem;
             background: var(--bb-surface-sunk);
-            border: 1px solid var(--bb-border);
-            border-radius: 10px;
+            border: 1px solid var(--bb-neon-border);
+            box-shadow: 0 0 10px rgba(37, 194, 168, 0.07);
             color: var(--bb-fg-2);
             font-family: var(--bb-font-mono);
             font-size: 0.95rem;
@@ -254,7 +254,7 @@ $challenge = antibot_challenge();
             cursor: text;
             transition: border-color 0.15s;
         }
-        .editor:focus { border-color: var(--bb-accent); box-shadow: 0 0 0 3px rgba(58, 123, 213, 0.12); }
+        .editor:focus { border-color: var(--bb-teal); box-shadow: 0 0 12px rgba(37, 194, 168, 0.20); }
         .editor:empty::before {
             content: '<?= str_replace("'", "\\'", str_replace("\n", "\\A", $t['editor_placeholder'])) ?>';
             color: var(--bb-fg-7);
