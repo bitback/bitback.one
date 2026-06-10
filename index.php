@@ -312,11 +312,11 @@ $challenge = antibot_challenge();
         }
         .antibot-opt {
             flex: 1;
-            padding: 0.5rem;
-            border-radius: 5px;
+            padding: 0.6rem 0.5rem;
             border: 1px solid var(--bb-border-mid);
             background: var(--bb-surface-sunk);
             color: var(--bb-fg-3);
+            font-family: var(--bb-font-mono);
             font-size: 0.92rem;
             text-align: center;
             cursor: pointer;
@@ -324,13 +324,15 @@ $challenge = antibot_challenge();
             user-select: none;
         }
         .antibot-opt:hover {
-            border-color: var(--bb-fg-6);
+            border-color: var(--bb-violet);
             color: var(--bb-fg-body);
         }
+        /* wybrana odpowiedz = violet (mockup m01) */
         .antibot-opt.selected {
-            border-color: var(--bb-accent);
-            background: var(--bb-accent-tint);
-            color: var(--bb-accent-light);
+            border-color: var(--bb-violet);
+            background: rgba(155, 124, 232, 0.10);
+            color: #fff;
+            box-shadow: 0 0 10px rgba(155, 124, 232, 0.25);
         }
 
         /* honeypot */
