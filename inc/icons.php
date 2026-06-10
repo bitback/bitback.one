@@ -16,6 +16,7 @@ function bb_icon(string $name): string {
         'clock'   => '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
         'monitor' => '<rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/>',
         'check'   => '<path d="M20 6 9 17l-5-5"/>',
+        'arrow-right' => '<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>',
         'ghost'   => '<path d="M9 10h.01"/><path d="M15 10h.01"/><path d="M12 2a8 8 0 0 0-8 8v12l3-3 2.5 2.5L12 19l2.5 2.5L17 19l3 3V10a8 8 0 0 0-8-8z"/>',
     ];
     if (!isset($paths[$name])) {

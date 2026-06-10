@@ -314,23 +314,35 @@ $challenge = antibot_challenge();
             pointer-events: none;
         }
 
-        /* przycisk generuj - FLAT solid blue (akcja) */
+        /* przycisk generuj - CTA z mockupu m01: JEDYNY dozwolony gradient
+           (user zaakceptowal mockup; reszta strony zero gradientow).
+           teal -> blue -> violet + neon glow + strzalka. */
         .generate-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.7em;
             width: 100%;
-            padding: 0.8rem;
+            padding: 0.95rem 1rem;
             margin-top: 1rem;
-            border-radius: 8px;
-            border: none;
-            background: var(--bb-accent);
+            border: 1px solid rgba(155, 124, 232, 0.65);
+            background: linear-gradient(90deg, var(--bb-teal) 0%, var(--bb-accent) 50%, var(--bb-violet) 100%);
             color: #fff;
             font-size: 0.95rem;
-            font-weight: 700;
+            font-weight: 800;
             cursor: pointer;
-            transition: background 140ms var(--bb-ease), transform 140ms var(--bb-ease);
-            letter-spacing: 0.01em;
+            transition: filter 140ms var(--bb-ease), transform 140ms var(--bb-ease), box-shadow 140ms var(--bb-ease);
+            text-transform: uppercase;
+            letter-spacing: 0.16em;
+            box-shadow: 0 0 18px rgba(122, 92, 230, 0.35), 0 0 6px rgba(37, 194, 168, 0.20);
         }
-        .generate-btn:hover { background: var(--bb-accent-hover); transform: translateY(-1px); }
-        .generate-btn:active { background: var(--bb-accent-press); transform: translateY(0); }
+        .generate-btn [data-lucide] { width: 19px; height: 19px; stroke-width: 2.2; }
+        .generate-btn:hover {
+            filter: brightness(1.1);
+            transform: translateY(-1px);
+            box-shadow: 0 0 26px rgba(122, 92, 230, 0.5), 0 0 9px rgba(37, 194, 168, 0.3);
+        }
+        .generate-btn:active { filter: brightness(0.92); transform: translateY(0); }
         .generate-btn:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
         .generate-btn .spinner {
             display: inline-block;
@@ -627,8 +639,8 @@ $challenge = antibot_challenge();
                         <div class="antibot-options" id="mathOptions" role="group" aria-label="<?= htmlspecialchars($t['verify_label']) ?>"></div>
                     </div>
 
-                    <button type="button" class="generate-btn" onclick="generateLink()"><?= htmlspecialchars($t['generate_btn']) ?></button>
                 </div>
+                <button type="button" class="generate-btn" onclick="generateLink()"><span><?= htmlspecialchars($t['generate_btn']) ?></span><?= bb_icon('arrow-right') ?></button>
             </div>
         </div>
     </form>
