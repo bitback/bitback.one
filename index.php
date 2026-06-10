@@ -477,6 +477,12 @@ $challenge = antibot_challenge();
             text-transform: uppercase;
             letter-spacing: 0.1em;
         }
+        /* wiersz przycisku + dekoracyjne sciezki circuit po prawej (m01) */
+        .mark-row { display: flex; align-items: center; gap: 1rem; margin-top: 0.6rem; }
+        .mark-row .mark-secret-btn { margin-top: 0; }
+        .circuit-deco { flex: 1; height: 56px; min-width: 0; }
+        @media (max-width: 768px) { .circuit-deco { display: none; } }
+
         .mark-secret-btn:hover { filter: drop-shadow(0 0 11px rgba(122, 92, 230, 0.55)) brightness(1.12); }
         .mark-secret-btn:active { filter: drop-shadow(0 0 5px rgba(122, 92, 230, 0.3)) brightness(0.92); }
         .mark-secret-btn [data-lucide] { width: 18px; height: 18px; stroke-width: 2; }
@@ -685,7 +691,17 @@ $challenge = antibot_challenge();
                         <div class="editor-gutter" id="editorGutter" aria-hidden="true">1</div>
                         <div class="editor" id="editor" contenteditable="true" spellcheck="false" role="textbox" aria-multiline="true" aria-label="<?= htmlspecialchars($t['content_label']) ?>"></div>
                     </div>
-                    <button type="button" class="mark-secret-btn" onmousedown="event.preventDefault()" onclick="toggleSecret()"><span class="inner"><?= bb_icon('lock') ?> <?= htmlspecialchars($t['mark_secret_btn']) ?></span></button>
+                    <div class="mark-row">
+                        <button type="button" class="mark-secret-btn" onmousedown="event.preventDefault()" onclick="toggleSecret()"><span class="inner"><?= bb_icon('lock') ?> <?= htmlspecialchars($t['mark_secret_btn']) ?></span></button>
+                        <svg class="circuit-deco" viewBox="0 0 260 56" preserveAspectRatio="xMaxYMid meet" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M258,8 H150 L128,30 H58" fill="none" stroke="rgba(37,194,168,0.75)" stroke-width="1.5"/>
+                            <path d="M258,22 H170 L148,44 H96" fill="none" stroke="rgba(155,124,232,0.75)" stroke-width="1.5"/>
+                            <path d="M258,38 H200 L186,52 H160" fill="none" stroke="rgba(37,194,168,0.40)" stroke-width="1.5"/>
+                            <rect x="50" y="26" width="5" height="5" fill="rgba(37,194,168,0.9)"/>
+                            <rect x="88" y="40" width="5" height="5" fill="rgba(155,124,232,0.9)"/>
+                            <rect x="153" y="49" width="4" height="4" fill="rgba(37,194,168,0.55)"/>
+                        </svg>
+                    </div>
                 </div>
 
                 <!-- podgląd pod edytorem -->
