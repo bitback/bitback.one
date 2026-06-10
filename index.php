@@ -448,6 +448,14 @@ $challenge = antibot_challenge();
             50% { box-shadow: 0 0 20px rgba(37, 194, 168, 0.60); }
         }
         .editor.bb-flash { animation: bb-guide-editor 0.55s ease-in-out 2; }
+        /* OZNACZ bez zaznaczenia: hint "Zaznacz fragment..." zapala sie 2x.
+           Animacja na .hint-text, nie na .hint-bar - dzieci z wlasnym color
+           ignoruja animacje koloru rodzica */
+        @keyframes bb-guide-hint {
+            0%, 100% { color: var(--bb-fg-3); text-shadow: 0 0 0 rgba(37, 194, 168, 0); }
+            50% { color: #eaf6f3; text-shadow: 0 0 10px rgba(37, 194, 168, 0.45); }
+        }
+        .hint-bar.bb-flash .hint-text { animation: bb-guide-hint 0.55s ease-in-out 2; }
         /* przygaszony dopoki brak tresci + oznaczonego poufnego (po bb-guide,
            zeby dimmed wygrywal i wylaczal puls) */
         .generate-btn.dimmed {
@@ -925,9 +933,16 @@ $challenge = antibot_challenge();
         updatePreview();
     }
 
+    function flashHint() {
+        const hint = document.querySelector('.hint-bar');
+        hint.classList.remove('bb-flash');
+        void hint.offsetWidth;
+        hint.classList.add('bb-flash');
+    }
+
     function toggleSecret() {
         const sel = window.getSelection();
-        if (!sel.rangeCount) return;
+        if (!sel.rangeCount) { flashHint(); return; }
 
         // sprawdź czy kursor/zaznaczenie jest wewnątrz .secret
         const anchorParent = sel.anchorNode.nodeType === 3 ? sel.anchorNode.parentElement : sel.anchorNode;
@@ -941,7 +956,7 @@ $challenge = antibot_challenge();
         // sprawdź czy zaznaczenie obejmuje lub dotyka .secret (odznacz)
         if (!sel.isCollapsed) {
             const range = sel.getRangeAt(0);
-            if (!editor.contains(range.commonAncestorContainer)) return;
+            if (!editor.contains(range.commonAncestorContainer)) { flashHint(); return; }
 
             const startParent = range.startContainer.nodeType === 3 ? range.startContainer.parentElement : range.startContainer;
             const endParent = range.endContainer.nodeType === 3 ? range.endContainer.parentElement : range.endContainer;
@@ -984,7 +999,7 @@ $challenge = antibot_challenge();
         }
 
         // --- OZNACZ ---
-        if (sel.isCollapsed) return; // nic nie zaznaczono
+        if (sel.isCollapsed) { flashHint(); return; } // nic nie zaznaczono
         const range = sel.getRangeAt(0);
         if (!editor.contains(range.commonAncestorContainer)) return;
 
