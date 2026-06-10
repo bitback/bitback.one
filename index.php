@@ -134,7 +134,7 @@ $challenge = antibot_challenge();
         /* --- LAYOUT DWU-KOLUMNOWY --- */
         .two-col {
             display: grid;
-            grid-template-columns: 1fr 300px;
+            grid-template-columns: 1fr 340px; /* proporcja kolumn jak w mockupie m01 */
             gap: 1.5rem;
             align-items: start;
         }
@@ -227,18 +227,47 @@ $challenge = antibot_challenge();
             padding: 1rem;
         }
 
+        /* wiersz ustawien (m01): kwadratowy icon-chip z cienka ramka po
+           lewej (rozpiety na label + input), uppercase label, input + unit */
         .config-group {
-            margin-bottom: 1rem;
+            display: grid;
+            grid-template-columns: auto 1fr;
+            column-gap: 0.7rem;
+            row-gap: 0.35rem;
+            align-items: center;
+            margin-bottom: 1.05rem;
         }
         .config-group:last-child { margin-bottom: 0; }
 
+        .config-chip {
+            grid-row: span 2;
+            width: 34px;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(37, 194, 168, 0.45);
+            background: rgba(37, 194, 168, 0.07);
+            color: var(--bb-teal);
+        }
+        .config-chip [data-lucide] { width: 17px; height: 17px; stroke-width: 1.8; }
+        .config-chip-violet {
+            border-color: rgba(155, 124, 232, 0.5);
+            background: rgba(155, 124, 232, 0.08);
+            color: var(--bb-violet);
+        }
+        /* weryfikacja: chip tylko przy labelce, pytanie i opcje pelna szerokosc */
+        .config-verify .config-chip { grid-row: 1; }
+        .config-verify .antibot-q,
+        .config-verify .antibot-options { grid-column: 1 / -1; }
+
         .config-group label {
             display: block;
-            font-size: 0.75rem;
+            font-size: 0.76rem;
+            font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--bb-fg-5);
-            margin-bottom: 0.3rem;
+            letter-spacing: 0.08em;
+            color: var(--bb-fg-2);
         }
 
         .config-row {
@@ -601,6 +630,7 @@ $challenge = antibot_challenge();
                 <div class="col-label"><?= htmlspecialchars($t['settings_label']) ?></div>
                 <div class="config-panel bb-frame">
                     <div class="config-group">
+                        <span class="config-chip"><?= bb_icon('clock') ?></span>
                         <label><?= htmlspecialchars($t['expire_label']) ?></label>
                         <div class="config-row">
                             <input type="number" class="config-input" id="expireDays" value="<?= DEFAULT_EXPIRE_DAYS ?>" min="1" max="3650">
@@ -609,6 +639,7 @@ $challenge = antibot_challenge();
                     </div>
 
                     <div class="config-group">
+                        <span class="config-chip"><?= bb_icon('eye') ?></span>
                         <label><?= htmlspecialchars($t['views_label']) ?></label>
                         <div class="config-row">
                             <input type="number" class="config-input" id="maxViews" value="<?= DEFAULT_MAX_VIEWS ?>" min="1" max="10000">
@@ -617,6 +648,7 @@ $challenge = antibot_challenge();
                     </div>
 
                     <div class="config-group">
+                        <span class="config-chip config-chip-violet"><?= bb_icon('trash') ?></span>
                         <label><?= htmlspecialchars($t['delete_label']) ?></label>
                         <div class="config-row">
                             <input type="number" class="config-input" id="deleteDays" value="<?= DEFAULT_DELETE_DAYS ?>" min="0" max="3650">
@@ -625,6 +657,7 @@ $challenge = antibot_challenge();
                     </div>
 
                     <div class="config-group">
+                        <span class="config-chip config-chip-violet"><?= bb_icon('lock') ?></span>
                         <label><?= htmlspecialchars($t['password_label']) ?></label>
                         <div class="config-row">
                             <input type="text" class="config-input" id="linkPassword" style="width:100%;text-align:left;" placeholder="<?= htmlspecialchars($t['password_placeholder_config']) ?>" autocomplete="off">
@@ -633,7 +666,8 @@ $challenge = antibot_challenge();
 
                     <hr class="config-sep">
 
-                    <div class="config-group">
+                    <div class="config-group config-verify">
+                        <span class="config-chip"><?= bb_icon('shield-check') ?></span>
                         <label><?= htmlspecialchars($t['verify_label']) ?></label>
                         <div class="antibot-q" id="mathQuestion" aria-live="polite"></div>
                         <div class="antibot-options" id="mathOptions" role="group" aria-label="<?= htmlspecialchars($t['verify_label']) ?>"></div>
