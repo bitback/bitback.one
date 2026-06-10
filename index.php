@@ -414,11 +414,8 @@ $challenge = antibot_challenge();
             pointer-events: none;
         }
 
-        /* przycisk generuj - CTA z mockupu m01: JEDYNY dozwolony gradient
-           (user zaakceptowal mockup; reszta strony zero gradientow).
-           Ciemny box + gradientowa ramka teal -> blue -> violet (trik
-           padding-box/border-box, bez zmian w HTML/JS - innerHTML swap
-           spinnera musi dzialac) + neon glow + strzalka. */
+        /* CTA: jedyny dozwolony gradient na stronie. Struktura plaska
+           (innerHTML swap spinnera - patrz handoff gotchas). */
         .generate-btn {
             display: flex;
             align-items: center;
@@ -427,8 +424,8 @@ $challenge = antibot_challenge();
             width: 100%;
             padding: 0.95rem 1rem;
             margin-top: 1rem;
-            border: 2px solid transparent;
-            background: linear-gradient(#0a0e15, #0a0e15) padding-box,
+            border: 3px solid transparent;
+            background: linear-gradient(90deg, #0c1517 0%, #0a0e15 50%, #120e1f 100%) padding-box,
                         linear-gradient(90deg, var(--bb-teal) 0%, var(--bb-accent) 50%, var(--bb-violet) 100%) border-box;
             color: #fff;
             font-size: 0.95rem;
@@ -437,13 +434,13 @@ $challenge = antibot_challenge();
             transition: filter 140ms var(--bb-ease), transform 140ms var(--bb-ease), box-shadow 140ms var(--bb-ease);
             text-transform: uppercase;
             letter-spacing: 0.16em;
-            box-shadow: 0 0 18px rgba(122, 92, 230, 0.35), 0 0 6px rgba(37, 194, 168, 0.20);
+            box-shadow: 0 0 26px rgba(122, 92, 230, 0.45), 0 0 12px rgba(37, 194, 168, 0.30);
         }
         .generate-btn [data-lucide] { width: 19px; height: 19px; stroke-width: 2.2; }
         .generate-btn:hover {
-            filter: brightness(1.1);
+            filter: brightness(1.12);
             transform: translateY(-1px);
-            box-shadow: 0 0 26px rgba(122, 92, 230, 0.5), 0 0 9px rgba(37, 194, 168, 0.3);
+            box-shadow: 0 0 34px rgba(122, 92, 230, 0.6), 0 0 16px rgba(37, 194, 168, 0.4);
         }
         .generate-btn:active { filter: brightness(0.92); transform: translateY(0); }
         .generate-btn:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
