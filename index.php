@@ -293,6 +293,7 @@ $challenge = antibot_challenge();
         }
         .config-group:last-child { margin-bottom: 0; }
 
+        /* chipy ikon ustawien (m01): jasniejsza ikona ze swiecacym konturem */
         .config-chip {
             grid-row: span 2;
             width: 34px;
@@ -300,15 +301,23 @@ $challenge = antibot_challenge();
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 1px solid rgba(37, 194, 168, 0.45);
-            background: rgba(37, 194, 168, 0.07);
+            border: 1px solid rgba(37, 194, 168, 0.60);
+            background: rgba(37, 194, 168, 0.10);
             color: var(--bb-teal);
+            box-shadow: 0 0 10px rgba(37, 194, 168, 0.12);
         }
-        .config-chip [data-lucide] { width: 17px; height: 17px; stroke-width: 1.8; }
+        .config-chip [data-lucide] {
+            width: 17px; height: 17px; stroke-width: 2;
+            filter: drop-shadow(0 0 4px rgba(37, 194, 168, 0.55));
+        }
         .config-chip-violet {
-            border-color: rgba(155, 124, 232, 0.5);
-            background: rgba(155, 124, 232, 0.08);
+            border-color: rgba(155, 124, 232, 0.60);
+            background: rgba(155, 124, 232, 0.10);
             color: var(--bb-violet);
+            box-shadow: 0 0 10px rgba(155, 124, 232, 0.12);
+        }
+        .config-chip-violet [data-lucide] {
+            filter: drop-shadow(0 0 4px rgba(155, 124, 232, 0.55));
         }
         /* weryfikacja: chip tylko przy labelce, pytanie i opcje pelna szerokosc */
         .config-verify .config-chip { grid-row: 1; }
