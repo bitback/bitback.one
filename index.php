@@ -104,11 +104,6 @@ $challenge = antibot_challenge();
             row-gap: 0.45rem;
             align-items: center;
             padding: 0.4rem;
-            transition: background 220ms var(--bb-ease), transform 220ms var(--bb-ease);
-        }
-        .trust-item:hover {
-            background: rgba(127, 176, 245, 0.06);
-            transform: translateY(-1px);
         }
         .trust-item .trust-desc { grid-column: 1 / -1; }
         .trust-title {
@@ -419,6 +414,18 @@ $challenge = antibot_challenge();
             transform: translateY(-1px);
         }
         .generate-btn:active { filter: brightness(0.92); transform: translateY(0); }
+
+        /* guide: pulsuje sam glow, ramka i grubosc bez zmian */
+        @keyframes bb-guide-verify {
+            0%, 100% { box-shadow: 0 0 0 rgba(37, 194, 168, 0); }
+            50% { box-shadow: 0 0 18px rgba(37, 194, 168, 0.45); }
+        }
+        .config-verify.bb-guide { animation: bb-guide-verify 1.1s ease-in-out infinite; }
+        @keyframes bb-guide-cta {
+            0%, 100% { filter: drop-shadow(0 0 4px rgba(122, 92, 230, 0.30)); }
+            50% { filter: drop-shadow(0 0 16px rgba(122, 92, 230, 0.85)); }
+        }
+        .generate-btn.bb-guide { animation: bb-guide-cta 1.1s ease-in-out infinite; }
         .generate-btn:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
         .generate-btn .spinner {
             display: inline-block;
@@ -847,6 +854,8 @@ $challenge = antibot_challenge();
                 container.querySelectorAll('.antibot-opt').forEach(b => b.classList.remove('selected'));
                 btn.classList.add('selected');
                 selectedAnswer = val;
+                document.querySelector('.config-verify').classList.remove('bb-guide');
+                document.querySelector('.generate-btn').classList.add('bb-guide');
             });
             container.appendChild(btn);
         });
@@ -1089,11 +1098,12 @@ $challenge = antibot_challenge();
             return;
         }
 
-        // math — sprawdź czy wybrano odpowiedź
+        // math - brak wyboru: zamiast alertu glow prowadzi do weryfikacji
         if (selectedAnswer === null) {
-            alert(T.error_math_select);
+            document.querySelector('.config-verify').classList.add('bb-guide');
             return;
         }
+        document.querySelector('.generate-btn').classList.remove('bb-guide');
 
         const sections = extractSections();
 
