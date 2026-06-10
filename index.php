@@ -345,14 +345,16 @@ $challenge = antibot_challenge();
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* przycisk oznaczania poufnych - FLAT solid gold (akcja secret) */
+        /* przycisk oznaczania poufnych - FLAT solid gold (akcja secret,
+           gold = sygnatura). Uppercase + letterspacing wg m01; width auto
+           zeby uppercase miescil sie w jednej linii. */
         .mark-secret-btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 0.5em;
-            width: 270px;
-            padding: 0.65rem 1rem;
+            gap: 0.6em;
+            width: auto;
+            padding: 0.65rem 1.3rem;
             margin-top: 0.6rem;
             border-radius: 8px;
             border: none;
@@ -362,7 +364,8 @@ $challenge = antibot_challenge();
             font-weight: 700;
             cursor: pointer;
             transition: filter 140ms var(--bb-ease), transform 140ms var(--bb-ease);
-            letter-spacing: 0.01em;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
         }
         .mark-secret-btn:hover { filter: brightness(1.07); transform: translateY(-1px); }
         .mark-secret-btn:active { filter: brightness(0.93); transform: translateY(0); }
