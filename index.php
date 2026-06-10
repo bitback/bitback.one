@@ -424,30 +424,39 @@ $challenge = antibot_challenge();
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* przycisk oznaczania poufnych - FLAT solid gold (akcja secret,
-           gold = sygnatura). Uppercase + letterspacing wg m01; width auto
-           zeby uppercase miescil sie w jednej linii. */
+        /* przycisk oznaczania poufnych - wariant z mockupu m01: ciemny box
+           z gradientowa ramka teal->violet i bialym uppercase tekstem.
+           Nested clip-path jak chip Ctrl+E: zewnetrzna warstwa = gradient
+           przyciety wielokatem ze scietymi rogami, wewnetrzny span = ciemne
+           wnetrze tym samym wielokatem (1px mniej); drop-shadow podaza
+           za ksztaltem. */
         .mark-secret-btn {
+            display: inline-block;
+            padding: 1px;
+            margin-top: 0.6rem;
+            border: none;
+            background: linear-gradient(90deg, var(--bb-teal), var(--bb-violet));
+            clip-path: polygon(13px 0, 100% 0, 100% calc(100% - 13px), calc(100% - 13px) 100%, 0 100%, 0 13px);
+            filter: drop-shadow(0 0 7px rgba(122, 92, 230, 0.35));
+            cursor: pointer;
+            transition: filter 140ms var(--bb-ease);
+        }
+        .mark-secret-btn .inner {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 0.6em;
-            width: auto;
-            padding: 0.65rem 1.3rem;
-            margin-top: 0.6rem;
-            border-radius: 8px;
-            border: none;
-            background: var(--bb-secret);
-            color: #2a1d08;
+            gap: 0.7em;
+            padding: 0.65rem 1.5rem;
+            background: #0a0e15;
+            clip-path: polygon(13px 0, 100% 0, 100% calc(100% - 13px), calc(100% - 13px) 100%, 0 100%, 0 13px);
+            color: #fff;
             font-size: 0.9rem;
             font-weight: 700;
-            cursor: pointer;
-            transition: filter 140ms var(--bb-ease), transform 140ms var(--bb-ease);
             text-transform: uppercase;
-            letter-spacing: 0.08em;
+            letter-spacing: 0.1em;
         }
-        .mark-secret-btn:hover { filter: brightness(1.07); transform: translateY(-1px); }
-        .mark-secret-btn:active { filter: brightness(0.93); transform: translateY(0); }
+        .mark-secret-btn:hover { filter: drop-shadow(0 0 11px rgba(122, 92, 230, 0.55)) brightness(1.12); }
+        .mark-secret-btn:active { filter: drop-shadow(0 0 5px rgba(122, 92, 230, 0.3)) brightness(0.92); }
         .mark-secret-btn [data-lucide] { width: 18px; height: 18px; stroke-width: 2; }
 
         /* ====== PODGLĄD WYGAŚNIĘCIA ====== */
@@ -652,7 +661,7 @@ $challenge = antibot_challenge();
                         <div class="editor-gutter" id="editorGutter" aria-hidden="true">1</div>
                         <div class="editor" id="editor" contenteditable="true" spellcheck="false" role="textbox" aria-multiline="true" aria-label="<?= htmlspecialchars($t['content_label']) ?>"></div>
                     </div>
-                    <button type="button" class="mark-secret-btn" onmousedown="event.preventDefault()" onclick="toggleSecret()"><?= bb_icon('lock') ?> <?= htmlspecialchars($t['mark_secret_btn']) ?></button>
+                    <button type="button" class="mark-secret-btn" onmousedown="event.preventDefault()" onclick="toggleSecret()"><span class="inner"><?= bb_icon('lock') ?> <?= htmlspecialchars($t['mark_secret_btn']) ?></span></button>
                 </div>
 
                 <!-- podgląd pod edytorem -->
