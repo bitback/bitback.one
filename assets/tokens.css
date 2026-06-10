@@ -164,6 +164,39 @@
 }
 
 /* =========================================================================
+   Sloty na grafiki narozne (bitmapy generowane w Higgsfield)
+   Bitmapy na CZYSTEJ CZERNI + mix-blend-mode: screen = czern znika,
+   zostaja smugi swiatla. Dziala na kazdej ciemnej powierzchni bez
+   dopasowywania koloru tla karty.
+   Uzycie: <div class="bb-card bb-art bb-art-aurora">...
+   ========================================================================= */
+.bb-art {
+  position: relative;
+  overflow: hidden;
+}
+.bb-art::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 60%;
+  height: 90%;
+  background: var(--bb-art, none) right bottom / contain no-repeat;
+  mix-blend-mode: screen;
+  pointer-events: none;
+  z-index: 0;
+}
+/* tresc karty nad grafika */
+.bb-art > * {
+  position: relative;
+  z-index: 1;
+}
+/* warianty - URL podpinane po wygenerowaniu bitmap */
+.bb-art-aurora { --bb-art: url('/assets/art/aurora-1.webp'); }
+.bb-art-gold   { --bb-art: url('/assets/art/gold-1.webp'); }
+.bb-art-green  { --bb-art: url('/assets/art/green-1.webp'); }
+
+/* =========================================================================
    Hero surfaces - radial spotlights (dla landing, result, trust)
    Sygnaturowy gold-on-black + warianty: fresh/cool/hot
    Uzywaj oszczednie, tylko na kontenerach wyroznionych
