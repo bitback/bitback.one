@@ -256,15 +256,16 @@
    ========================================================================= */
 .bb-page-art {
   position: fixed;
-  width: min(34vw, 520px);
+  width: min(36vw, 560px);
   aspect-ratio: 1 / 1;
   pointer-events: none;
   z-index: -1;
   background: var(--bb-page-art, none) center / cover no-repeat;
   mix-blend-mode: screen;
-  opacity: 0.9;
-  -webkit-mask-image: radial-gradient(130% 130% at 100% 100%, #000 30%, transparent 72%);
-  mask-image: radial-gradient(130% 130% at 100% 100%, #000 30%, transparent 72%);
+  opacity: 1;
+  /* maska trzyma pelna jasnosc dluzej - smugi zywe jak w mockupie */
+  -webkit-mask-image: radial-gradient(130% 130% at 100% 100%, #000 40%, transparent 80%);
+  mask-image: radial-gradient(130% 130% at 100% 100%, #000 40%, transparent 80%);
 }
 .bb-page-art-tl {
   top: 0; left: 0;
