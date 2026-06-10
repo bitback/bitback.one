@@ -51,11 +51,12 @@ $challenge = antibot_challenge();
             color: var(--bb-fg);
         }
         .header p {
-            color: var(--bb-fg);
-            font-size: 1rem;
-            font-weight: 600;
-            letter-spacing: 0.02em;
-            margin-top: 0.5rem;
+            color: var(--bb-teal);
+            font-size: 1rem; /* twarda regula: nie mniejsze niz obecne */
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.24em;
+            margin-top: 0.6rem;
         }
 
         /* ====== TRUST BAR ====== */
