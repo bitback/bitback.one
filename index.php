@@ -40,9 +40,16 @@ $challenge = antibot_challenge();
             padding-bottom: 2.5rem;
         }
 
+        /* logo do lewej, podtytul obok - header w jednej linii,
+           tresc apki wedruje w gore */
         .header {
-            text-align: center;
-            padding: 2rem 1rem 1.5rem;
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.4rem 1.6rem;
+            padding: 1.3rem 1rem 1rem;
         }
         .header h1 {
             font-size: 1.6rem;
@@ -56,7 +63,6 @@ $challenge = antibot_challenge();
             font-weight: 500;
             text-transform: uppercase;
             letter-spacing: 0.24em;
-            margin-top: 0.6rem;
         }
 
         /* ====== TRUST BAR ====== */
@@ -431,6 +437,12 @@ $challenge = antibot_challenge();
             50% { filter: drop-shadow(0 0 16px rgba(122, 92, 230, 0.85)); }
         }
         .generate-btn.bb-guide { animation: bb-guide-cta 1.1s ease-in-out infinite; }
+        /* brak tresci przy GENERUJ: edytor blyska 2 pulsami (iteration 2) */
+        @keyframes bb-guide-editor {
+            0%, 100% { box-shadow: 0 0 10px rgba(37, 194, 168, 0.07); }
+            50% { box-shadow: 0 0 20px rgba(37, 194, 168, 0.60); }
+        }
+        .editor.bb-flash { animation: bb-guide-editor 0.55s ease-in-out 2; }
         /* przygaszony dopoki brak tresci + oznaczonego poufnego (po bb-guide,
            zeby dimmed wygrywal i wylaczal puls) */
         .generate-btn.dimmed {
@@ -793,8 +805,6 @@ $challenge = antibot_challenge();
 <script src="/crypto.js" integrity="sha384-lbGxH8AFxpkiMqDgkudynUSMoMFVnfMkcjN4XwCJHaTu9mLjvW4emijB7r3kh7MU"></script>
 <script>
     const T = {
-        error_empty: <?= json_encode($t['error_empty']) ?>,
-        error_math_select: <?= json_encode($t['error_math_select']) ?>,
         error_ratelimit: <?= json_encode($t['error_ratelimit']) ?>,
         error_math: <?= json_encode($t['error_math']) ?>,
         error_server: <?= json_encode($t['error_server']) ?>,
@@ -1107,7 +1117,10 @@ $challenge = antibot_challenge();
         // treść
         const text = editor.textContent.trim();
         if (!text) {
-            alert(T.error_empty);
+            document.querySelector('.config-verify').classList.remove('bb-guide');
+            editor.classList.remove('bb-flash');
+            void editor.offsetWidth;
+            editor.classList.add('bb-flash');
             return;
         }
 
