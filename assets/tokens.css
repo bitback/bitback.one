@@ -169,6 +169,7 @@
   width: auto;
   display: inline-block;
   vertical-align: middle;
+  filter: drop-shadow(0 0 10px rgba(155, 124, 232, 0.35)) drop-shadow(0 0 18px rgba(37, 194, 168, 0.18));
 }
 @media (max-width: 480px) {
   .bb-logo svg { height: 56px !important; }
