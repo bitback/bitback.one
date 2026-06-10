@@ -62,7 +62,7 @@ $challenge = antibot_challenge();
         /* ====== TRUST BAR ====== */
         .trust {
             max-width: 1100px;
-            margin: 0 auto 3.5rem;
+            margin: 0 auto 1.5rem;
             padding: 0 1rem;
         }
         /* trust bar (m01): neon ramka + ciemne wnetrze, corner streaks
@@ -430,23 +430,23 @@ $challenge = antibot_challenge();
             width: 100%;
             padding: 0.95rem 1rem;
             margin-top: 1rem;
-            border: 3px solid transparent;
+            border: 2px solid transparent;
             background: linear-gradient(90deg, #1b1233 0%, #0a0e15 50%, #0b2127 100%) padding-box,
                         linear-gradient(90deg, var(--bb-teal) 0%, var(--bb-accent) 50%, var(--bb-violet) 100%) border-box;
+            clip-path: polygon(13px 0, 100% 0, 100% calc(100% - 13px), calc(100% - 13px) 100%, 0 100%, 0 13px);
             color: #fff;
             font-size: 0.95rem;
             font-weight: 800;
             cursor: pointer;
-            transition: filter 140ms var(--bb-ease), transform 140ms var(--bb-ease), box-shadow 140ms var(--bb-ease);
+            transition: filter 140ms var(--bb-ease), transform 140ms var(--bb-ease);
             text-transform: uppercase;
             letter-spacing: 0.16em;
-            box-shadow: 0 0 26px rgba(122, 92, 230, 0.45), 0 0 12px rgba(37, 194, 168, 0.30);
+            filter: drop-shadow(0 0 9px rgba(122, 92, 230, 0.45));
         }
         .generate-btn [data-lucide] { width: 19px; height: 19px; stroke-width: 2.2; }
         .generate-btn:hover {
-            filter: brightness(1.12);
+            filter: drop-shadow(0 0 11px rgba(122, 92, 230, 0.55)) brightness(1.12);
             transform: translateY(-1px);
-            box-shadow: 0 0 34px rgba(122, 92, 230, 0.6), 0 0 16px rgba(37, 194, 168, 0.4);
         }
         .generate-btn:active { filter: brightness(0.92); transform: translateY(0); }
         .generate-btn:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
@@ -673,6 +673,28 @@ $challenge = antibot_challenge();
     <p><?= htmlspecialchars($t['subtitle']) ?></p>
 </div>
 
+<div class="trust bb-rise-2">
+    <div class="trust-box bb-art bb-art-aurora bb-art-left bb-art-left-magenta">
+        <div class="trust-grid">
+            <div class="trust-item">
+                <div class="bb-chip bb-chip-teal"><?= bb_icon('lock') ?></div>
+                <div class="trust-title"><?= htmlspecialchars($t['trust1_title']) ?></div>
+                <div class="trust-desc"><?= htmlspecialchars($t['trust1_desc']) ?></div>
+            </div>
+            <div class="trust-item">
+                <div class="bb-chip bb-chip-teal"><?= bb_icon('clock') ?></div>
+                <div class="trust-title"><?= htmlspecialchars($t['trust2_title']) ?></div>
+                <div class="trust-desc"><?= htmlspecialchars($t['trust2_desc']) ?></div>
+            </div>
+            <div class="trust-item">
+                <div class="bb-chip bb-chip-violet"><?= bb_icon('monitor') ?></div>
+                <div class="trust-title"><?= htmlspecialchars($t['trust3_title']) ?></div>
+                <div class="trust-desc"><?= htmlspecialchars($t['trust3_desc']) ?></div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="main bb-rise-3">
     <form id="createForm" autocomplete="off" onsubmit="return false;">
         <input type="text" name="website_url" class="ohnohoney" tabindex="-1" autocomplete="off">
@@ -773,28 +795,6 @@ $challenge = antibot_challenge();
         </div>
     </div>
 
-</div>
-
-<div class="trust bb-rise-3">
-    <div class="trust-box bb-art bb-art-aurora bb-art-left bb-art-left-magenta">
-        <div class="trust-grid">
-            <div class="trust-item">
-                <div class="bb-chip bb-chip-teal"><?= bb_icon('lock') ?></div>
-                <div class="trust-title"><?= htmlspecialchars($t['trust1_title']) ?></div>
-                <div class="trust-desc"><?= htmlspecialchars($t['trust1_desc']) ?></div>
-            </div>
-            <div class="trust-item">
-                <div class="bb-chip bb-chip-teal"><?= bb_icon('clock') ?></div>
-                <div class="trust-title"><?= htmlspecialchars($t['trust2_title']) ?></div>
-                <div class="trust-desc"><?= htmlspecialchars($t['trust2_desc']) ?></div>
-            </div>
-            <div class="trust-item">
-                <div class="bb-chip bb-chip-violet"><?= bb_icon('monitor') ?></div>
-                <div class="trust-title"><?= htmlspecialchars($t['trust3_title']) ?></div>
-                <div class="trust-desc"><?= htmlspecialchars($t['trust3_desc']) ?></div>
-            </div>
-        </div>
-    </div>
 </div>
 
 <div style="position:fixed;bottom:0;left:0;right:0;z-index:100;background:var(--bb-bg);border-top:1px solid var(--bb-border-soft);padding:0.5rem 1rem;text-align:center;font-size:0.8rem;color:var(--bb-fg-5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
