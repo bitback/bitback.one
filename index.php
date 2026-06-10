@@ -75,15 +75,19 @@ $challenge = antibot_challenge();
             border: 1px solid var(--bb-neon-border);
             box-shadow: var(--bb-neon-glow);
         }
+        /* smugi od GORNEJ krawedzi: pionowe lustro kanonicznej bitmapy
+           (maska flipuje sie razem z transformem) */
         .trust-box.bb-art::after {
             width: 36%;
             opacity: 0.45;
+            transform: scaleY(-1);
             -webkit-mask-image: radial-gradient(120% 130% at 100% 100%, #000 18%, transparent 58%);
             mask-image: radial-gradient(120% 130% at 100% 100%, #000 18%, transparent 58%);
         }
         .trust-box.bb-art-left::before {
             width: 24%;
             opacity: 0.32;
+            transform: scale(-1, -1);
             -webkit-mask-image: radial-gradient(120% 130% at 100% 100%, #000 18%, transparent 58%);
             mask-image: radial-gradient(120% 130% at 100% 100%, #000 18%, transparent 58%);
         }
