@@ -65,10 +65,27 @@ $challenge = antibot_challenge();
             margin: 0 auto 1.5rem;
             padding: 0 1rem;
         }
+        /* trust bar (m01): neon ramka + ciemne wnetrze, corner streaks
+           przez bb-art (aurora prawy rog) i bb-art-left (magenta lewy).
+           Stonowane: na ciemnym tle screen blend mocno pcha jasnosc,
+           a tekst musi zostac czytelny (mockup: akcenty przy krawedziach). */
         .trust-box {
-            border-radius: 10px;
             padding: 1rem;
-            /* background i border z bb-card-default */
+            background: var(--bb-surface-sunk);
+            border: 1px solid var(--bb-neon-border);
+            box-shadow: var(--bb-neon-glow);
+        }
+        .trust-box.bb-art::after {
+            width: 36%;
+            opacity: 0.45;
+            -webkit-mask-image: radial-gradient(120% 130% at 100% 100%, #000 18%, transparent 58%);
+            mask-image: radial-gradient(120% 130% at 100% 100%, #000 18%, transparent 58%);
+        }
+        .trust-box.bb-art-left::before {
+            width: 24%;
+            opacity: 0.32;
+            -webkit-mask-image: radial-gradient(120% 130% at 100% 100%, #000 18%, transparent 58%);
+            mask-image: radial-gradient(120% 130% at 100% 100%, #000 18%, transparent 58%);
         }
         .trust-grid {
             display: grid;
@@ -578,7 +595,7 @@ $challenge = antibot_challenge();
 </div>
 
 <div class="trust bb-rise-2">
-    <div class="trust-box bb-card bb-card-default bb-art bb-art-aurora">
+    <div class="trust-box bb-art bb-art-aurora bb-art-left bb-art-left-magenta">
         <div class="trust-grid">
             <div class="trust-item">
                 <div class="bb-chip bb-chip-blue"><?= bb_icon('lock') ?></div>

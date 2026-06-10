@@ -224,6 +224,27 @@
 .bb-art-gold   { --bb-art: url('/assets/art/gold-1.webp'); }
 .bb-art-green  { --bb-art: url('/assets/art/green-1.webp'); }
 
+/* drugi rog karty (lewy-dolny) przez ::before - kanoniczna bitmapa
+   (art w prawym-dolnym rogu) odbita scaleX. Uzycie razem z .bb-art:
+   <div class="bb-art bb-art-aurora bb-art-left bb-art-left-magenta"> */
+.bb-art-left::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 45%;
+  height: 100%;
+  background: var(--bb-art-l, none) right bottom / cover no-repeat;
+  mix-blend-mode: screen;
+  pointer-events: none;
+  z-index: -1;
+  transform: scaleX(-1);
+  -webkit-mask-image: radial-gradient(140% 150% at 100% 100%, #000 30%, transparent 70%);
+  mask-image: radial-gradient(140% 150% at 100% 100%, #000 30%, transparent 70%);
+  opacity: 0.7;
+}
+.bb-art-left-magenta { --bb-art-l: url('/assets/art/magenta-2.webp'); }
+
 /* =========================================================================
    Smugi narozne na POZIOMIE STRONY (mockup m01): fixed bitmapy w gornych
    rogach viewportu. Kanoniczne bitmapy maja art w prawym-dolnym rogu -
