@@ -159,11 +159,34 @@ $challenge = antibot_challenge();
 
         /* placeholder edytora */
 
-        /* edytor contenteditable - flat sunken, akcent przez focus i secret highlight */
+        /* edytor contenteditable - flat sunken, akcent przez focus i secret highlight.
+           Gutter z numerami linii (mockup m01): absolutny pas po lewej, JS liczy
+           linie WIZUALNE (wysokosc tresci / line-height) - numeracja nigdy sie
+           nie rozjezdza, takze przy zawinietych dlugich liniach. */
+        .editor-wrap {
+            position: relative;
+        }
+        .editor-gutter {
+            position: absolute;
+            top: 1px; left: 1px; bottom: 1px;
+            width: 2.5rem;
+            padding: 0.85rem 0.55rem 0.85rem 0;
+            background: var(--bb-bg);
+            border-right: 1px solid var(--bb-border-soft);
+            font-family: var(--bb-font-mono);
+            font-size: 0.95rem;
+            line-height: 1.7;
+            color: var(--bb-fg-6);
+            text-align: right;
+            white-space: pre-line;
+            user-select: none;
+            pointer-events: none;
+            overflow: hidden;
+        }
         .editor {
             width: 100%;
             min-height: 220px;
-            padding: 0.85rem;
+            padding: 0.85rem 0.85rem 0.85rem 3.3rem;
             background: var(--bb-surface-sunk);
             border: 1px solid var(--bb-border);
             border-radius: 10px;
@@ -538,7 +561,10 @@ $challenge = antibot_challenge();
                         <kbd>Ctrl+E</kbd>
                         <span class="hint-text"><?= $t['hint_text'] ?></span>
                     </div>
-                    <div class="editor" id="editor" contenteditable="true" spellcheck="false" role="textbox" aria-multiline="true" aria-label="<?= htmlspecialchars($t['content_label']) ?>"></div>
+                    <div class="editor-wrap">
+                        <div class="editor-gutter" id="editorGutter" aria-hidden="true">1</div>
+                        <div class="editor" id="editor" contenteditable="true" spellcheck="false" role="textbox" aria-multiline="true" aria-label="<?= htmlspecialchars($t['content_label']) ?>"></div>
+                    </div>
                     <button type="button" class="mark-secret-btn" onmousedown="event.preventDefault()" onclick="toggleSecret()"><?= bb_icon('lock') ?> <?= htmlspecialchars($t['mark_secret_btn']) ?></button>
                 </div>
 
@@ -644,6 +670,29 @@ $challenge = antibot_challenge();
     };
     const editor = document.getElementById('editor');
     let previewMode = 'expired';
+
+    // --- GUTTER NUMERACJI LINII ---
+    // Liczy linie WIZUALNE (wysokosc wyrenderowanej tresci / line-height),
+    // wiec numery sa zawsze wyrownane z trescia - takze gdy dluga linia
+    // sie zawija. Pusty edytor: numeruje linie placeholdera (::before).
+    const gutter = document.getElementById('editorGutter');
+    const PLACEHOLDER_LINES = <?= count(explode("\n", $t['editor_placeholder'])) ?>;
+    function updateGutter() {
+        const lh = parseFloat(getComputedStyle(editor).lineHeight);
+        let lines;
+        if (editor.textContent.length === 0 && !editor.querySelector('br,div')) {
+            lines = PLACEHOLDER_LINES;
+        } else {
+            const r = document.createRange();
+            r.selectNodeContents(editor);
+            const h = r.getBoundingClientRect().height;
+            lines = Math.max(1, Math.round(h / lh));
+        }
+        let out = '';
+        for (let i = 1; i <= lines; i++) out += i + '\n';
+        gutter.textContent = out;
+    }
+    window.addEventListener('resize', updateGutter);
 
     // --- MATH ANTYBOT ---
     // Challenge generowany serwerowo i podpisany HMAC - klient nie zna logiki
@@ -819,6 +868,7 @@ $challenge = antibot_challenge();
 
     // --- PODGLĄD ---
     function updatePreview() {
+        updateGutter();
         const previewBox = document.getElementById('preview');
         const html = editor.innerHTML;
         const isEmpty = editor.textContent.trim().length === 0;
