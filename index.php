@@ -292,6 +292,11 @@ $challenge = antibot_challenge();
             margin-bottom: 1.05rem;
         }
         .config-group:last-child { margin-bottom: 0; }
+        /* separator miedzy wierszami ustawien (m01): cienka teal linia */
+        .config-group + .config-group {
+            border-top: 1px solid rgba(37, 194, 168, 0.14);
+            padding-top: 1.05rem;
+        }
 
         /* chipy ikon ustawien (m01): jasniejsza ikona ze swiecacym konturem */
         .config-chip {
