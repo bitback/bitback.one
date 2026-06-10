@@ -128,19 +128,38 @@ $challenge = antibot_challenge();
             font-size: 0.85rem;
             color: var(--bb-fg-3);
         }
+        /* chip Ctrl+E (m01): neonowy teal box ze scietymi rogami.
+           Zewnetrzny kbd = teal "ramka" przycieta clip-pathem, wewnetrzny
+           span = ciemne wnetrze przyciete tym samym wielokatem (1px mniej)
+           - ramka widoczna takze na diagonalach. drop-shadow podaza za
+           clip-path (box-shadow by nie podazal). */
         .hint-bar kbd {
             display: inline-block;
-            padding: 0.15em 0.5em;
-            background: var(--bb-surface-sunk);
-            border: 1px solid var(--bb-border);
-            border-radius: 4px;
-            font-family: var(--bb-font-mono);
-            font-size: 0.84rem;
-            color: var(--bb-teal);
+            padding: 1px;
+            background: rgba(37, 194, 168, 0.65);
+            clip-path: polygon(9px 0, 100% 0, 100% calc(100% - 9px), calc(100% - 9px) 100%, 0 100%, 0 9px);
+            filter: drop-shadow(0 0 5px rgba(37, 194, 168, 0.35));
             white-space: nowrap;
+        }
+        .hint-bar kbd span {
+            display: block;
+            padding: 0.35em 0.8em;
+            background: #0b1612;
+            clip-path: polygon(9px 0, 100% 0, 100% calc(100% - 9px), calc(100% - 9px) 100%, 0 100%, 0 9px);
+            font-family: var(--bb-font-mono);
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--bb-teal);
         }
         .hint-bar .hint-text { color: var(--bb-fg-3); }
         .hint-bar .hint-text strong { color: var(--bb-fg); font-weight: 600; }
+        /* inline akcenty hinta (m01): skrot teal mono, "poufny" gold */
+        .hint-bar .hint-text strong:first-of-type {
+            color: var(--bb-teal);
+            font-family: var(--bb-font-mono);
+            font-weight: 500;
+        }
+        .hint-bar .hint-text strong:last-of-type { color: var(--bb-secret); }
 
         .main {
             max-width: 1100px;
@@ -626,7 +645,7 @@ $challenge = antibot_challenge();
                 <div class="col-label"><?= htmlspecialchars($t['content_label']) ?></div>
                 <div class="bb-frame frame-pad">
                     <div class="hint-bar">
-                        <kbd>Ctrl+E</kbd>
+                        <kbd><span>Ctrl+E</span></kbd>
                         <span class="hint-text"><?= $t['hint_text'] ?></span>
                     </div>
                     <div class="editor-wrap">
