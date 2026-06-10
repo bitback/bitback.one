@@ -329,11 +329,10 @@
    ========================================================================= */
 .bb-frame {
   position: relative;
-  background: transparent !important;
+  /* kryjace tlo = panel blokuje page-art (czytelnosc); kolor identyczny
+     z coverem notcha ::before, wiec diagonal bez szwu */
+  background: var(--bb-bg) !important;
   border: 1px solid var(--bb-neon-border) !important;
-  /* gradientowy stroke (m01): teal -> violet przy prawej krawedzi.
-     border-image dziala z przezroczystym wnetrzem (trik z notchem
-     ::before zostaje - rog top-left jest w strefie teal). */
   border-image: linear-gradient(90deg, var(--bb-neon-border) 55%, rgba(155, 124, 232, 0.55) 100%) 1 !important;
   box-shadow: var(--bb-neon-glow) !important;
 }
