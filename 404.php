@@ -5,6 +5,7 @@
 
 require_once __DIR__ . '/inc/config.php';
 require_once __DIR__ . '/inc/i18n.php';
+require_once __DIR__ . '/inc/icons.php';
 
 $lang = detect_lang();
 $t = get_strings($lang);
@@ -21,9 +22,7 @@ http_response_code(404);
     <meta property="og:description" content="<?= htmlspecialchars($t['og_description'] ?? '') ?>">
     <meta property="og:site_name" content="bitback.one">
     <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/fonts.css?v=<?= filemtime(__DIR__ . '/assets/fonts.css') ?>">
     <link rel="stylesheet" href="/assets/tokens.css?v=<?= filemtime(__DIR__ . '/assets/tokens.css') ?>">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -66,7 +65,7 @@ http_response_code(404);
 </head>
 <body>
     <div class="box">
-        <div class="ghost"><i data-lucide="ghost"></i></div>
+        <div class="ghost"><?= bb_icon('ghost') ?></div>
         <div class="code">404</div>
         <h1><?= htmlspecialchars($t['not_found_title']) ?></h1>
         <div class="sub"><?= htmlspecialchars($t['not_found_sub']) ?></div>
@@ -77,7 +76,5 @@ http_response_code(404);
             <span style="color:var(--bb-fg-8);margin:0 0.5rem;">|</span>Kod źródłowy na <a href="https://github.com/bitback/bitback.one" target="_blank" rel="noopener" style="color:var(--bb-accent-link);text-decoration:none;">GitHub</a>
         </div>
     </div>
-<script src="https://unpkg.com/lucide@latest"></script>
-<script>lucide.createIcons();</script>
 </body>
 </html>

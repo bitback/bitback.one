@@ -3,6 +3,7 @@ require_once __DIR__ . '/inc/config.php';
 require_once __DIR__ . '/inc/i18n.php';
 require_once __DIR__ . '/inc/logo.php';
 require_once __DIR__ . '/inc/antibot.php';
+require_once __DIR__ . '/inc/icons.php';
 $lang = detect_lang();
 $t = get_strings($lang);
 $challenge = antibot_challenge();
@@ -26,9 +27,7 @@ $challenge = antibot_challenge();
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="<?= htmlspecialchars($t['meta_title']) ?>">
     <meta name="twitter:description" content="<?= htmlspecialchars($t['og_description']) ?>">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/fonts.css?v=<?= filemtime(__DIR__ . '/assets/fonts.css') ?>">
     <link rel="stylesheet" href="/assets/tokens.css?v=<?= filemtime(__DIR__ . '/assets/tokens.css') ?>">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -566,17 +565,17 @@ $challenge = antibot_challenge();
     <div class="trust-box bb-card bb-hero-cool">
         <div class="trust-grid">
             <div class="trust-item">
-                <div class="trust-icon"><i data-lucide="lock"></i></div>
+                <div class="trust-icon"><?= bb_icon('lock') ?></div>
                 <div class="trust-title"><?= htmlspecialchars($t['trust1_title']) ?></div>
                 <div class="trust-desc"><?= htmlspecialchars($t['trust1_desc']) ?></div>
             </div>
             <div class="trust-item">
-                <div class="trust-icon"><i data-lucide="clock"></i></div>
+                <div class="trust-icon"><?= bb_icon('clock') ?></div>
                 <div class="trust-title"><?= htmlspecialchars($t['trust2_title']) ?></div>
                 <div class="trust-desc"><?= htmlspecialchars($t['trust2_desc']) ?></div>
             </div>
             <div class="trust-item">
-                <div class="trust-icon"><i data-lucide="monitor"></i></div>
+                <div class="trust-icon"><?= bb_icon('monitor') ?></div>
                 <div class="trust-title"><?= htmlspecialchars($t['trust3_title']) ?></div>
                 <div class="trust-desc"><?= htmlspecialchars($t['trust3_desc']) ?></div>
             </div>
@@ -596,8 +595,8 @@ $challenge = antibot_challenge();
                     <kbd>Ctrl+E</kbd>
                     <span class="hint-text"><?= $t['hint_text'] ?></span>
                 </div>
-                <div class="editor" id="editor" contenteditable="true" spellcheck="false"></div>
-                <button type="button" class="mark-secret-btn" onmousedown="event.preventDefault()" onclick="toggleSecret()"><i data-lucide="lock"></i> <?= htmlspecialchars($t['mark_secret_btn']) ?></button>
+                <div class="editor" id="editor" contenteditable="true" spellcheck="false" role="textbox" aria-multiline="true" aria-label="<?= htmlspecialchars($t['content_label']) ?>"></div>
+                <button type="button" class="mark-secret-btn" onmousedown="event.preventDefault()" onclick="toggleSecret()"><?= bb_icon('lock') ?> <?= htmlspecialchars($t['mark_secret_btn']) ?></button>
 
                 <!-- podgląd pod edytorem -->
                 <div class="preview-section">
@@ -651,8 +650,8 @@ $challenge = antibot_challenge();
 
                     <div class="config-group">
                         <label><?= htmlspecialchars($t['verify_label']) ?></label>
-                        <div class="antibot-q" id="mathQuestion"></div>
-                        <div class="antibot-options" id="mathOptions"></div>
+                        <div class="antibot-q" id="mathQuestion" aria-live="polite"></div>
+                        <div class="antibot-options" id="mathOptions" role="group" aria-label="<?= htmlspecialchars($t['verify_label']) ?>"></div>
                     </div>
 
                     <button type="button" class="generate-btn" onclick="generateLink()"><?= htmlspecialchars($t['generate_btn']) ?></button>
@@ -1012,25 +1011,34 @@ $challenge = antibot_challenge();
                 ? await encryptBlob(secretSections, hexKey)
                 : null;
 
-            const resp = await fetch('/api/create.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    website_url: honeypot,
-                    encrypted_text: encryptedText,
-                    encrypted_secrets: encryptedSecrets,
-                    total_sections: sections.length,
-                    expire_days: parseInt(document.getElementById('expireDays').value) || <?= DEFAULT_EXPIRE_DAYS ?>,
-                    max_views: parseInt(document.getElementById('maxViews').value) || <?= DEFAULT_MAX_VIEWS ?>,
-                    delete_after_days: parseInt(document.getElementById('deleteDays').value) || <?= DEFAULT_DELETE_DAYS ?>,
-                    password: document.getElementById('linkPassword').value.trim() || '',
-                    math_a: CH.a,
-                    math_b: CH.b,
-                    math_exp: CH.exp,
-                    math_token: CH.token,
-                    math_answer: selectedAnswer,
-                }),
-            });
+            // timeout - zawieszone polaczenie nie zostawia spinnera na zawsze
+            const ctrl = new AbortController();
+            const timer = setTimeout(() => ctrl.abort(), 15000);
+            let resp;
+            try {
+                resp = await fetch('/api/create.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    signal: ctrl.signal,
+                    body: JSON.stringify({
+                        website_url: honeypot,
+                        encrypted_text: encryptedText,
+                        encrypted_secrets: encryptedSecrets,
+                        total_sections: sections.length,
+                        expire_days: parseInt(document.getElementById('expireDays').value) || <?= DEFAULT_EXPIRE_DAYS ?>,
+                        max_views: parseInt(document.getElementById('maxViews').value) || <?= DEFAULT_MAX_VIEWS ?>,
+                        delete_after_days: parseInt(document.getElementById('deleteDays').value) || <?= DEFAULT_DELETE_DAYS ?>,
+                        password: document.getElementById('linkPassword').value.trim() || '',
+                        math_a: CH.a,
+                        math_b: CH.b,
+                        math_exp: CH.exp,
+                        math_token: CH.token,
+                        math_answer: selectedAnswer,
+                    }),
+                });
+            } finally {
+                clearTimeout(timer);
+            }
 
             const result = await resp.json();
 
@@ -1068,24 +1076,33 @@ $challenge = antibot_challenge();
     function copyLink() {
         const input = document.getElementById('resultUrl');
         input.select();
-        navigator.clipboard.writeText(input.value).then(() => {
+        input.setSelectionRange(0, input.value.length); // mobile Safari
+
+        const showCopied = () => {
             const btn = document.querySelector('.copy-btn');
             const original = btn.innerHTML;
-            btn.innerHTML = '<i data-lucide="check" style="width:1em;height:1em;vertical-align:-0.15em;margin-right:0.3em;"></i>' + T.copied;
+            btn.innerHTML = '<svg data-lucide="check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-0.15em;margin-right:0.3em;" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>' + T.copied;
             btn.classList.add('copied');
-            if (window.lucide) lucide.createIcons();
             setTimeout(() => {
                 btn.innerHTML = original;
                 btn.classList.remove('copied');
             }, 1800);
-        });
+        };
+
+        // navigator.clipboard wymaga secure context (HTTPS) i uprawnien -
+        // fallback do execCommand, a gdy i to padnie, tekst i tak jest zaznaczony.
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(input.value).then(showCopied).catch(() => {
+                try { document.execCommand('copy'); showCopied(); } catch (e) {}
+            });
+        } else {
+            try { document.execCommand('copy'); showCopied(); } catch (e) {}
+        }
     }
 
     // init
     updatePreview();
 </script>
 
-<script src="https://unpkg.com/lucide@latest"></script>
-<script>lucide.createIcons();</script>
 </body>
 </html>

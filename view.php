@@ -12,6 +12,7 @@
 require_once __DIR__ . '/inc/config.php';
 require_once __DIR__ . '/inc/i18n.php';
 require_once __DIR__ . '/inc/logo.php';
+require_once __DIR__ . '/inc/icons.php';
 
 $lang = detect_lang();
 $t = get_strings($lang);
@@ -198,9 +199,7 @@ function og_view_meta(array $t): void {
     <meta name="twitter:title" content="<?= htmlspecialchars($t['og_view_title']) ?>">
     <meta name="twitter:description" content="<?= htmlspecialchars($t['og_view_description']) ?>">
     <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/fonts.css?v=<?= filemtime(__DIR__ . '/assets/fonts.css') ?>">
     <link rel="stylesheet" href="/assets/tokens.css?v=<?= filemtime(__DIR__ . '/assets/tokens.css') ?>">
     <?php
 }
@@ -275,8 +274,6 @@ function show_password_form(array $t, string $slug, bool $wrongPassword = false)
         this.action = '/' + <?= json_encode($slug) ?> + window.location.hash;
     });
     </script>
-<script src="https://unpkg.com/lucide@latest"></script>
-<script>lucide.createIcons();</script>
 </body>
 </html><?php
     exit;
@@ -332,7 +329,7 @@ function show_not_found(array $t): void {
 </head>
 <body>
     <div class="box">
-        <div class="ghost"><i data-lucide="ghost"></i></div>
+        <div class="ghost"><?= bb_icon('ghost') ?></div>
         <div class="code">404</div>
         <h1><?= htmlspecialchars($t['not_found_title']) ?></h1>
         <div class="sub"><?= htmlspecialchars($t['not_found_sub']) ?></div>
@@ -343,8 +340,6 @@ function show_not_found(array $t): void {
             <span style="color:var(--bb-fg-8);margin:0 0.5rem;">|</span>Kod źródłowy na <a href="https://github.com/bitback/bitback.one" target="_blank" rel="noopener" style="color:var(--bb-accent-link);text-decoration:none;">GitHub</a>
         </div>
     </div>
-<script src="https://unpkg.com/lucide@latest"></script>
-<script>lucide.createIcons();</script>
 </body>
 </html><?php
     exit;
@@ -400,8 +395,6 @@ function show_expired(array $t, ?string $killedAt = null, ?string $expiredManual
             <span style="color:var(--bb-fg-8);margin:0 0.5rem;">|</span>Kod źródłowy na <a href="https://github.com/bitback/bitback.one" target="_blank" rel="noopener" style="color:var(--bb-accent-link);text-decoration:none;">GitHub</a>
         </div>
     </div>
-<script src="https://unpkg.com/lucide@latest"></script>
-<script>lucide.createIcons();</script>
 </body>
 </html><?php
     exit;
@@ -556,7 +549,7 @@ function view_meta_html(array $t, array $data, bool $expired): string {
     $ztText = $lang === 'pl'
         ? 'Zero-trust: deszyfrowanie odbyło się w Twojej przeglądarce. Serwer nie miał dostępu do klucza.'
         : 'Zero-trust: decryption happened in your browser. The server never had access to the key.';
-    $html .= '<div class="zt-badge"><i data-lucide="lock"></i> ' . $ztText . '</div>';
+    $html .= '<div class="zt-badge">' . bb_icon('lock') . ' ' . $ztText . '</div>';
 
     // Przyciski natychmiastowego wygaszenia/ubicia — tylko gdy sekrety aktywne i nie jest to ostatni widok
     global $lastView;
@@ -838,12 +831,16 @@ function show_view_encrypted(array $t, array $data, string $encText, ?string $en
         document.querySelectorAll('.expire-now-btn').forEach(function(b) { b.disabled = true; });
         cb.disabled = true;
         btn.textContent = '...';
+        const ctrl = new AbortController();
+        const timer = setTimeout(function() { ctrl.abort(); }, 15000);
         try {
             const resp = await fetch('/api/expire.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
+                signal: ctrl.signal,
                 body: JSON.stringify({ uuid: btn.dataset.uuid, action: action || 'expire' }),
             });
+            clearTimeout(timer);
             const result = await resp.json();
             if (result.ok) {
                 btn.textContent = '\u2713 ' + btn.dataset.success;
@@ -861,8 +858,6 @@ function show_view_encrypted(array $t, array $data, string $encText, ?string $en
         }
     }
     </script>
-<script src="https://unpkg.com/lucide@latest"></script>
-<script>lucide.createIcons();</script>
 </body>
 </html><?php
 }
@@ -955,16 +950,17 @@ function show_view_encrypted_v2(array $t, array $data, string $encryptedPayload,
         if (!cb.checked) { wrap.classList.remove('shake'); void wrap.offsetWidth; wrap.classList.add('shake'); return; }
         document.querySelectorAll('.expire-now-btn').forEach(b => b.disabled = true);
         cb.disabled = true; btn.textContent = '...';
+        const ctrl = new AbortController();
+        const timer = setTimeout(() => ctrl.abort(), 15000);
         try {
-            const r = await fetch('/api/expire.php', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({uuid: btn.dataset.uuid, action: action || 'expire'}) });
+            const r = await fetch('/api/expire.php', { method: 'POST', headers: {'Content-Type':'application/json'}, signal: ctrl.signal, body: JSON.stringify({uuid: btn.dataset.uuid, action: action || 'expire'}) });
+            clearTimeout(timer);
             const j = await r.json();
             if (j.ok) { btn.textContent = '\u2713 ' + btn.dataset.success; btn.classList.add('done'); setTimeout(()=>location.reload(), 1500); }
             else { btn.textContent = btn.dataset.error; document.querySelectorAll('.expire-now-btn').forEach(b => b.disabled = false); cb.disabled = false; }
         } catch(e) { btn.textContent = btn.dataset.error; document.querySelectorAll('.expire-now-btn').forEach(b => b.disabled = false); cb.disabled = false; }
     }
     </script>
-<script src="https://unpkg.com/lucide@latest"></script>
-<script>lucide.createIcons();</script>
 </body>
 </html><?php
 }
@@ -1026,16 +1022,17 @@ function show_view_legacy(array $t, array $data, array $sections, bool $expired)
         if (!cb.checked) { wrap.classList.remove('shake'); void wrap.offsetWidth; wrap.classList.add('shake'); return; }
         document.querySelectorAll('.expire-now-btn').forEach(b => b.disabled = true);
         cb.disabled = true; btn.textContent = '...';
+        const ctrl = new AbortController();
+        const timer = setTimeout(() => ctrl.abort(), 15000);
         try {
-            const r = await fetch('/api/expire.php', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({uuid: btn.dataset.uuid, action: action || 'expire'}) });
+            const r = await fetch('/api/expire.php', { method: 'POST', headers: {'Content-Type':'application/json'}, signal: ctrl.signal, body: JSON.stringify({uuid: btn.dataset.uuid, action: action || 'expire'}) });
+            clearTimeout(timer);
             const j = await r.json();
             if (j.ok) { btn.textContent = '\u2713 ' + btn.dataset.success; btn.classList.add('done'); setTimeout(()=>location.reload(), 1500); }
             else { btn.textContent = btn.dataset.error; document.querySelectorAll('.expire-now-btn').forEach(b => b.disabled = false); cb.disabled = false; }
         } catch(e) { btn.textContent = btn.dataset.error; document.querySelectorAll('.expire-now-btn').forEach(b => b.disabled = false); cb.disabled = false; }
     }
     </script>
-<script src="https://unpkg.com/lucide@latest"></script>
-<script>lucide.createIcons();</script>
 </body>
 </html><?php
 }
