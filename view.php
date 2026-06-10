@@ -204,6 +204,15 @@ function og_view_meta(array $t): void {
     <?php
 }
 
+function bb_page_art(): void {
+    ?>
+    <div class="bb-page-art bb-page-art-tl" aria-hidden="true"></div>
+    <div class="bb-page-art bb-page-art-tr" aria-hidden="true"></div>
+    <div class="bb-page-art bb-page-art-br" aria-hidden="true"></div>
+    <div class="bb-page-art bb-page-art-bl" aria-hidden="true"></div>
+    <?php
+}
+
 function show_password_form(array $t, string $slug, bool $wrongPassword = false): void {
     ?><!DOCTYPE html>
 <html lang="<?= detect_lang() ?>">
@@ -244,6 +253,7 @@ function show_password_form(array $t, string $slug, bool $wrongPassword = false)
     </style>
 </head>
 <body>
+    <?php bb_page_art(); ?>
     <div class="box">
         <?= render_logo($t['title'], '/') ?>
         <div class="sub"><?= htmlspecialchars($t['password_required'] ?? 'This link is password protected') ?></div>
@@ -319,6 +329,7 @@ function show_not_found(array $t): void {
     </style>
 </head>
 <body>
+    <?php bb_page_art(); ?>
     <div class="box">
         <div class="ghost"><?= bb_icon('ghost') ?></div>
         <div class="code">404</div>
@@ -374,6 +385,7 @@ function show_expired(array $t, ?string $killedAt = null, ?string $expiredManual
     </style>
 </head>
 <body>
+    <?php bb_page_art(); ?>
     <div class="box">
         <h1><?= htmlspecialchars($t['link_expired']) ?></h1>
         <p><?= htmlspecialchars($t['link_expired_info']) ?></p>
@@ -633,6 +645,7 @@ function show_view_encrypted(array $t, array $data, string $encText, ?string $en
     <style><?= view_css() ?></style>
 </head>
 <body>
+    <?php bb_page_art(); ?>
     <div class="header"><?= render_logo($t['title'], '/') ?></div>
     <div class="container">
         <?php if ($expired): ?>
@@ -847,6 +860,7 @@ function show_view_encrypted_v2(array $t, array $data, string $encryptedPayload,
     <style><?= view_css() ?></style>
 </head>
 <body>
+    <?php bb_page_art(); ?>
     <div class="header"><?= render_logo($t['title'], '/') ?></div>
     <div class="container">
         <?php if ($expired): ?>
@@ -955,6 +969,7 @@ function show_view_legacy(array $t, array $data, array $sections, bool $expired)
     <style><?= view_css() ?></style>
 </head>
 <body>
+    <?php bb_page_art(); ?>
     <div class="header"><?= render_logo($t['title'], '/') ?></div>
     <div class="container">
         <?php if ($expired): $ll = detect_lang(); ?>
