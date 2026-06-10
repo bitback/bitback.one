@@ -402,7 +402,6 @@ $challenge = antibot_challenge();
             border: 2px solid transparent;
             background: linear-gradient(90deg, #1b1233 0%, #0a0e15 50%, #0b2127 100%) padding-box,
                         linear-gradient(90deg, var(--bb-teal) 0%, var(--bb-accent) 50%, var(--bb-violet) 100%) border-box;
-            clip-path: polygon(13px 0, 100% 0, 100% calc(100% - 13px), calc(100% - 13px) 100%, 0 100%, 0 13px);
             color: #fff;
             font-size: 0.95rem;
             font-weight: 800;
@@ -432,6 +431,13 @@ $challenge = antibot_challenge();
             50% { filter: drop-shadow(0 0 16px rgba(122, 92, 230, 0.85)); }
         }
         .generate-btn.bb-guide { animation: bb-guide-cta 1.1s ease-in-out infinite; }
+        /* przygaszony dopoki brak tresci + oznaczonego poufnego (po bb-guide,
+           zeby dimmed wygrywal i wylaczal puls) */
+        .generate-btn.dimmed {
+            opacity: 0.4;
+            filter: none;
+            animation: none;
+        }
         .generate-btn:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
         .generate-btn .spinner {
             display: inline-block;
@@ -453,7 +459,7 @@ $challenge = antibot_challenge();
            wnetrze tym samym wielokatem (1px mniej); drop-shadow podaza
            za ksztaltem. */
         .mark-secret-btn {
-            display: inline-block;
+            display: inline-flex;
             padding: 2px;
             margin-top: 0.6rem;
             border: none;
@@ -465,12 +471,14 @@ $challenge = antibot_challenge();
         }
         .mark-secret-btn .inner {
             display: inline-flex;
+            flex: 1;
             align-items: center;
             justify-content: center;
             gap: 0.6em;
             padding: 0.6rem 1rem;
             background: linear-gradient(90deg, #1c1508 0%, #0a0e15 50%, #1c1508 100%);
-            clip-path: polygon(13px 0, 100% 0, 100% calc(100% - 13px), calc(100% - 13px) 100%, 0 100%, 0 13px);
+            /* notch 12px (zewnetrzny 13) - diagonal trzyma ~2px jak boki */
+            clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
             color: #fff;
             font-size: 0.86rem;
             font-weight: 700;
@@ -697,7 +705,7 @@ $challenge = antibot_challenge();
                     </div>
                     <div class="mark-row">
                         <button type="button" class="mark-secret-btn" onmousedown="event.preventDefault()" onclick="toggleSecret()"><span class="inner"><?= bb_icon('lock') ?> <?= htmlspecialchars($t['mark_secret_btn']) ?></span></button>
-                        <button type="button" class="generate-btn" onclick="generateLink()"><span><?= htmlspecialchars($t['generate_btn']) ?></span><?= bb_icon('arrow-right') ?></button>
+                        <button type="button" class="generate-btn dimmed" onclick="generateLink()"><span><?= htmlspecialchars($t['generate_btn']) ?></span><?= bb_icon('arrow-right') ?></button>
                     </div>
                 </div>
 
@@ -1004,6 +1012,7 @@ $challenge = antibot_challenge();
         const previewBox = document.getElementById('preview');
         const html = editor.innerHTML;
         const isEmpty = editor.textContent.trim().length === 0;
+        document.querySelector('.generate-btn').classList.toggle('dimmed', isEmpty || !editor.querySelector('.secret'));
 
         if (isEmpty) {
             previewBox.innerHTML = '<span class="preview-empty">' + (T.preview_empty || '') + '</span>';
