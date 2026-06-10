@@ -597,6 +597,8 @@ $challenge = antibot_challenge();
         .result {
             margin-top: 1.5rem;
             display: none;
+            /* scrollIntoView nie moze schowac boxa pod fixed footerem */
+            scroll-margin-bottom: 3.5rem;
         }
         .result.show {
             display: block;
@@ -1230,6 +1232,7 @@ $challenge = antibot_challenge();
                     pwdEl.classList.remove('show');
                     pwdEl.innerHTML = '';
                 }
+                document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                 refreshChallenge();
             } else if (result.error === 'ratelimit') {
                 alert(T.error_ratelimit);
