@@ -216,7 +216,7 @@ $challenge = antibot_challenge();
         .frame-pad { padding: 0.85rem; }
 
         /* ====== LEWA KOLUMNA — EDYTOR ====== */
-        .col-left { min-width: 0; display: flex; flex-direction: column; }
+        .col-left { min-width: 0; }
 
         /* placeholder edytora */
 
@@ -312,7 +312,6 @@ $challenge = antibot_challenge();
            flex-kolumna, config-panel flex:1 - dol ramki rowna sie z dolem
            podgladu w lewej kolumnie */
         .verify-panel {
-            margin-top: 1.5rem;
             padding: 1rem;
         }
         .verify-panel label { margin-bottom: 0.45rem; }
@@ -511,9 +510,15 @@ $challenge = antibot_challenge();
             letter-spacing: 0.04em;
         }
         /* wiersz przycisku + dekoracyjne sciezki circuit po prawej (m01) */
-        .mark-row { display: flex; align-items: stretch; gap: 1rem; margin-top: 0.6rem; }
+        .mark-row { display: flex; margin-top: 0.6rem; }
         .mark-row .mark-secret-btn { margin-top: 0; }
-        .mark-row .generate-btn { margin-top: 0; width: auto; flex: 1; white-space: nowrap; letter-spacing: 0.08em; padding-left: 0.8rem; padding-right: 0.8rem; }
+        /* akcje: weryfikacja + generuj obok siebie; generuj rosnie na wysokosc panelu.
+           DOM order content->settings->verify->generate->result->preview = poprawny
+           flow tez na mobile (gdzie wszystko stackuje sie w jedna kolumne) */
+        .action-row { display: flex; align-items: stretch; gap: 1.5rem; margin-top: 1.5rem; }
+        .action-row .verify-panel { flex: 1.25; }
+        .action-row .generate-btn { flex: 1; margin-top: 0; width: auto; white-space: nowrap; }
+        @media (max-width: 768px) { .action-row { flex-direction: column; } }
 
         .mark-secret-btn:hover {
             filter: drop-shadow(0 0 15px rgba(240, 192, 96, 0.80)) brightness(1.15);
@@ -527,9 +532,6 @@ $challenge = antibot_challenge();
         /* ====== PODGLĄD WYGAŚNIĘCIA ====== */
         .preview-section {
             margin-top: 1.5rem;
-            flex: 1 1 auto;
-            display: flex;
-            flex-direction: column;
         }
         .preview-bar {
             display: flex;
@@ -564,7 +566,6 @@ $challenge = antibot_challenge();
         }
         .preview-box {
             padding: 0.85rem;
-            flex: 1 1 auto;
             min-height: 90px;
             font-family: var(--bb-font-mono);
             font-size: 0.92rem;
@@ -737,20 +738,7 @@ $challenge = antibot_challenge();
                     </div>
                     <div class="mark-row">
                         <button type="button" class="mark-secret-btn" onmousedown="event.preventDefault()" onclick="toggleSecret()"><span class="inner"><?= bb_icon('lock') ?> <?= htmlspecialchars($t['mark_secret_btn']) ?></span></button>
-                        <button type="button" class="generate-btn dimmed" onclick="generateLink()"><span><?= htmlspecialchars($t['generate_btn']) ?></span><?= bb_icon('arrow-right') ?></button>
                     </div>
-                </div>
-
-                <!-- podgląd pod edytorem -->
-                <div class="preview-section">
-                    <div class="preview-bar">
-                        <div class="col-label"><?= htmlspecialchars($t['preview_label']) ?></div>
-                        <div class="preview-tabs">
-                            <button type="button" class="preview-tab active" onclick="setPreview('expired', this)"><?= htmlspecialchars($t['preview_expired']) ?></button>
-                            <button type="button" class="preview-tab" onclick="setPreview('active', this)"><?= htmlspecialchars($t['preview_active']) ?></button>
-                        </div>
-                    </div>
-                    <div class="preview-box bb-frame" id="preview"></div>
                 </div>
             </div>
 
@@ -788,28 +776,44 @@ $challenge = antibot_challenge();
                             <input type="text" class="config-input" id="linkPassword" style="width:100%;text-align:left;" placeholder="<?= htmlspecialchars($t['password_placeholder_config']) ?>" autocomplete="off">
                         </div>
                     </div>
-
-                </div>
-
-                <div class="verify-panel bb-frame config-verify">
-                    <label><?= htmlspecialchars($t['verify_label']) ?></label>
-                    <div class="antibot-q" id="mathQuestion" aria-live="polite"></div>
-                    <div class="antibot-options" id="mathOptions" role="group" aria-label="<?= htmlspecialchars($t['verify_label']) ?>"></div>
                 </div>
             </div>
+        </div>
+
+        <!-- AKCJE: weryfikacja + generuj obok siebie -->
+        <div class="action-row">
+            <div class="verify-panel bb-frame config-verify">
+                <label><?= htmlspecialchars($t['verify_label']) ?></label>
+                <div class="antibot-q" id="mathQuestion" aria-live="polite"></div>
+                <div class="antibot-options" id="mathOptions" role="group" aria-label="<?= htmlspecialchars($t['verify_label']) ?>"></div>
+            </div>
+            <button type="button" class="generate-btn dimmed" onclick="generateLink()"><span><?= htmlspecialchars($t['generate_btn']) ?></span><?= bb_icon('arrow-right') ?></button>
+        </div>
+
+        <!-- LINK WYJŚCIOWY -->
+        <div class="result" id="result">
+            <div class="result-box bb-card bb-card-success bb-art bb-art-green">
+                <div class="result-label"><?= htmlspecialchars($t['your_link']) ?></div>
+                <div class="result-link">
+                    <input type="text" class="result-url" id="resultUrl" readonly>
+                    <button type="button" class="copy-btn" onclick="copyLink()"><?= htmlspecialchars($t['copy']) ?></button>
+                </div>
+                <div class="result-password" id="resultPassword"></div>
+            </div>
+        </div>
+
+        <!-- PODGLĄD na dole -->
+        <div class="preview-section">
+            <div class="preview-bar">
+                <div class="col-label"><?= htmlspecialchars($t['preview_label']) ?></div>
+                <div class="preview-tabs">
+                    <button type="button" class="preview-tab active" onclick="setPreview('expired', this)"><?= htmlspecialchars($t['preview_expired']) ?></button>
+                    <button type="button" class="preview-tab" onclick="setPreview('active', this)"><?= htmlspecialchars($t['preview_active']) ?></button>
+                </div>
+            </div>
+            <div class="preview-box bb-frame" id="preview"></div>
         </div>
     </form>
-
-    <div class="result" id="result">
-        <div class="result-box bb-card bb-card-success bb-art bb-art-green">
-            <div class="result-label"><?= htmlspecialchars($t['your_link']) ?></div>
-            <div class="result-link">
-                <input type="text" class="result-url" id="resultUrl" readonly>
-                <button type="button" class="copy-btn" onclick="copyLink()"><?= htmlspecialchars($t['copy']) ?></button>
-            </div>
-            <div class="result-password" id="resultPassword"></div>
-        </div>
-    </div>
 
 </div>
 
