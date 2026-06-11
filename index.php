@@ -900,8 +900,7 @@ $challenge = antibot_challenge();
                 container.querySelectorAll('.antibot-opt').forEach(b => b.classList.remove('selected'));
                 btn.classList.add('selected');
                 selectedAnswer = val;
-                document.querySelector('.config-verify').classList.remove('bb-guide');
-                document.querySelector('.generate-btn').classList.add('bb-guide');
+                updateGuide();
             });
             container.appendChild(btn);
         });
@@ -1047,13 +1046,26 @@ $challenge = antibot_challenge();
         }
     });
 
+    // --- GUIDE: co pulsuje w danym stanie (pulsuje sam glow, ramki bez zmian) ---
+    // oznaczenie poufnego -> pulsuje WERYFIKACJA; wybor odpowiedzi -> zapala sie GENERUJ
+    function updateGuide() {
+        const hasContent = editor.textContent.trim().length > 0;
+        const hasSecret = !!editor.querySelector('.secret');
+        const hasAnswer = selectedAnswer !== null;
+        const ready = hasContent && hasSecret && hasAnswer;
+        const gen = document.querySelector('.generate-btn');
+        gen.classList.toggle('dimmed', !ready);
+        gen.classList.toggle('bb-guide', ready);
+        document.querySelector('.config-verify').classList.toggle('bb-guide', hasContent && hasSecret && !hasAnswer);
+    }
+
     // --- PODGLĄD ---
     function updatePreview() {
         updateGutter();
         const previewBox = document.getElementById('preview');
         const html = editor.innerHTML;
         const isEmpty = editor.textContent.trim().length === 0;
-        document.querySelector('.generate-btn').classList.toggle('dimmed', isEmpty || !editor.querySelector('.secret'));
+        updateGuide();
 
         if (isEmpty) {
             previewBox.innerHTML = '<span class="preview-empty">' + (T.preview_empty || '') + '</span>';
