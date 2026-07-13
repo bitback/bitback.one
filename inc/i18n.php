@@ -111,7 +111,7 @@ function get_strings(?string $lang = null): array {
             // index: footer
             'footer_tagline' => 'Zabezpieczamy pocztę, serwery i komputery',
             'footer_source' => 'Kod źródłowy na',
-            'footer_commercial' => 'Użycie komercyjne wymaga licencji',
+            'footer_commercial' => 'Kod na licencji AGPL, wersja komercyjna dostępna',
         ],
         'en' => [
             'title' => defined('APP_NAME') ? APP_NAME : 'bitback.one',
@@ -205,7 +205,7 @@ function get_strings(?string $lang = null): array {
             // index: footer
             'footer_tagline' => 'We secure email, servers and computers',
             'footer_source' => 'Source code on',
-            'footer_commercial' => 'Commercial use requires a license',
+            'footer_commercial' => 'AGPL-licensed, commercial license available',
         ],
     ];
 
