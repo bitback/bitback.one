@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>bitback tests: RUNNING</title>
+<link rel="stylesheet" href="/assets/fonts.css">
+<link rel="stylesheet" href="/assets/tokens.css">
+<style>
+    body { background: var(--bb-bg); color: var(--bb-fg-2); font-family: var(--bb-font-mono); padding: 1rem; font-size: 0.9rem; }
+    h3 { color: var(--bb-fg-1); }
+    #summary { font-size: 1.1rem; font-weight: 700; margin: 0.6rem 0 1rem; padding: 0.4rem 0.8rem; display: inline-block; }
+    #summary.ok { color: var(--bb-success); border: 1px solid var(--bb-success); }
+    #summary.bad { color: var(--bb-secret); border: 1px solid var(--bb-secret); }
+    .grp { color: var(--bb-fg-4); margin: 0.6rem 0 0.2rem; }
+    .pass { color: var(--bb-success); }
+    .fail { color: var(--bb-secret); font-weight: 700; }
+    #app { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+</style>
+</head>
+<body>
+<h3>bitback.one - suite testow (FAZA 1 + FAZA 2)</h3>
+<div id="summary">RUNNING...</div>
+<div id="results"></div>
+<iframe id="app" src="/index.php?lang=pl"></iframe>
+<iframe id="view" src="about:blank"></iframe>
+
+<script>
+// Laduje REALNY index.php w iframe (same-origin) i wola PRAWDZIWE funkcje
+// zadeklarowane w jego inline <script> (sa globalne - klasyczny script).
+// Zero kopiowania kodu - test nie dryfuje od index.php.
+// sectionsToPayload weryfikowany end-to-end: encryptBlob -> decryptBlob.
+const out = document.getElementById('results');
+let pass = 0, fail = 0;
+function grp(name) { const d = document.createElement('div'); d.className = 'grp'; d.textContent = '== ' + name + ' =='; out.appendChild(d); }
+function log(ok, msg) {
+    const d = document.createElement('div');
+    d.className = ok ? 'pass' : 'fail';
+    d.textContent = (ok ? 'PASS ' : 'FAIL ') + msg;
+    out.appendChild(d);
+    if (ok) pass++; else fail++;
+}
+const J = x => JSON.stringify(x);
+
+function td(doc, t) { const e = doc.createElement('td'); e.textContent = t; return e; }
+function tr(doc, ...tds) { const e = doc.createElement('tr'); tds.forEach(x => e.appendChild(x)); return e; }
+
+function finish() {
+    const total = pass + fail;
+    const res = (fail === 0 ? 'PASS' : 'FAIL') + ' ' + pass + '/' + total;
+    const s = document.getElementById('summary');
+    s.textContent = 'RESULT: ' + res;
+    s.className = fail === 0 ? 'ok' : 'bad';
+    document.title = 'bitback tests: ' + res;
+    document.documentElement.setAttribute('data-test-result', res);
+    // Zglos wynik runnerowi (tests/collect.php). To JEDYNY wiarygodny sygnal
+    // ukonczenia - suite liczy realne crypto, wiec nie da sie go obstawic czasem.
+    try {
+        const body = res + '\n' + out.innerText;
+        if (!navigator.sendBeacon('/tests/collect.php', new Blob([body], { type: 'text/plain' }))) {
+            fetch('/tests/collect.php', { method: 'POST', body: body });
+        }
+    } catch (e) { /* standalone w przegladarce: brak kolektora, nie szkodzi */ }
+}
+
+document.getElementById('app').addEventListener('load', async () => {
+    try {
+        const win = document.getElementById('app').contentWindow;
+        const doc = win.document;
+        const editor = doc.getElementById('editor');
+        const toggle = doc.getElementById('plainTextToggle');
+
+        // sanity: realne funkcje sa dostepne
+        const need = ['cleanPastedTable','hoistTableToEditor','isBulkMode','collectBulkRecords','tableToPlainText','sectionsToPayload','extractSections','generateHexKey','decryptBlob',
+                      'deriveMasterV3','authTagFromMaster','aesKeyFromMaster','aesKeyNoPassV3','encryptBlobV3','decryptBlobV3','hkdf256','bytesToHex','hexToBytes','encryptBlob'];
+        const missing = need.filter(f => typeof win[f] !== 'function');
+        log(missing.length === 0, 'realne funkcje index.php dostepne' + (missing.length ? ' (BRAK: ' + missing.join(',') + ')' : ''));
+        if (missing.length) { finish(); return; }
+
+        // ======================= FAZA 1: import tabeli =======================
+        grp('FAZA 1 - cleanPastedTable / hoist');
+        const excelHtml = '<table border=1 style="border-collapse:collapse" width="600">' +
+            '<tr><td style="font-weight:bold" bgcolor="#eee"><b>imie</b></td><td width="200">totp</td></tr>' +
+            '<tr><td>Jan</td><td>linia1<br>linia2</td></tr></table>';
+        const res = win.cleanPastedTable(excelHtml);
+        log(!!res, 'cleanPastedTable zwraca wynik');
+        log(res && res.table.className === 'bb-import-table', 'klasa bb-import-table nadana');
+        log(res && res.table.querySelector('[style]') === null && res.table.querySelector('[width]') === null && res.table.querySelector('[bgcolor]') === null, 'atrybuty zdjete (style/width/bgcolor)');
+        log(res && res.table.querySelector('b') === null, 'tag <b> UNWRAP (usuniety)');
+        log(res && res.table.querySelector('td').textContent === 'imie', 'tekst z <b> zachowany (imie)');
+        log(res && res.table.querySelector('br') !== null, '<br> zachowany w wieloliniowej komorce');
+        log(res && res.tableCount === 1, 'tableCount === 1');
+
+        // hoist: tabela owinieta w <div> ze stopka -> po hoist bezposrednie dziecko #editor
+        editor.innerHTML = '';
+        const wrapper = doc.createElement('div');
+        wrapper.appendChild(res.table);
+        const footEl = doc.createElement('span'); footEl.textContent = 'stopka';
+        wrapper.appendChild(footEl);
+        editor.appendChild(wrapper);
+        win.hoistTableToEditor(res.table);
+        log(editor.querySelector(':scope > table') !== null, 'tabela bezposrednim dzieckiem #editor po hoist');
+        log(res.table.nextSibling === footEl, 'kolejnosc zachowana (stopka po tabeli)');
+        log(editor.querySelector('div') === null, 'wrapper <div> rozbity');
+
+        log(win.cleanPastedTable('<p>zwykly <b>tekst</b></p>') === null, 'brak <table> -> null (handler nie przejmuje)');
+        const multi = win.cleanPastedTable('<table><tr><td>a</td></tr></table><table><tr><td>b</td></tr></table>');
+        log(multi && multi.tableCount === 2, 'wiele tabel -> tableCount === 2');
+
+        // ======================= FAZA 2: parser + payload =======================
+        grp('FAZA 2 - parser korespondencji seryjnej');
+        // naglowek + --- + tabela(naglowek + 3 dane, puste komorki) + --- + stopka
+        editor.innerHTML = '';
+        editor.appendChild(doc.createTextNode('Dane dostepowe'));
+        editor.appendChild(doc.createElement('br'));
+        editor.appendChild(doc.createTextNode('---'));
+        editor.appendChild(doc.createElement('br'));
+        const table = doc.createElement('table'); table.className = 'bb-import-table';
+        table.appendChild(tr(doc, td(doc, 'imie'), td(doc, 'email'), td(doc, 'totp')));
+        table.appendChild(tr(doc, td(doc, 'Jan'), td(doc, 'jan@x.pl'), td(doc, 'otpauth://totp/x')));
+        table.appendChild(tr(doc, td(doc, 'Anna'), td(doc, ''), td(doc, 'sek2')));
+        table.appendChild(tr(doc, td(doc, 'Piotr'), td(doc, 'piotr@x.pl'), td(doc, '')));
+        editor.appendChild(table);
+        editor.appendChild(doc.createElement('br'));
+        editor.appendChild(doc.createTextNode('---'));
+        editor.appendChild(doc.createElement('br'));
+        editor.appendChild(doc.createTextNode('Pozdrawiam'));
+
+        toggle.checked = false;
+        log(win.isBulkMode() === true, 'isBulkMode()===true (tabela 4 tr, przelacznik off)');
+        toggle.checked = true;
+        log(win.isBulkMode() === false, 'przelacznik ON -> isBulkMode()===false');
+        toggle.checked = false;
+
+        const recs = win.collectBulkRecords();
+        log(recs.length === 3, 'collectBulkRecords().length===3');
+        const r0 = recs[0];
+        log(r0.sections[0].content === 'Dane dostepowe\n\n', 'r0[0] = naglowek + pusty wiersz (--- -> Enter)');
+        log(r0.sections[r0.sections.length - 1].content === '\nPozdrawiam', 'r0 ostatnia = stopka (pusty wiersz przed)');
+        const r0secrets = r0.sections.filter(s => s.type === 'secret').map(s => s.content);
+        log(J(r0secrets) === J(['Jan', 'jan@x.pl', 'otpauth://totp/x']), 'r0 secrety = [Jan, jan@x.pl, otpauth...]');
+        log(recs[1].sections.every(s => s.content !== 'email: '), 'r1 (Anna) pusta komorka email -> linia pominieta');
+        log(J(recs[1].values) === J(['Anna', '', 'sek2']), 'r1.values = [Anna,,sek2]');
+        log(recs[2].sections.every(s => s.content !== 'totp: '), 'r2 (Piotr) pusta komorka totp -> linia pominieta');
+
+        const tsv = win.tableToPlainText(table);
+        log(tsv.split('\n')[0] === 'imie\temail\ttotp', 'tableToPlainText: naglowek TSV (taby)');
+        log(tsv.split('\n')[1] === 'Jan\tjan@x.pl\totpauth://totp/x', 'tableToPlainText: wiersz Jan TSV');
+
+        // 1 wiersz danych -> nie bulk
+        editor.innerHTML = '';
+        const t2 = doc.createElement('table'); t2.className = 'bb-import-table';
+        t2.appendChild(tr(doc, td(doc, 'imie'), td(doc, 'email')));
+        t2.appendChild(tr(doc, td(doc, 'Jan'), td(doc, 'jan@x.pl')));
+        editor.appendChild(t2);
+        log(win.isBulkMode() === false, 'tabela z 1 wierszem danych (2 tr) -> isBulkMode()===false');
+
+        // ======= sectionsToPayload: END-TO-END (encrypt -> decrypt -> idx) =======
+        grp('FAZA 2 - sectionsToPayload round-trip (realny crypto)');
+        async function roundtrip(sections) {
+            const key = win.generateHexKey();
+            const aesKey = await win.aesKeyNoPassV3(key);
+            const p = await win.sectionsToPayload(sections, aesKey);
+            const txt = await win.decryptBlobV3(p.encrypted_text, aesKey);
+            const sec = p.encrypted_secrets ? await win.decryptBlobV3(p.encrypted_secrets, aesKey) : [];
+            return { p, txt, sec };
+        }
+        // rekord bulk
+        const rt = await roundtrip(r0.sections);
+        const allIdx = [...rt.txt.map(e => e.idx), ...rt.sec.map(e => e.idx)].sort((a, b) => a - b);
+        log(allIdx.every((v, i) => v === i), 'bulk: idx gesty 0..N-1 bez dziur (po decrypt)');
+        log(rt.p.total_sections === allIdx.length, 'bulk: total_sections === liczba sekcji (' + rt.p.total_sections + ')');
+        log(rt.sec.length === 3, 'bulk: 3 sekrety po odszyfrowaniu');
+        log(rt.sec.map(e => e.content).join(',') === 'Jan,jan@x.pl,otpauth://totp/x', 'bulk: sekrety w kolejnosci idx');
+
+        // ======= regresja pojedynczego linku: extractSections -> payload -> decrypt =======
+        grp('regresja pojedynczego linku (round-trip)');
+        editor.innerHTML = 'Login: <span class="secret">admin</span><br>Haslo: <span class="secret">s3cret</span>';
+        const singleSections = win.extractSections();
+        const rt2 = await roundtrip(singleSections);
+        const all2 = [...rt2.txt.map(e => e.idx), ...rt2.sec.map(e => e.idx)].sort((a, b) => a - b);
+        log(all2.every((v, i) => v === i), 'single: idx gesty 0..N-1 (po decrypt)');
+        log(rt2.p.total_sections === all2.length, 'single: total_sections spojne (' + rt2.p.total_sections + ')');
+        log(J(rt2.sec.map(e => e.content)) === J(['admin', 's3cret']), 'single: sekrety = [admin, s3cret]');
+        const textJoined = rt2.txt.map(e => e.content).join('');
+        log(textJoined.indexOf('Login: ') !== -1 && textJoined.indexOf('Haslo: ') !== -1, 'single: jawny tekst zachowany (Login/Haslo)');
+
+        // ============ podglad bulk: interpretacja rekordu, NIE maskowana tabela ============
+        grp('podglad bulk (jeden rekord, nie tabela)');
+        editor.innerHTML = '';
+        editor.appendChild(doc.createTextNode('Dane dostepowe'));
+        editor.appendChild(doc.createElement('br'));
+        editor.appendChild(doc.createTextNode('---'));
+        editor.appendChild(doc.createElement('br'));
+        const pvt = doc.createElement('table'); pvt.className = 'bb-import-table';
+        pvt.appendChild(tr(doc, td(doc, 'imie'), td(doc, 'email')));
+        pvt.appendChild(tr(doc, td(doc, 'Jan'), td(doc, 'jan@x.pl')));
+        pvt.appendChild(tr(doc, td(doc, 'Anna'), td(doc, 'anna@x.pl')));
+        editor.appendChild(pvt);
+        editor.appendChild(doc.createElement('br'));
+        editor.appendChild(doc.createTextNode('---'));
+        editor.appendChild(doc.createElement('br'));
+        editor.appendChild(doc.createTextNode('Pozdrawiam'));
+        doc.getElementById('plainTextToggle').checked = false;
+        const pvrecs = win.collectBulkRecords();
+        // expired: wartosci zamaskowane, brak tabeli, etykiety + naglowek/stopka jawne
+        const pe = win.buildBulkPreview(pvrecs[0], true);
+        log(pe.querySelector('table') === null, 'buildBulkPreview: brak <table> (interpretacja, nie tabela)');
+        log(pe.textContent.indexOf('imie:') !== -1 && pe.textContent.indexOf('●●●●●●') !== -1, 'expired: "imie:" + maski');
+        log(pe.textContent.indexOf('Jan') === -1, 'expired: wartosc "Jan" zamaskowana (niewidoczna)');
+        log(pe.textContent.indexOf('Dane dostepowe') !== -1 && pe.textContent.indexOf('Pozdrawiam') !== -1, 'expired: naglowek + stopka jawne');
+        // active: wartosci jawne, spany .secret, brak masek
+        const pa = win.buildBulkPreview(pvrecs[0], false);
+        log(pa.querySelector('.secret') !== null && pa.querySelector('.masked') === null, 'active: spany .secret, brak .masked');
+        log(pa.textContent.indexOf('Jan') !== -1, 'active: wartosc "Jan" jawna');
+        // updatePreview integracja (domyslny tryb expired): brak tabeli w podgladzie
+        win.updatePreview();
+        const pbox = doc.getElementById('preview');
+        log(pbox.querySelector('table') === null, 'updatePreview bulk: podglad NIE zawiera tabeli');
+        log(pbox.querySelector('.bulk-preview-note') !== null, 'updatePreview bulk: nota "1. rekord z N"');
+        log(pbox.textContent.indexOf('●●●●●●') !== -1, 'updatePreview bulk: wartosci zamaskowane (tryb expired)');
+
+        // ============ fixy z review Fable (parser edge-case) ============
+        grp('fixy review (nadmiar/pusty wiersz/druga tabela/plain)');
+        // (1) wiersz szerszy niz naglowek: nadmiarowa komorka NIE ginie z szyfrowania
+        editor.innerHTML = '';
+        const wt = doc.createElement('table'); wt.className = 'bb-import-table';
+        wt.appendChild(tr(doc, td(doc, 'imie'), td(doc, 'email')));                       // 2 etykiety
+        wt.appendChild(tr(doc, td(doc, 'Jan'), td(doc, 'jan@x.pl'), td(doc, 'EXTRA')));    // 3 komorki
+        editor.appendChild(wt);
+        doc.getElementById('plainTextToggle').checked = false;
+        const wrecs = win.collectBulkRecords();
+        const w0secrets = wrecs[0].sections.filter(s => s.type === 'secret').map(s => s.content);
+        log(w0secrets.indexOf('EXTRA') !== -1 && w0secrets.length === 3, 'nadmiarowa komorka trafia do szyfrowania (nie gubiona)');
+        const w0texts = wrecs[0].sections.filter(s => s.type === 'text').map(s => s.content);
+        log(w0texts.indexOf('undefined: ') === -1, 'brak "undefined: " dla kolumny bez etykiety');
+
+        // (2) calkowicie pusty wiersz pominiety
+        editor.innerHTML = '';
+        const et = doc.createElement('table'); et.className = 'bb-import-table';
+        et.appendChild(tr(doc, td(doc, 'imie'), td(doc, 'email')));
+        et.appendChild(tr(doc, td(doc, 'Jan'), td(doc, 'jan@x.pl')));
+        et.appendChild(tr(doc, td(doc, ''), td(doc, '')));                                // pusty wiersz (ogon Excela)
+        et.appendChild(tr(doc, td(doc, 'Anna'), td(doc, 'anna@x.pl')));
+        editor.appendChild(et);
+        log(win.collectBulkRecords().length === 2, 'pusty wiersz pominiety (2 rekordy, nie 3)');
+
+        // (3) druga tabela NIE wycieka do jawnej stopki/naglowka
+        editor.innerHTML = '';
+        const lt1 = doc.createElement('table'); lt1.className = 'bb-import-table';
+        lt1.appendChild(tr(doc, td(doc, 'imie'))); lt1.appendChild(tr(doc, td(doc, 'Jan'))); lt1.appendChild(tr(doc, td(doc, 'Anna')));
+        editor.appendChild(lt1);
+        const lt2 = doc.createElement('table'); lt2.className = 'bb-import-table';
+        lt2.appendChild(tr(doc, td(doc, 'SEKRET-Z-DRUGIEJ-TABELI')));
+        editor.appendChild(lt2);
+        const leak = win.collectBulkRecords().some(r => r.sections.some(s => s.content.indexOf('SEKRET-Z-DRUGIEJ-TABELI') !== -1));
+        log(!leak, 'druga tabela NIE wycieka do rekordow');
+
+        // (4) plain: konwersja tabeli NIE mutuje edytora (tabela zostaje po generowaniu)
+        editor.innerHTML = '';
+        const s1 = doc.createElement('table'); s1.className = 'bb-import-table';
+        s1.appendChild(tr(doc, td(doc, 'login'), td(doc, 'haslo')));
+        s1.appendChild(tr(doc, td(doc, 'admin'), td(doc, 's3cret')));                     // 1 wiersz danych -> plain
+        editor.appendChild(s1);
+        answerMath();
+        const rf3 = win.fetch, ra3 = win.alert, rr3 = win.refreshChallenge;
+        win.alert = () => {};
+        win.refreshChallenge = () => {}; // no-op: nie odpalaj fire-and-forget fetch do prawdziwego serwera (zaklocalby math nizej)
+        win.fetch = (url) => Promise.resolve({ json: () => Promise.resolve(url.indexOf('challenge') !== -1 ? { a:1,b:2,exp:9999999999,token:'t' } : { ok:true, url:'https://x/s' }) });
+        await win.generateLink();
+        log(editor.querySelector(':scope > table.bb-import-table') !== null, 'plain: tabela zostaje w edytorze po generowaniu (nie mutowana)');
+        win.fetch = rf3; win.alert = ra3; win.refreshChallenge = rr3;
+        doc.getElementById('result').classList.remove('show'); // sprzataj po single-link (nie zaklocaj testow #result nizej)
+
+        // ============ normalizacja bialych znakow + --- jako pusty wiersz ============
+        grp('normalizacja komorek + --- -> pusty wiersz');
+        // (a) cellText: entery/taby/wielokrotne spacje/<br> -> pojedyncza spacja + trim
+        editor.innerHTML = '';
+        const nt = doc.createElement('table'); nt.className = 'bb-import-table';
+        nt.appendChild(tr(doc, td(doc, 'imie'), td(doc, 'email')));
+        const dirtyTd = doc.createElement('td'); dirtyTd.innerHTML = '  Jan   Kowalski<br>  x  ';
+        const ntr = doc.createElement('tr'); ntr.appendChild(dirtyTd); ntr.appendChild(td(doc, '  a@b.pl  '));
+        nt.appendChild(ntr);
+        nt.appendChild(tr(doc, td(doc, 'Anna'), td(doc, 'anna@x.pl')));
+        editor.appendChild(nt);
+        const nvals = win.collectBulkRecords()[0].values;
+        log(nvals[0] === 'Jan Kowalski x', 'cellText: entery/spacje/<br> -> pojedyncza spacja');
+        log(nvals[1] === 'a@b.pl', 'cellText: trim wiodacych/koncowych spacji');
+
+        // (b) --- -> pusty wiersz w naglowku/stopce rekordu
+        editor.innerHTML = '';
+        editor.appendChild(doc.createTextNode('Naglowek'));
+        editor.appendChild(doc.createElement('br'));
+        editor.appendChild(doc.createTextNode('---'));
+        editor.appendChild(doc.createElement('br'));
+        const bt2 = doc.createElement('table'); bt2.className = 'bb-import-table';
+        bt2.appendChild(tr(doc, td(doc, 'imie'))); bt2.appendChild(tr(doc, td(doc, 'Jan'))); bt2.appendChild(tr(doc, td(doc, 'Anna')));
+        editor.appendChild(bt2);
+        editor.appendChild(doc.createElement('br'));
+        editor.appendChild(doc.createTextNode('---'));
+        editor.appendChild(doc.createElement('br'));
+        editor.appendChild(doc.createTextNode('Stopka'));
+        const secs = win.collectBulkRecords()[0].sections;
+        log(secs[0].content === 'Naglowek\n\n', 'naglowek + pusty wiersz (\\n\\n zamiast ---)');
+        log(secs[secs.length - 1].content === '\nStopka', 'stopka poprzedzona pustym wierszem (\\n zamiast ---)');
+        const prevBr = win.buildBulkPreview(win.collectBulkRecords()[0], false).querySelectorAll('br').length;
+        log(prevBr >= 2, 'podglad: puste wiersze (br) w miejscu ---');
+
+        // ======================= FAZA 4: renderBulkResults (DOM) =======================
+        grp('FAZA 4 - renderBulkResults (lista wynikow)');
+        const rr_records = [
+            { values: ['Jan', 'jan@x.pl', ''] },       // pusta 3. kolumna -> pominieta
+            { values: ['Anna', 'anna@x.pl', 'sek'] },
+        ];
+        const rr_links = [{ url: 'https://x/u0' }, { url: 'https://x/u1' }];
+        const rr_keys = ['deadbeef00', 'cafebabe11'];
+        const pwdEl = doc.getElementById('linkPassword');
+        const pwdOld = pwdEl.value; pwdEl.value = '';
+        win.renderBulkResults(rr_records, rr_links, rr_keys);
+        const box = doc.getElementById('bulkResult');
+        log(box.style.display === 'block', 'bulkResult widoczny (display block)');
+        log(!!box.querySelector('.bulk-results-table'), 'jedna tabela .bulk-results-table');
+        const vrows = box.querySelectorAll('.bulk-values-row');
+        const lrows = box.querySelectorAll('.bulk-link-row');
+        log(vrows.length === 2 && lrows.length === 2, '2 wiersze wartosci + 2 wiersze linku');
+        const firstInput = lrows[0].querySelector('.bulk-link-cell input');
+        log(firstInput && firstInput.value === 'https://x/u0#deadbeef00', 'URL = link + #klucz');
+        log(vrows[0].querySelectorAll('td').length === 3, 'wiersz wartosci: wszystkie 3 kolumny (wyrownanie)');
+        log(vrows[0].children[2].textContent === '', 'pusta komorka = puste td (nie pominiete, dla wyrownania)');
+        log(lrows[0].querySelector('td').colSpan === 3, 'wiersz linku zmergeowany (colspan=3)');
+        log(box.querySelectorAll('.bulk-spacer-row').length === 1, 'pusty wiersz-odstep miedzy rekordami (1)');
+        log(box.querySelector('.bulk-note') === null, 'brak hasla -> brak notki hasla');
+        log(!doc.getElementById('result').classList.contains('show'), '#result pojedynczego linku nietkniety');
+        pwdEl.value = 'sekret123';
+        win.renderBulkResults(rr_records, rr_links, rr_keys);
+        const note = box.querySelector('.bulk-note');
+        log(note && note.textContent.indexOf('sekret123') !== -1, 'haslo ustawione -> notka z haslem');
+        pwdEl.value = pwdOld;
+
+        // klik poprawnej odpowiedzi math (ustawia modul-scoped selectedAnswer).
+        // CH jest let (nie na window) - czytamy pytanie z DOM "A + B = ?".
+        function answerMath() {
+            const q = doc.getElementById('mathQuestion').textContent;
+            const m = q.match(/(\d+)\s*\+\s*(\d+)/);
+            const correct = parseInt(m[1], 10) + parseInt(m[2], 10);
+            const b = Array.from(doc.querySelectorAll('#mathOptions .antibot-opt')).find(x => x.textContent === String(correct));
+            if (b) b.click();
+            return correct;
+        }
+
+        // =============== FAZA 3: galaz bulk w generateLink (fetch przechwycony) ===============
+        grp('FAZA 3 - generateLink galaz bulk (fetch stub)');
+        editor.innerHTML = '';
+        const bt = doc.createElement('table'); bt.className = 'bb-import-table';
+        bt.appendChild(tr(doc, td(doc, 'imie'), td(doc, 'email')));
+        bt.appendChild(tr(doc, td(doc, 'Jan'), td(doc, 'jan@x.pl')));
+        bt.appendChild(tr(doc, td(doc, 'Anna'), td(doc, 'anna@x.pl')));
+        bt.appendChild(tr(doc, td(doc, 'Piotr'), td(doc, 'piotr@x.pl')));
+        editor.appendChild(bt);
+        doc.getElementById('plainTextToggle').checked = false;
+        const correctVal = answerMath();
+
+        const realFetch = win.fetch, realAlert = win.alert;
+        const fetchCalls = [], alerts = [];
+        win.alert = (m) => { alerts.push(m); };
+        win.fetch = function (url, opts) {
+            fetchCalls.push({ url, opts });
+            let body = {};
+            if (url.indexOf('create-batch') !== -1) { const b = JSON.parse(opts.body); body = { ok: true, links: b.records.map((_, i) => ({ url: 'https://x/uuid' + i })) }; }
+            else if (url.indexOf('challenge') !== -1) body = { a: 1, b: 2, exp: 9999999999, token: 't' };
+            else if (url.indexOf('create.php') !== -1) body = { ok: true, url: 'https://x/single' };
+            return Promise.resolve({ json: () => Promise.resolve(body) });
+        };
+        await win.generateLink();
+        const batchCall = fetchCalls.find(c => c.url.indexOf('create-batch') !== -1);
+        log(!!batchCall, 'POST poszedl na /api/create-batch.php');
+        const posted = batchCall ? JSON.parse(batchCall.opts.body) : {};
+        log(posted.records && posted.records.length === 3, 'body.records.length === 3 (3 wiersze danych)');
+        log(posted.records && posted.records.every(r => typeof r.encrypted_text === 'string' && typeof r.total_sections === 'number'), 'kazdy rekord: encrypted_text(str) + total_sections(num)');
+        log(posted.math_answer === correctVal, 'math_answer = poprawna odpowiedz z UI');
+        log(!('password' in posted), 'bulk POST: BRAK pola password w body');
+        log(posted.kdf === undefined || posted.kdf === null, 'bulk bez hasla: brak kdf');
+        log(posted.records.every(r => !('auth_tag' in r) || r.auth_tag === null), 'bulk bez hasla: rekordy bez auth_tag');
+        log(doc.getElementById('bulkResult').querySelectorAll('.bulk-values-row').length === 3, 'lista wynikow: 3 rekordy (wiersze wartosci)');
+        log(!doc.getElementById('result').classList.contains('show'), '#result ukryty w trybie bulk');
+
+        grp('FAZA 3b - bulk z haslem: auth_tag per rekord, zero plaintextu');
+        // Produkcyjne 600k iteracji x N rekordow to sekundy realnego CPU, a headless
+        // Chromium przewija --virtual-time-budget natychmiast, gdy strona czeka na
+        // crypto.subtle - suite zdazylaby zostac ubita w polowie. Wartosc stalej
+        // sprawdza osobno grupa "v3 crypto"; tutaj liczy sie KSZTALT zadania.
+        const REAL_V3_ITER = win.V3_ITER;
+        win.V3_ITER = 1000;
+        doc.getElementById('linkPassword').value = 'tajne haslo 123';
+        answerMath();
+        fetchCalls.length = 0;
+        await win.generateLink();
+        const bc2 = fetchCalls.find(c => c.url.indexOf('create-batch') !== -1);
+        const posted2 = bc2 ? JSON.parse(bc2.opts.body) : {};
+        log(!('password' in posted2), 'bulk+haslo: BRAK pola password w body');
+        log(REAL_V3_ITER === 600000, 'bulk+haslo: produkcyjny V3_ITER to 600k (tu obnizony na czas testu)');
+        log(posted2.kdf && posted2.kdf.alg === 'PBKDF2-SHA256' && posted2.kdf.iter === win.V3_ITER, 'bulk+haslo: kdf = PBKDF2-SHA256 + aktualny V3_ITER');
+        log(posted2.records.every(r => /^[0-9a-f]{64}$/.test(r.auth_tag)), 'bulk+haslo: kazdy rekord ma auth_tag hex64');
+        log(new Set(posted2.records.map(r => r.auth_tag)).size === posted2.records.length, 'bulk+haslo: auth_tagi ROZNE per rekord (salt=hexKey_i)');
+        doc.getElementById('linkPassword').value = '';
+
+        // sciezka bledu ratelimit -> alert
+        win.fetch = function (url, opts) {
+            if (url.indexOf('create-batch') !== -1) return Promise.resolve({ json: () => Promise.resolve({ error: 'ratelimit' }) });
+            if (url.indexOf('challenge') !== -1) return Promise.resolve({ json: () => Promise.resolve({ a: 1, b: 2, exp: 9999999999, token: 't' }) });
+            return Promise.resolve({ json: () => Promise.resolve({}) });
+        };
+        answerMath(); alerts.length = 0;
+        await win.generateLink();
+        log(alerts.length >= 1, 'blad ratelimit -> alert wyswietlony');
+
+        // =============== plain fallback: tabela 1-wierszowa -> pojedynczy link ===============
+        grp('plain fallback - tabela 1-wierszowa -> /api/create.php');
+        editor.innerHTML = '';
+        const st = doc.createElement('table'); st.className = 'bb-import-table';
+        st.appendChild(tr(doc, td(doc, 'login'), td(doc, 'haslo')));
+        st.appendChild(tr(doc, td(doc, 'admin'), td(doc, 's3cret')));
+        editor.appendChild(st);
+        answerMath();
+        const fc2 = [];
+        win.fetch = function (url, opts) {
+            fc2.push({ url, opts });
+            let body = {};
+            if (url.indexOf('create-batch') !== -1) body = { ok: true, links: [] };
+            else if (url.indexOf('challenge') !== -1) body = { a: 1, b: 2, exp: 9999999999, token: 't' };
+            else if (url.indexOf('create.php') !== -1) body = { ok: true, url: 'https://x/single' };
+            return Promise.resolve({ json: () => Promise.resolve(body) });
+        };
+        await win.generateLink();
+        log(fc2.some(c => c.url.indexOf('create.php') !== -1 && c.url.indexOf('create-batch') === -1), '1-wierszowa tabela -> POST /api/create.php (pojedynczy)');
+        log(!fc2.some(c => c.url.indexOf('create-batch') !== -1), 'NIE poszedl batch dla 1 wiersza');
+
+        grp('single v3 - auth_tag zamiast hasla');
+        editor.innerHTML = 'Login: <span class="secret">admin</span>';
+        doc.getElementById('linkPassword').value = 'moje haslo';
+        answerMath();
+        const fc3 = [];
+        win.fetch = function (url, opts) {
+            fc3.push({ url, opts });
+            let body = {};
+            if (url.indexOf('challenge') !== -1) body = { a: 1, b: 2, exp: 9999999999, token: 't' };
+            else if (url.indexOf('create.php') !== -1) body = { ok: true, url: 'https://x/single' };
+            return Promise.resolve({ json: () => Promise.resolve(body) });
+        };
+        await win.generateLink();
+        const sc = fc3.find(c => c.url.indexOf('create.php') !== -1 && c.url.indexOf('batch') === -1);
+        const sb = sc ? JSON.parse(sc.opts.body) : {};
+        log(!('password' in sb), 'single+haslo: BRAK pola password w body');
+        log(sb.format === 3, 'single: format 3');
+        log(/^[0-9a-f]{64}$/.test(sb.auth_tag), 'single+haslo: auth_tag hex64');
+        log(sb.kdf && sb.kdf.iter === win.V3_ITER, 'single+haslo: kdf niesie aktualny V3_ITER');
+        doc.getElementById('resultPassword').classList.remove('show');
+        doc.getElementById('result').classList.remove('show');
+        doc.getElementById('linkPassword').value = '';
+        answerMath();
+        fc3.length = 0;
+        await win.generateLink();
+        const sc2 = fc3.find(c => c.url.indexOf('create.php') !== -1);
+        const sb2 = sc2 ? JSON.parse(sc2.opts.body) : {};
+        log(sb2.auth_tag === null && sb2.kdf === null && sb2.format === 3, 'single bez hasla: auth_tag/kdf null, format 3');
+        doc.getElementById('result').classList.remove('show');
+        win.V3_ITER = REAL_V3_ITER;
+        log(win.V3_ITER === 600000, 'V3_ITER przywrocony po testach UI');
+
+        win.fetch = realFetch; win.alert = realAlert;
+
+        // ======================= v3: KDF + HKDF + GCM =======================
+        grp('v3 crypto - deriveMasterV3 / HKDF split / GCM');
+        log(win.V3_ITER === 600000, 'V3_ITER === 600000');
+        const v3hex = win.generateHexKey();
+        const v3m = await win.deriveMasterV3('correct horse', v3hex, 10000);
+        log(v3m instanceof win.Uint8Array && v3m.length === 32, 'master = 32 bajty');
+        // separacja domen: enc != auth
+        const encBits = win.bytesToHex(await win.hkdf256(v3m, 'bb3-enc'));
+        const authBits = win.bytesToHex(await win.hkdf256(v3m, 'bb3-auth'));
+        log(encBits !== authBits, 'HKDF bb3-enc != bb3-auth (separacja domen)');
+        const v3tag = await win.authTagFromMaster(v3m);
+        log(/^[0-9a-f]{64}$/.test(v3tag), 'authTag = 64 hex lowercase');
+        log(v3tag === authBits, 'authTagFromMaster == HKDF(master,"bb3-auth")');
+        // salt=hexKey: inny hexKey -> inny master i inny tag
+        const v3m2 = await win.deriveMasterV3('correct horse', win.generateHexKey(), 10000);
+        log(win.bytesToHex(v3m) !== win.bytesToHex(v3m2), 'inny hexKey -> inny master');
+        // inne haslo -> inny tag
+        const v3m3 = await win.deriveMasterV3('inne haslo', v3hex, 10000);
+        log((await win.authTagFromMaster(v3m3)) !== v3tag, 'inne haslo -> inny authTag');
+        // round-trip GCM poprawnym haslem
+        const v3sections = [{ idx: 0, content: 'tajne dane' }];
+        const v3aes = await win.aesKeyFromMaster(v3m);
+        const v3blob = await win.encryptBlobV3(v3sections, v3aes);
+        const v3dec = await win.decryptBlobV3(v3blob, v3aes);
+        log(JSON.stringify(v3dec) === JSON.stringify(v3sections), 'GCM round-trip poprawnym kluczem');
+        // struktura blobu: iv 12B + ciphertext + tag 16B
+        const v3raw = win.Uint8Array.from(win.atob(v3blob), c => c.charCodeAt(0));
+        log(v3raw.length === 12 + new win.TextEncoder().encode(JSON.stringify(v3sections)).length + 16, 'blob = iv(12) + ct + gcmTag(16)');
+        // zle haslo -> OperationError
+        const wrongAes = await win.aesKeyFromMaster(v3m3);
+        let v3err = null;
+        try { await win.decryptBlobV3(v3blob, wrongAes); } catch (e) { v3err = e; }
+        log(v3err !== null && v3err.name === 'OperationError', 'zly klucz -> OperationError (' + (v3err && v3err.name) + ')');
+        // sciezka bez hasla
+        const npAes = await win.aesKeyNoPassV3(v3hex);
+        const npBlob = await win.encryptBlobV3(v3sections, npAes);
+        log(JSON.stringify(await win.decryptBlobV3(npBlob, npAes)) === JSON.stringify(v3sections), 'no-pass v3 round-trip');
+        // klucz no-pass != klucz z haslem (dla tego samego hexKey)
+        let npCross = null;
+        try { await win.decryptBlobV3(npBlob, v3aes); } catch (e) { npCross = e; }
+        log(npCross !== null, 'klucz z haslem nie otwiera blobu no-pass (rozne klucze)');
+        // verifier: sha256 po ASCII hex taga - zgodnosc z PHP hash('sha256', $tag)
+        const vBytes = await win.sha256(new win.TextEncoder().encode(v3tag));
+        log(/^[0-9a-f]{64}$/.test(win.bytesToHex(vBytes)), 'verifier = sha256(hex authTag) liczalne w JS');
+        // hex helpers round-trip
+        log(win.bytesToHex(win.hexToBytes('00ff10ab')) === '00ff10ab', 'hexToBytes/bytesToHex round-trip');
+
+        // ======================= legacy CBC (v1/v2) + hexKey + NFC =======================
+        grp('legacy CBC + generateHexKey + normalizacja');
+        // generateHexKey: format, roznica, lowercase (istotne - derywacja robi toLowerCase,
+        // uppercase z generatora rozjechalby salt po cichu)
+        const hk1 = win.generateHexKey(), hk2 = win.generateHexKey();
+        log(/^[0-9a-f]{32}$/.test(hk1), 'generateHexKey: 32 hex lowercase');
+        log(hk1 !== hk2, 'generateHexKey: dwa wywolania rozne');
+        log(hk1 === hk1.toLowerCase(), 'generateHexKey: zawsze lowercase');
+        // legacy CBC round-trip (jedyna sciezka odczytu starych linkow format 2)
+        const cbcSections = [{ idx: 0, content: 'stara tresc CBC' }];
+        const cbcBlob = await win.encryptBlob(cbcSections, hk1);
+        log(JSON.stringify(await win.decryptBlob(cbcBlob, hk1)) === JSON.stringify(cbcSections), 'CBC: round-trip poprawnym kluczem');
+        // zly klucz: AES-CBC bez MAC - albo blad paddingu, albo smieci (nigdy oryginal)
+        let cbcWrong = null, cbcThrew = false;
+        try { cbcWrong = await win.decryptBlob(cbcBlob, win.generateHexKey()); } catch (e) { cbcThrew = true; }
+        log(cbcThrew || JSON.stringify(cbcWrong) !== JSON.stringify(cbcSections), 'CBC: zly klucz nie zwraca oryginalu (blad lub smieci)');
+        // za krotki payload
+        let cbcShort = false;
+        try { await win.decryptBlob(win.btoa('x'), hk1); } catch (e) { cbcShort = true; }
+        log(cbcShort, 'CBC: payload < 17B rzuca');
+        // NFC: haslo w formie NFD daje ten sam master co NFC (deterministycznosc miedzy urzadzeniami)
+        const pwNFC = String.fromCharCode(104,233,115,322,111);      // h e-acute s l-stroke o (precomposed)
+        const pwNFD = String.fromCharCode(104,101,769,115,322,111);  // h e + combining-acute s l-stroke o
+        log(pwNFC !== pwNFD && pwNFC.normalize('NFC') === pwNFD.normalize('NFC'), 'NFC: przypadek realnie rozny przed normalizacja (test nie pozorny)');
+        const tagNFC = await win.authTagFromMaster(await win.deriveMasterV3(pwNFC, hk1, 1000));
+        const tagNFD = await win.authTagFromMaster(await win.deriveMasterV3(pwNFD, hk1, 1000));
+        log(tagNFC === tagNFD, 'NFC: forma NFD i NFC hasla daja ten sam authTag');
+        // hexKey UPPERCASE == lowercase w derywacji (regex view.php akceptuje uppercase)
+        const mLower = await win.authTagFromMaster(await win.deriveMasterV3('x', hk1, 1000));
+        const mUpper = await win.authTagFromMaster(await win.deriveMasterV3('x', hk1.toUpperCase(), 1000));
+        log(mLower === mUpper, 'hexKey UPPERCASE daje ten sam authTag co lowercase');
+        // no-pass v3: klucz z uppercase hexKey odszyfruje blob zrobiony lowercase
+        const npA = await win.aesKeyNoPassV3(hk1);
+        const npB = await win.aesKeyNoPassV3(hk1.toUpperCase());
+        const npBlob2 = await win.encryptBlobV3(cbcSections, npA);
+        log(JSON.stringify(await win.decryptBlobV3(npBlob2, npB)) === JSON.stringify(cbcSections), 'no-pass: uppercase hexKey otwiera blob z lowercase');
+
+        grp('generator hasla');
+        win.generatePassword();
+        const gp = doc.getElementById('linkPassword').value;
+        log(/^[a-km-z2-9]{14}$/.test(gp), 'generatePassword: 14 znakow z bezpiecznego alfabetu');
+        log(gp !== (win.generatePassword(), doc.getElementById('linkPassword').value), 'generatePassword: kolejne wywolanie daje inne haslo');
+        doc.getElementById('linkPassword').value = '';
+
+        // ============ view.php: deszyfrowanie GCM + XSS + linkify + TOTP (drugi iframe) ============
+        // Rekord tworzony przez tests/fixture.php (aktywny tylko przy BB_TEST_DATA_DIR),
+        // bloby liczone tu w #app; potem /view.php?slug=uuid#hexKey w iframe #view.
+        grp('view.php widok - GCM + escapeHtml XSS + linkify + fillMasked + TOTP');
+        const waitForV = async (fn, ms) => { const t0 = Date.now(); while (Date.now() - t0 < ms) { const v = fn(); if (v) return v; await new Promise(r => setTimeout(r, 60)); } return null; };
+        const loadView = (uuid, hexKey) => new Promise(r => { const vf = document.getElementById('view'); vf.addEventListener('load', r, { once: true }); vf.src = '/view.php?slug=' + uuid + '#' + hexKey; });
+        async function makeFixture(fields) {
+            const resp = await win.fetch('/tests/fixture.php', { method: 'POST', body: JSON.stringify(fields) });
+            if (!resp.ok) return null;
+            try { return await resp.json(); } catch (e) { return null; }
+        }
+
+        const vhex = win.generateHexKey();
+        const vaes = await win.aesKeyNoPassV3(vhex);
+        const XSS = 'Zobacz https://przyklad.pl/a?x=1 potem <img src=x onerror=alert(1)>';
+        const OTP = 'otpauth://totp/BitBack?secret=JBSWY3DPEHPK3PXP&issuer=bb';
+        const encText = await win.encryptBlobV3([{ idx: 0, content: XSS }], vaes);
+        const encSec = await win.encryptBlobV3([{ idx: 1, content: OTP }], vaes);
+        const fx = await makeFixture({ encrypted_text: encText, encrypted_secrets: encSec, total_sections: 2, format: 3 });
+
+        if (!fx || !fx.uuid) {
+            log(false, 'view: fixture.php niedostepny - uruchom przez run.ps1 (BB_TEST_DATA_DIR)');
+        } else {
+            await loadView(fx.uuid, vhex);
+            const vwin = document.getElementById('view').contentWindow;
+            const vdoc = document.getElementById('view').contentDocument;
+            const cbox = await waitForV(() => { const c = vdoc.getElementById('contentBox'); return (c && c.style.display !== 'none' && c.textContent.length) ? c : null; }, 10000);
+            log(!!cbox, 'view: tresc odszyfrowana (GCM, no-pass) w iframe #view');
+            log(!!cbox && cbox.textContent.indexOf('przyklad.pl') !== -1, 'view: odszyfrowany tekst obecny w DOM');
+            log(!!cbox && cbox.querySelector('img') === null, 'view XSS: zaden <img> nie zostal wykonany (escapeHtml)');
+            log(!!cbox && cbox.innerHTML.indexOf('&lt;img') !== -1, 'view XSS: znacznik <img> jako zescapowany tekst');
+            const a = cbox && cbox.querySelector('a[href^="https://przyklad.pl"]');
+            log(!!a, 'view linkify: URL zamieniony na <a>');
+            log(!!a && a.getAttribute('rel') === 'noopener' && a.getAttribute('target') === '_blank', 'view linkify: rel=noopener target=_blank');
+            const tz = await waitForV(() => { const z = vdoc.getElementById('totpZone'); return (z && z.children.length) ? z : null; }, 10000);
+            log(!!tz, 'view TOTP: otpauth:// wykryty i wyrenderowany w totpZone');
+            // biala skrzynka: czyste funkcje widoku
+            log(vwin.escapeHtml('<b>&x') === '&lt;b&gt;&amp;x', 'view escapeHtml(): <,>,& zescapowane');
+            log(vwin.linkify('a https://x.pl/y b').indexOf('<a href="https://x.pl/y"') !== -1, 'view linkify(): wstawia <a> dla URL');
+            log(vwin.escapeHtml('czysty tekst') === 'czysty tekst', 'view escapeHtml(): zwykly tekst bez zmian');
+        }
+
+        // fillMasked przez czarna skrzynke: wygasly sekret -> maska, tekst zostaje
+        const mhex = win.generateHexKey();
+        const maes = await win.aesKeyNoPassV3(mhex);
+        const mText = await win.encryptBlobV3([{ idx: 0, content: 'jawny naglowek' }], maes);
+        const mSec = await win.encryptBlobV3([{ idx: 1, content: 'poufny sekret' }], maes);
+        const fx2 = await makeFixture({ encrypted_text: mText, encrypted_secrets: mSec, total_sections: 2, format: 3, expires_secrets: '2020-01-01T00:00:00Z' });
+        if (fx2 && fx2.uuid) {
+            await loadView(fx2.uuid, mhex);
+            const vdoc2 = document.getElementById('view').contentDocument;
+            const cbox2 = await waitForV(() => { const c = vdoc2.getElementById('contentBox'); return (c && c.style.display !== 'none' && c.textContent.length) ? c : null; }, 10000);
+            log(!!cbox2 && cbox2.querySelector('.s-masked') !== null, 'view fillMasked: wygasly sekret jako maska (.s-masked)');
+            log(!!cbox2 && cbox2.textContent.indexOf('jawny naglowek') !== -1, 'view fillMasked: jawny tekst nadal widoczny');
+            log(!!cbox2 && cbox2.textContent.indexOf('poufny sekret') === -1, 'view fillMasked: tresc sekretu NIE wycieka po wygasnieciu');
+        }
+
+    } catch (e) {
+        log(false, 'HARNESS ERROR: ' + e.message + ' | ' + (e.stack || '').split('\n')[1]);
+    }
+    finish();
+});
+</script>
+</body>
+</html>

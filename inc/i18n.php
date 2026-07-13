@@ -1,0 +1,213 @@
+<?php
+/**
+ * i18n — PL/EN z Accept-Language
+ */
+
+function detect_lang(): string {
+    // Override przez querystring ?lang=en lub ?lang=pl - uzyteczne do testowania
+    // i dla userow ktorzy chca wymusic jezyk. Dzialanie: ?lang=en przed # w URL.
+    if (isset($_GET['lang']) && in_array($_GET['lang'], ['pl', 'en'], true)) {
+        return $_GET['lang'];
+    }
+    $header = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '';
+    if (stripos($header, 'pl') !== false) return 'pl';
+    return 'en';
+}
+
+function get_strings(?string $lang = null): array {
+    if ($lang === null) $lang = detect_lang();
+
+    $strings = [
+        'pl' => [
+            'title' => defined('APP_NAME') ? APP_NAME : 'bitback.one',
+            'subtitle' => 'bezpieczne linki do przekazywania poufnych danych',
+            'content_label' => 'Treść',
+            'placeholder_line1' => 'Wpisz treść tutaj...',
+            'placeholder_line2' => 'zaznacz fragment i naciśnij Ctrl+E aby oznaczyć jako poufne',
+            'placeholder_line3' => 'ponowne Ctrl+E na poufnym fragmencie — odznacza',
+            'settings_label' => 'Ustawienia',
+            'expire_label' => 'Wygaśnięcie danych poufnych',
+            'expire_unit' => 'dni',
+            'views_label' => 'Maksymalna liczba wyświetleń',
+            'views_unit' => 'razy',
+            'delete_label' => 'Permanentne usunięcie po',
+            'delete_unit' => 'dni (0 = od razu)',
+            'verify_label' => 'Weryfikacja',
+            'generate_btn' => 'Generuj link',
+            'generating' => 'Szyfrowanie...',
+            'your_link' => 'Twój link',
+            'copy' => 'Kopiuj',
+            'copied' => 'Skopiowano!',
+            'preview_label' => 'Podgląd',
+            'preview_expired' => 'po wygaśnięciu',
+            'preview_active' => 'aktywny link',
+            'preview_empty' => 'Tu pojawi się podgląd po wpisaniu treści.',
+            'error_empty' => 'Wpisz treść.',
+            'error_math' => 'Nieprawidłowa odpowiedź.',
+            'error_bot' => 'Błąd weryfikacji.',
+            'error_ratelimit' => 'Zbyt wiele prób. Spróbuj później.',
+            'error_server' => 'Błąd serwera. Spróbuj ponownie.',
+            // strona odczytu
+            'secrets_expired' => 'Dane poufne wygasły',
+            'secrets_expired_info' => 'Poufne fragmenty zostały trwale zamaskowane.',
+            'totp_qr_title' => 'Kod TOTP - zeskanuj w aplikacji uwierzytelniającej',
+            'link_expired' => 'Ten link wygasł',
+            'link_expired_info' => 'Udostępnione dane zostały usunięte.',
+            'views_count' => 'wyświetleń',
+            'expires_on' => 'Wygaśnięcie:',
+            'days_left' => 'dni do wygaśnięcia',
+            'views_left' => 'pozostałych wyświetleń',
+            // hasło
+            'password_label' => 'Hasło otwarcia (opcjonalne)',
+            'password_placeholder_config' => 'zostaw puste = bez hasła',
+            'password_required' => 'Ten link jest chroniony hasłem',
+            'password_placeholder' => 'Wpisz hasło',
+            'password_submit' => 'Otwórz',
+            'password_wrong' => 'Nieprawidłowe hasło.',
+            'your_password' => 'Twoje hasło:',
+            'password_checking' => 'Sprawdzanie hasła...',
+            'password_wrong_or_corrupt' => 'Nieprawidłowe hasło lub uszkodzony link.',
+            'password_js_required' => 'Do otwarcia linku z hasłem wymagany jest JavaScript.',
+            'password_reenter' => 'Podaj hasło, aby odszyfrować dane',
+            'password_unrecoverable' => 'Hasła nie da się odzyskać. Zapisz je przed wysłaniem linku.',
+            'password_generate' => 'Generuj',
+            'deriving_keys' => 'Szyfrowanie...',
+            // licznik permanentnego usunięcia
+            'delete_permanent_in' => 'dni do usunięcia',
+            'delete_permanent_label' => 'Permanentne usunięcie:',
+            'delete_permanent_today' => 'Usunięcie wkrótce',
+            // 404
+            'not_found_title' => 'Nie ma takiego linka',
+            'not_found_sub' => 'Albo nigdy nie istniał, albo został permanentnie usunięty.',
+            'not_found_hint' => 'Sprawdź czy link jest kompletny — klucz deszyfrujący jest za znakiem #',
+            // index: meta / OG
+            'meta_title' => 'bitback.one - bezpieczne udostępnianie danych',
+            'og_description' => 'Bezpieczne jednorazowe linki do przekazywania poufnych danych. Szyfrowanie AES-256 w przeglądarce, zero-trust - serwer nigdy nie widzi treści.',
+            // view: OG
+            'og_view_title' => 'Bezpieczna wiadomość - bitback.one',
+            'og_view_description' => 'Ktoś udostępnił Ci poufne dane przez zaszyfrowany link jednorazowy.',
+            // index: trust bar
+            'trust1_title' => 'Szyfrowanie zero-trust',
+            'trust1_desc' => 'Treść szyfrowana AES-256 w przeglądarce. Klucz deszyfrujący jest w części linka (#fragment), która nigdy nie trafia do serwera — nawet w logach. Administrator nie ma fizycznej możliwości odczytu danych.',
+            'trust2_title' => 'Kontrolowane wygasanie',
+            'trust2_desc' => 'Po wygaśnięciu linka fragmenty oznaczone jako poufne zostają trwale ukryte. Reszta treści pozostaje widoczna jako kontekst. Po usunięciu — wszystko znika bezpowrotnie.',
+            'trust3_title' => 'Bez śladu na serwerze',
+            'trust3_desc' => 'Serwer przechowuje wyłącznie zaszyfrowany blob. Klucz nie pojawia się w logach, bazie danych, ani w pamięci serwera. Deszyfrowanie odbywa się wyłącznie w przeglądarce odbiorcy.',
+            // index: hint bar
+            'hint_text' => 'Zaznacz fragment tekstu i naciśnij <strong>Ctrl+E</strong> lub przycisk poniżej, aby oznaczyć go jako <strong>poufny</strong>. Poufne fragmenty zostaną ukryte po wygaśnięciu linka - reszta treści pozostanie widoczna. Ponowne użycie odznacza.',
+            'mark_secret_btn' => 'Oznacz zaznaczony tekst jako poufny',
+            // index: editor placeholder
+            'editor_placeholder' => "Wpisz treść tutaj...\nNp. Login: admin\nHasło: s3cret123  ← zaznacz i Ctrl+E",
+            // index: JS alerts/messages
+            'error_math_select' => 'Wybierz odpowiedź na pytanie.',
+            'error_connection' => 'Błąd połączenia z serwerem.',
+            // index: import tabeli (bulk)
+            'import_detected' => 'Tabela rozpoznana: {rows} wierszy, {cols} kolumn',
+            'import_multi_tables' => 'Wykryto {n} tabel - użyto pierwszej, pozostałe pominięto',
+            'plain_text_toggle' => 'Traktuj tabelę jako zwykły tekst',
+            'bulk_preview_note' => 'Podgląd 1. rekordu z {n} (tak zobaczy odbiorca)',
+            'error_batch_too_many' => 'Za dużo osób w paczce (maksymalnie {max}). Zmniejsz tabelę.',
+            'error_batch' => 'Paczka jest za duża. Zmniejsz liczbę osób lub rozmiar danych.',
+            // index: footer
+            'footer_tagline' => 'Zabezpieczamy pocztę, serwery i komputery',
+            'footer_source' => 'Kod źródłowy na',
+            'footer_commercial' => 'Użycie komercyjne wymaga licencji',
+        ],
+        'en' => [
+            'title' => defined('APP_NAME') ? APP_NAME : 'bitback.one',
+            'subtitle' => 'secure links for sharing confidential data',
+            'content_label' => 'Content',
+            'placeholder_line1' => 'Type your content here...',
+            'placeholder_line2' => 'select text and press Ctrl+E to mark as secret',
+            'placeholder_line3' => 'press Ctrl+E again on a secret to unmark it',
+            'settings_label' => 'Settings',
+            'expire_label' => 'Secret data expiration',
+            'expire_unit' => 'days',
+            'views_label' => 'Maximum views',
+            'views_unit' => 'times',
+            'delete_label' => 'Permanent deletion after',
+            'delete_unit' => 'days (0 = immediately)',
+            'verify_label' => 'Verification',
+            'generate_btn' => 'Generate link',
+            'generating' => 'Encrypting...',
+            'your_link' => 'Your link',
+            'copy' => 'Copy',
+            'copied' => 'Copied!',
+            'preview_label' => 'Preview',
+            'preview_expired' => 'after expiry',
+            'preview_active' => 'active link',
+            'preview_empty' => 'Preview will appear here once you type content.',
+            'error_empty' => 'Enter some content.',
+            'error_math' => 'Wrong answer.',
+            'error_bot' => 'Verification failed.',
+            'error_ratelimit' => 'Too many attempts. Try later.',
+            'error_server' => 'Server error. Try again.',
+            'secrets_expired' => 'Secret data has expired',
+            'secrets_expired_info' => 'Confidential fragments have been permanently masked.',
+            'totp_qr_title' => 'TOTP code - scan it in your authenticator app',
+            'link_expired' => 'This link has expired',
+            'link_expired_info' => 'The shared data has been deleted.',
+            'views_count' => 'views',
+            'expires_on' => 'Expires:',
+            'days_left' => 'days remaining',
+            'views_left' => 'views remaining',
+            // password
+            'password_label' => 'Open password (optional)',
+            'password_placeholder_config' => 'leave empty = no password',
+            'password_required' => 'This link is password protected',
+            'password_placeholder' => 'Enter password',
+            'password_submit' => 'Open',
+            'password_wrong' => 'Wrong password.',
+            'your_password' => 'Your password:',
+            'password_checking' => 'Checking password...',
+            'password_wrong_or_corrupt' => 'Wrong password or corrupted link.',
+            'password_js_required' => 'JavaScript is required to open a password-protected link.',
+            'password_reenter' => 'Enter the password to decrypt the data',
+            'password_unrecoverable' => 'The password cannot be recovered. Save it before sending the link.',
+            'password_generate' => 'Generate',
+            'deriving_keys' => 'Encrypting...',
+            // permanent deletion countdown
+            'delete_permanent_in' => 'days to deletion',
+            'delete_permanent_label' => 'Permanent deletion:',
+            'delete_permanent_today' => 'Deletion imminent',
+            // 404
+            'not_found_title' => 'This link does not exist',
+            'not_found_sub' => 'It either never existed or has been permanently deleted.',
+            'not_found_hint' => 'Make sure the link is complete — the decryption key is after the # sign',
+            // index: meta / OG
+            'meta_title' => 'bitback.one - secure data sharing',
+            'og_description' => 'Secure one-time links for sharing sensitive data. AES-256 encryption in the browser, zero-trust - the server never sees your content.',
+            // view: OG
+            'og_view_title' => 'Secure message - bitback.one',
+            'og_view_description' => 'Someone shared sensitive data with you through an encrypted one-time link.',
+            // index: trust bar
+            'trust1_title' => 'Zero-trust encryption',
+            'trust1_desc' => 'Content encrypted with AES-256 in the browser. The decryption key is in the link fragment (#), which never reaches the server — not even in logs. The administrator has no way to read the data.',
+            'trust2_title' => 'Controlled expiration',
+            'trust2_desc' => 'After link expiration, fragments marked as secret are permanently hidden. The rest of the content remains visible as context. After deletion — everything is gone forever.',
+            'trust3_title' => 'No trace on the server',
+            'trust3_desc' => 'The server stores only the encrypted blob. The key never appears in logs, database, or server memory. Decryption happens exclusively in the recipient\'s browser.',
+            // index: hint bar
+            'hint_text' => 'Select text and press <strong>Ctrl+E</strong> or use the button below to mark it as <strong>secret</strong>. Secret fragments will be hidden after link expiration - the rest remains visible. Use again to unmark.',
+            'mark_secret_btn' => 'Mark selected text as secret',
+            // index: editor placeholder
+            'editor_placeholder' => "Type your content here...\ne.g. Login: admin\nPassword: s3cret123  ← select and Ctrl+E",
+            // index: JS alerts/messages
+            'error_math_select' => 'Select an answer to the question.',
+            'error_connection' => 'Connection error.',
+            // index: import tabeli (bulk)
+            'import_detected' => 'Table detected: {rows} rows, {cols} columns',
+            'import_multi_tables' => 'Detected {n} tables - used the first, rest skipped',
+            'plain_text_toggle' => 'Treat table as plain text',
+            'bulk_preview_note' => 'Preview of record 1 of {n} (as the recipient sees it)',
+            'error_batch_too_many' => 'Too many people in the batch (max {max}). Reduce the table.',
+            'error_batch' => 'The batch is too large. Reduce the number of people or data size.',
+            // index: footer
+            'footer_tagline' => 'We secure email, servers and computers',
+            'footer_source' => 'Source code on',
+            'footer_commercial' => 'Commercial use requires a license',
+        ],
+    ];
+
+    return $strings[$lang] ?? $strings['en'];
+}

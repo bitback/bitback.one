@@ -1,0 +1,19 @@
+{
+  "_comment": "Polskie frazy user-facing zaszyte w view.php jako galezie ternary ($lang==='pl'?...). W renderze ?lang=en NIE moga wystapic. Slownikowe PL (inc/i18n.php) sa dociagane osobno z PHP w runtime, wiec tu ich nie ma.",
+  "phrases": [
+    "Link został ręcznie usunięty dnia",
+    "Dane poufne zostały ręcznie wygaszone dnia",
+    "Zero-trust: deszyfrowanie odbyło się w Twojej przeglądarce. Serwer nie miał dostępu do klucza.",
+    "Otrzymałem dane. Potwierdź",
+    "wygaś poufne dane teraz",
+    "usuń cały link teraz",
+    "Dane poufne zostały wygaszone.",
+    "Link został usunięty.",
+    "Nie udało się. Spróbuj ponownie.",
+    "Potwierdzam usunięcie",
+    "Deszyfrowanie w przeglądarce...",
+    "Brak klucza deszyfrującego w linku. Upewnij się, że skopiowano pełny URL.",
+    "Ręcznie wygaszone dnia",
+    "Zabezpieczamy pocztę, serwery i komputery"
+  ]
+}

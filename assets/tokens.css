@@ -1,0 +1,427 @@
+/* =========================================================================
+   bitback.one - Design Tokens
+   Paleta FLAT (zaakceptowana na mockupie temp/palette-preview.html):
+   zero gradientow CSS, konkretne nasycone kolory z rolami, chlodna
+   granatowa rampa powierzchni. Atmosfere niosa bitmapy narozne
+   (assets/art/), nie gradienty.
+   ========================================================================= */
+
+:root {
+  /* --- Surfaces (rampa przyciemniona do mockupu m01: niemal czern
+         z chlodnym podtonem; zmierzono z m01.png: bg #04090e,
+         wnetrza boxow #000208-#04080e) --- */
+  --bb-bg:           #05080e;  /* page */
+  --bb-surface-1:    #10141f;  /* card */
+  --bb-surface-2:    #161b28;  /* hover/raised */
+  --bb-surface-3:    #161b28;  /* input/raised */
+  --bb-surface-sunk: #080c14;  /* sunken field (editor, url) */
+
+  /* --- Borders / dividers --- */
+  --bb-border:       #2a3040;
+  --bb-border-soft:  #232838;
+  --bb-border-mid:   #2a3040;  /* input borders */
+  --bb-border-hover: #3d4458;
+
+  /* --- Text (chlodna rampa, czytelna) --- */
+  --bb-fg:           #eef1f6;  /* primary */
+  --bb-fg-1:         #e2e6ee;  /* body */
+  --bb-fg-2:         #d4d9e4;
+  --bb-fg-3:         #aab2c2;
+  --bb-fg-4:         #aab2c2;  /* tertiary */
+  --bb-fg-5:         #6b7385;  /* muted */
+  --bb-fg-6:         #5d6477;
+  --bb-fg-7:         #4c5366;  /* quiet */
+  --bb-fg-8:         #3a4154;  /* separator dots */
+  --bb-fg-body:      #d4d9e4;  /* antibot hover text */
+  --bb-fg-tab:       #c3cad8;  /* active tab text */
+
+  /* --- Akcja (blue - przyciski primary) --- */
+  --bb-accent:       #3d82e8;
+  --bb-accent-hover: #5694ee;
+  --bb-accent-press: #2f6fd0;
+  --bb-accent-link:  #7fb0f5;
+  --bb-accent-tint:  #14223a;
+  --bb-accent-light: #7fb0f5;  /* antibot selected */
+
+  /* --- Akcent (teal - kbd, logo .one) --- */
+  --bb-teal:         #25c2a8;
+  --bb-teal-ink:     #04302a;
+
+  /* --- Info (violet - trzeci filar) --- */
+  --bb-violet:       #9b7ce8;
+
+  /* --- Secret (gold - sygnatura, NIETYKANE) --- */
+  --bb-secret:       #f0c060;
+  --bb-secret-ink:   #d4922a;
+
+  /* --- Sukces (green) --- */
+  --bb-success:      #46c46e;
+  --bb-success-light:#7ddb98;
+  --bb-success-mid:  #5fcd82;
+  --bb-success-ink:  #06310f;
+  --bb-success-bg:   #11271a;
+  --bb-success-bg-2: #0e2015;
+  --bb-success-border:#1f4030;
+  --bb-success-hover:#56d07c;
+  --bb-success-button:#46c46e;
+
+  /* --- Danger (red) --- */
+  --bb-danger:       #e8554a;
+  --bb-danger-light: #f07a72;
+  --bb-danger-ink:   #5a1d18;
+  --bb-danger-bg:    #271414;
+  --bb-danger-border:#45211e;
+
+  /* --- Warn (alias for secret) --- */
+  --bb-warn:         var(--bb-secret);
+  --bb-warn-ink:     var(--bb-secret-ink);
+
+  /* --- Mask (expired placeholder) --- */
+  --bb-mask-bg:      rgba(107, 115, 133, 0.22);
+  --bb-mask-fg:      #6b7385;
+
+  /* --- Shadows (sparingly) --- */
+  --bb-shadow-sm:    0 1px 2px rgba(0,0,0,0.5);
+  --bb-shadow-md:    0 4px 12px rgba(0,0,0,0.45), 0 1px 2px rgba(0,0,0,0.5);
+
+  /* --- Neon frame (mockup m01): cienka teal ramka sekcji + glow --- */
+  --bb-neon-border: rgba(37, 194, 168, 0.25);
+  --bb-neon-glow: 0 0 16px rgba(37, 194, 168, 0.05), inset 0 0 22px rgba(37, 194, 168, 0.025);
+
+  /* --- Fonts ---
+     Manrope (UI, zaakceptowana na mockupie) + JetBrains Mono (dane).
+     Self-hosted w assets/fonts/, fallback system stack. */
+  --bb-font-sans: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --bb-font-mono: 'JetBrains Mono', 'Consolas', 'Monaco', 'Courier New', monospace;
+
+  /* --- Radii: ZERO (zaakceptowane: ostre krawedzie wszedzie) --- */
+  --bb-radius-xs: 0;
+  --bb-radius-sm: 0;
+  --bb-radius-md: 0;
+  --bb-radius-lg: 0;
+
+  /* --- Spacing (optional, dla przyszlych etapow) --- */
+  --bb-space-1: 0.25rem;
+  --bb-space-2: 0.5rem;
+  --bb-space-3: 0.75rem;
+  --bb-space-4: 1rem;
+  --bb-space-5: 1.5rem;
+
+  /* --- Motion --- */
+  --bb-ease:     cubic-bezier(0.2, 0.6, 0.2, 1);
+  --bb-dur-fast: 120ms;
+  --bb-dur-base: 150ms;
+}
+
+/* =========================================================================
+   Komponenty bazowe
+   ========================================================================= */
+
+/* Lucide icons - domyslne rozmiary i zachowanie */
+[data-lucide] {
+  width: 1em;
+  height: 1em;
+  stroke-width: 1.5;
+  vertical-align: -0.15em;
+  display: inline-block;
+}
+/* Okragle chipy ikon (m01): solidne kolorowe kolo, ciemna ikona,
+   bez ramki, subtelny glow. */
+.bb-chip {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--bb-bg);
+}
+.bb-chip [data-lucide] { width: 19px; height: 19px; stroke-width: 2.2; vertical-align: middle; }
+.bb-chip-blue   { background: var(--bb-accent); box-shadow: 0 0 10px rgba(58, 123, 213, 0.22); }
+.bb-chip-teal   { background: var(--bb-teal); box-shadow: 0 0 10px rgba(37, 194, 168, 0.22); }
+.bb-chip-violet { background: var(--bb-violet); box-shadow: 0 0 10px rgba(155, 124, 232, 0.22); }
+.bb-chip-green  { background: var(--bb-success); }
+.bb-chip-gold   { background: var(--bb-secret); }
+.bb-chip-red    { background: var(--bb-danger); }
+/* Ghost na 404 i expired - duzy */
+.ghost [data-lucide] { width: 64px; height: 64px; stroke-width: 1.2; }
+/* Zt-badge kłódka - mała */
+.zt-badge [data-lucide] { width: 10px; height: 10px; vertical-align: -0.1em; }
+
+/* Logo - uzywane w naglowkach stron
+   !important bo inline <style> z .header h1 w PHP jest loadowane PO
+   tokens.css i nadpisuje bez tego */
+.bb-logo {
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 1 !important;
+  font-size: 0 !important;
+  letter-spacing: normal !important;
+}
+.bb-logo a {
+  display: inline-block;
+  text-decoration: none;
+  line-height: 0;
+}
+.bb-logo svg {
+  height: 64px !important;
+  width: auto;
+  display: inline-block;
+  vertical-align: middle;
+  filter: drop-shadow(0 0 10px rgba(155, 124, 232, 0.35)) drop-shadow(0 0 18px rgba(37, 194, 168, 0.18));
+}
+@media (max-width: 480px) {
+  .bb-logo svg { height: 56px !important; }
+}
+
+/* =========================================================================
+   Globalne style strony (etap 5 polish)
+   ========================================================================= */
+
+/* Zloty highlight przy zaznaczaniu tekstu - echo brand color */
+::selection {
+  background: rgba(212, 146, 42, 0.35);
+  color: var(--bb-fg);
+}
+::-moz-selection {
+  background: rgba(212, 146, 42, 0.35);
+  color: var(--bb-fg);
+}
+
+/* =========================================================================
+   Sloty na grafiki narozne (bitmapy generowane w Higgsfield)
+   Bitmapy na CZYSTEJ CZERNI + mix-blend-mode: screen = czern znika,
+   zostaja smugi swiatla. Dziala na kazdej ciemnej powierzchni bez
+   dopasowywania koloru tla karty.
+   Uzycie: <div class="bb-card bb-art bb-art-aurora">...
+   ========================================================================= */
+.bb-art {
+  position: relative;
+  overflow: hidden;
+  /* wlasny stacking context: ::after z z-index -1 laduje NAD tlem karty
+     a POD cala trescia (takze golymi text node'ami, ktorych z-index
+     nie podniesie) i blend nie przebija na strone */
+  isolation: isolate;
+}
+.bb-art::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 55%;
+  height: 100%;
+  background: var(--bb-art, none) right bottom / cover no-repeat;
+  mix-blend-mode: screen;
+  pointer-events: none;
+  z-index: -1;
+  /* maska RADIALNA z prawego dolnego rogu: gasi WSZYSTKIE krawedzie
+     bitmapy naraz (gora/lewo/diagonal) niezaleznie od jej zawartosci -
+     zadna krawedz ciecia nie ma prawa byc widoczna. Grafika = poswiata
+     naroznika, tekst nad nia czytelny. */
+  -webkit-mask-image: radial-gradient(140% 150% at 100% 100%, #000 30%, transparent 70%);
+  mask-image: radial-gradient(140% 150% at 100% 100%, #000 30%, transparent 70%);
+  opacity: 0.85;
+}
+/* warianty - URL podpinane po wygenerowaniu bitmap */
+.bb-art-aurora { --bb-art: url('/assets/art/aurora-1.webp'); }
+.bb-art-gold   { --bb-art: url('/assets/art/gold-1.webp'); }
+.bb-art-green  { --bb-art: url('/assets/art/green-1.webp'); }
+
+/* drugi rog karty (lewy-dolny) przez ::before - kanoniczna bitmapa
+   (art w prawym-dolnym rogu) odbita scaleX. Uzycie razem z .bb-art:
+   <div class="bb-art bb-art-aurora bb-art-left bb-art-left-magenta"> */
+.bb-art-left::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 45%;
+  height: 100%;
+  background: var(--bb-art-l, none) right bottom / cover no-repeat;
+  mix-blend-mode: screen;
+  pointer-events: none;
+  z-index: -1;
+  transform: scaleX(-1);
+  -webkit-mask-image: radial-gradient(140% 150% at 100% 100%, #000 30%, transparent 70%);
+  mask-image: radial-gradient(140% 150% at 100% 100%, #000 30%, transparent 70%);
+  opacity: 0.7;
+}
+.bb-art-left-magenta { --bb-art-l: url('/assets/art/magenta-2.webp'); }
+
+/* =========================================================================
+   Smugi narozne na POZIOMIE STRONY (mockup m01): fixed bitmapy w gornych
+   rogach viewportu. Kanoniczne bitmapy maja art w prawym-dolnym rogu -
+   orientacje do rogu robi transform (maska radialna obraca sie razem
+   z elementem). z-index -1 = nad tlem canvas, pod cala trescia; solidne
+   tla kart zaslaniaja smugi, wiec zyja tylko na czarnym tle strony.
+   ========================================================================= */
+.bb-page-art {
+  position: fixed;
+  width: min(36vw, 560px);
+  aspect-ratio: 1 / 1;
+  pointer-events: none;
+  z-index: -1;
+  background: var(--bb-page-art, none) center / cover no-repeat;
+  mix-blend-mode: screen;
+  opacity: 1;
+  /* maska trzyma pelna jasnosc dluzej - smugi zywe jak w mockupie */
+  -webkit-mask-image: radial-gradient(130% 130% at 100% 100%, #000 40%, transparent 80%);
+  mask-image: radial-gradient(130% 130% at 100% 100%, #000 40%, transparent 80%);
+}
+.bb-page-art-tl {
+  top: 0; left: 0;
+  --bb-page-art: url('/assets/art/magenta-2.webp');
+  transform: rotate(180deg);
+  opacity: 0.5;
+  -webkit-mask-image: radial-gradient(90% 90% at 100% 100%, #000 18%, transparent 56%);
+  mask-image: radial-gradient(90% 90% at 100% 100%, #000 18%, transparent 56%);
+}
+.bb-page-art-tr {
+  top: 0; right: 0;
+  --bb-page-art: url('/assets/art/aurora-1.webp');
+  transform: scaleY(-1);
+  opacity: 0.5;
+  -webkit-mask-image: radial-gradient(90% 90% at 100% 100%, #000 18%, transparent 56%);
+  mask-image: radial-gradient(90% 90% at 100% 100%, #000 18%, transparent 56%);
+}
+/* dolne rogi (m01): BR zywy teal, BL przyciszona magenta */
+.bb-page-art-br {
+  bottom: 0; right: 0;
+  --bb-page-art: url('/assets/art/aurora-1.webp');
+  opacity: 0.5;
+  -webkit-mask-image: radial-gradient(90% 90% at 100% 100%, #000 18%, transparent 56%);
+  mask-image: radial-gradient(90% 90% at 100% 100%, #000 18%, transparent 56%);
+}
+.bb-page-art-bl {
+  bottom: 0; left: 0;
+  --bb-page-art: url('/assets/art/magenta-2.webp');
+  transform: scaleX(-1);
+  opacity: 0.5;
+  -webkit-mask-image: radial-gradient(90% 90% at 100% 100%, #000 18%, transparent 56%);
+  mask-image: radial-gradient(90% 90% at 100% 100%, #000 18%, transparent 56%);
+}
+
+/* =========================================================================
+   Karty FLAT (zaakceptowane na mockupie): jednolita powierzchnia
+   --bb-surface-1 + border --bb-border. ZERO gradientow - tozsamosc
+   koloru niosa: chipy ikon, status-pille i bitmapy narozne (bb-art).
+   Warianty roznia sie wylacznie odcieniem ramki.
+   !important bo inline <style> w PHP laduje sie PO tokens.css.
+   ========================================================================= */
+.bb-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.bb-card-default {
+  background: var(--bb-surface-1) !important;
+  border: 1px solid var(--bb-border) !important;
+}
+
+.bb-card-success {
+  background: var(--bb-surface-1) !important;
+  border: 1px solid var(--bb-success-border) !important;
+}
+
+.bb-card-secret {
+  background: var(--bb-surface-1) !important;
+  border: 1px solid rgba(240, 192, 96, 0.35) !important;
+}
+
+.bb-card-accent {
+  background: var(--bb-surface-1) !important;
+  border: 1px solid var(--bb-border) !important;
+}
+
+/* =========================================================================
+   Neonowa ramka sekcji (mockup m01): 1px teal + delikatny glow, wnetrze
+   przezroczyste (czarne tlo strony). Padding daje element/strona.
+   !important jak bb-card - inline <style> w PHP laduje sie PO tokens.css.
+   ========================================================================= */
+.bb-frame {
+  position: relative;
+  /* kryjace tlo = panel blokuje page-art (czytelnosc); kolor identyczny
+     z coverem notcha ::before, wiec diagonal bez szwu */
+  background: var(--bb-bg) !important;
+  border: 1px solid var(--bb-neon-border) !important;
+  border-image: linear-gradient(90deg, var(--bb-neon-border) 55%, rgba(155, 124, 232, 0.28) 100%) 1 !important;
+  box-shadow: var(--bb-neon-glow) !important;
+}
+/* sciety narozhnik top-left (m01): kwadrat w kolorze tla obrocony 45deg
+   zakrywa rog ramki, jego border-bottom rysuje diagonal. Dziala bo
+   wnetrze ramki jest przezroczyste na tle strony. */
+.bb-frame::before {
+  content: "";
+  position: absolute;
+  top: -7px;
+  left: -7px;
+  width: 13px;
+  height: 13px;
+  background: var(--bb-bg);
+  border-bottom: 1px solid var(--bb-neon-border);
+  transform: rotate(45deg);
+}
+
+/* Tlo strony - solid FLAT, zero gradientow (zaakceptowane). */
+html, body {
+  background: var(--bb-bg) !important;
+  min-height: 100vh;
+}
+/* isolation: wlasny stacking context body - smugi bb-page-art (z-index -1)
+   laduja NAD tlem body, a POD cala trescia. Bez tego tlo body (in-flow)
+   maluje sie po negative-z dzieciach i calkowicie je zaslania. */
+body { isolation: isolate; }
+
+/* Ostre krawedzie WSZEDZIE (zaakceptowane): przyciski, sekcje, pola,
+   bannery - zero zaokraglen. Globalna regula z !important wygrywa
+   z hardkodowanymi border-radius w inline <style> PHP.
+   Wyjatki: okragle chipy ikon i spinnery (celowo kola). */
+* { border-radius: 0 !important; }
+.bb-chip,
+.generate-btn .spinner,
+.loading .spinner { border-radius: 50% !important; }
+
+/* Staggered page-load reveal - subtelny fade-up dla glownych sekcji
+   na landing. Jedna dobrze orkiestrowana animacja > 10 micro-interakcji. */
+@keyframes bb-rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.bb-rise-1 { animation: bb-rise 480ms cubic-bezier(0.16, 1, 0.3, 1) 0ms both; }
+.bb-rise-2 { animation: bb-rise 480ms cubic-bezier(0.16, 1, 0.3, 1) 80ms both; }
+.bb-rise-3 { animation: bb-rise 480ms cubic-bezier(0.16, 1, 0.3, 1) 160ms both; }
+.bb-rise-4 { animation: bb-rise 480ms cubic-bezier(0.16, 1, 0.3, 1) 240ms both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .bb-rise-1, .bb-rise-2, .bb-rise-3, .bb-rise-4 { animation: none; }
+}
+
+/* Spojny scrollbar - ciemny, dyskretny */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bb-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--bb-surface-3);
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--bb-border-hover);
+}
+
+/* Focus ring dla focusowalnych elementow (klawiatura) - ten sam outline system */
+:focus-visible {
+  outline: 2px solid var(--bb-accent);
+  outline-offset: 2px;
+}
+/* Ale: inputy, buttony i linki z wlasnym focusem (np. border change) - bez outline */
+input:focus-visible,
+button:focus-visible,
+a:focus-visible,
+.antibot-opt:focus-visible,
+[contenteditable]:focus-visible {
+  outline: none;
+}

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>bitback E2E - widok (formularz v3 + inline prompt)</title>
+<body style="background:#111;color:#0f0;font-family:monospace;font-size:13px">
+<h3>E2E widok: formularz v3, inline prompt, uszkodzony fragment, no-pass</h3>
+<div id="out"></div>
+<iframe id="app" src="/index.php?lang=pl" style="width:960px;height:280px"></iframe>
+<iframe id="view" name="view" src="about:blank" style="width:960px;height:280px"></iframe>
+<!-- formularz do POST auth_tag bez zapisu mastera (symulacja trybu prywatnego) -->
+<form id="gate" method="POST" target="view"><input type="hidden" name="auth_tag" id="gateTag"></form>
+<script>
+// Sciezki testowane tu, ktorych glowna suite (harness.html) NIE dotyka:
+//  - formularz hasla v3: submit liczy KDF w przegladarce, POST auth_tag, master do sessionStorage
+//  - decryptV3 sciezka (2): master z sessionStorage
+//  - decryptV3 sciezka (3): inline prompt gdy brak mastera (tryb prywatny), retry przy zlym hasle
+//  - uszkodzony #fragment -> komunikat laczony (GCM OperationError)
+//  - link bez hasla: odszyfrowanie bez pytania
+const PWD = 'HasloE2E!42', SECRET = 'SEKRET-E2E-XYZ';
+const rep = [];
+function emit(l){ rep.push(l); const d=document.createElement('div'); d.textContent=l; document.getElementById('out').appendChild(d); }
+function say(ok,m){ emit((ok?'PASS ':'FAIL ')+m); }
+const sleep = ms => new Promise(r=>setTimeout(r,ms));
+const onLoad = f => new Promise(r => f.addEventListener('load', r, {once:true}));
+async function waitFor(fn,ms){ const t=Date.now(); while(Date.now()-t<ms){ const v=fn(); if(v) return v; await sleep(60); } return null; }
+const V = () => document.getElementById('view');
+
+async function makeLink(win, doc, pwd, secret){
+    doc.getElementById('editor').innerHTML = 'Dane: <span class="secret">'+secret+'</span>';
+    doc.getElementById('linkPassword').value = pwd;
+    doc.getElementById('resultUrl').value = '';
+    const q = doc.getElementById('mathQuestion').textContent.match(/(\d+)\s*\+\s*(\d+)/);
+    const correct = parseInt(q[1],10)+parseInt(q[2],10);
+    Array.from(doc.querySelectorAll('#mathOptions .antibot-opt')).find(x=>x.textContent===String(correct)).click();
+    await win.generateLink();
+    const url = await waitFor(()=>doc.getElementById('resultUrl').value, 40000);
+    return url;
+}
+async function loadView(uuid, hexKey){ const p = onLoad(V()); V().src = '/'+uuid+'#'+hexKey; await p; }
+
+(async function(){
+    try {
+        const app = document.getElementById('app');
+        await onLoad(app);
+        const win = app.contentWindow, doc = app.contentDocument;
+        // NIE obnizamy V3_ITER: create.php waliduje iter >= 100000 i odrzucilby
+        // paczke z haslem. Pojedynczy PBKDF2 600k jest szybki (~0.05 s) - problem
+        // wydajnosci dotyczyl tylko petli bulk w harness.html, nie tego E2E.
+        emit('INFO start (V3_ITER=' + win.V3_ITER + ')');
+        // === 1. link BEZ hasla: odszyfrowuje sie bez pytania ===
+        let url = await makeLink(win, doc, '', SECRET);
+        say(!!url, 'no-pass: link utworzony');
+        let uuid = url.split('/').pop().split('#')[0], hexKey = url.split('#')[1];
+        await loadView(uuid, hexKey);
+        let box = await waitFor(()=>{ const c=V().contentDocument.getElementById('contentBox'); return (c&&c.style.display!=='none'&&c.textContent.length)?c:null; }, 20000);
+        say(!!box && box.textContent.indexOf(SECRET)!==-1, 'no-pass: odszyfrowane bez pytania o haslo');
+
+        // === 2. uszkodzony #fragment -> komunikat laczony ===
+        const broken = (hexKey[0]==='a'?'b':'a') + hexKey.slice(1);
+        V().src='about:blank'; await onLoad(V());  // wymus reload (sama zmiana #hash nie przeladowuje)
+        await loadView(uuid, broken);
+        const err = await waitFor(()=>{ const e=V().contentDocument.getElementById('errorBox'); return (e&&e.style.display!=='none'&&e.textContent.length)?e:null; }, 20000);
+        say(!!err && /hasło|password/i.test(err.textContent), 'uszkodzony fragment: komunikat laczony (nie surowy OperationError)');
+
+        // === 3. link Z HASLEM przez FORMULARZ v3 (pelny flow: KDF w JS, sessionStorage) ===
+        url = await makeLink(win, doc, PWD, SECRET);
+        uuid = url.split('/').pop().split('#')[0]; hexKey = url.split('#')[1];
+        V().src='about:blank'; await onLoad(V());
+        await loadView(uuid, hexKey);
+        let vdoc = V().contentDocument;
+        const form = await waitFor(()=>vdoc.getElementById('pwdForm'), 15000);
+        say(!!form, 'formularz v3: pokazany po wejsciu na link z haslem');
+        const pin = vdoc.getElementById('pwdInput');
+        say(pin && !pin.hasAttribute('name'), 'formularz v3: pole hasla BEZ atrybutu name (plaintext nie moze pojsc)');
+        // wpisz haslo i submituj - handler liczy authTag, pisze sessionStorage, POST
+        const gateLoaded = onLoad(V());
+        pin.value = PWD;
+        vdoc.getElementById('pwdBtn').click();
+        await gateLoaded;
+        vdoc = V().contentDocument;
+        box = await waitFor(()=>{ const c=vdoc.getElementById('contentBox'); return (c&&c.style.display!=='none'&&c.textContent.length)?c:null; }, 20000);
+        say(!!box && box.textContent.indexOf(SECRET)!==-1, 'formularz v3: dobre haslo -> tresc (sciezka sessionStorage)');
+
+        // === 4. INLINE PROMPT: bramka przeszla, ale brak mastera (symulacja trybu prywatnego) ===
+        url = await makeLink(win, doc, PWD, SECRET);
+        uuid = url.split('/').pop().split('#')[0]; hexKey = url.split('#')[1];
+        const master = await win.deriveMasterV3(PWD, hexKey, win.V3_ITER);
+        const tag = await win.authTagFromMaster(master);
+        V().src='about:blank'; await onLoad(V());
+        const f = document.getElementById('gate');
+        f.action = '/'+uuid+'#'+hexKey;
+        document.getElementById('gateTag').value = tag;
+        const gl = onLoad(V());
+        f.submit();  // POST auth_tag BEZ zapisu mastera = brak w sessionStorage strony widoku
+        await gl;
+        vdoc = V().contentDocument;
+        const inline = await waitFor(()=>vdoc.getElementById('inlinePwd'), 20000);
+        say(!!inline, 'inline prompt: pokazany gdy brak mastera (bez refetch)');
+        inline.value = 'zupelnie-zle';
+        vdoc.getElementById('inlinePwdBtn').click();
+        const ierr = await waitFor(()=>{ const e=vdoc.getElementById('inlinePwdErr'); return (e&&e.style.display!=='none')?e:null; }, 30000);
+        say(!!ierr, 'inline prompt: zle haslo -> komunikat bledu');
+        say(!!vdoc.getElementById('inlinePwd'), 'inline prompt: retry mozliwy bez przeladowania');
+        vdoc.getElementById('inlinePwd').value = PWD;
+        vdoc.getElementById('inlinePwdBtn').click();
+        box = await waitFor(()=>{ const c=vdoc.getElementById('contentBox'); return (c&&c.style.display!=='none'&&c.textContent.length)?c:null; }, 40000);
+        say(!!box && box.textContent.indexOf(SECRET)!==-1, 'inline prompt: dobre haslo -> tresc odszyfrowana');
+    } catch(e){
+        say(false, 'E2E ERROR: '+e.message+' @ '+((e.stack||'').split('\n')[1]||''));
+    }
+    const body = (rep.some(l=>l.startsWith('FAIL'))?'FAIL':'PASS')+'\n'+rep.join('\n');
+    try { navigator.sendBeacon('/tests/collect.php', new Blob([body],{type:'text/plain'})); }
+    catch(e){ fetch('/tests/collect.php',{method:'POST',body:body}); }
+    document.documentElement.setAttribute('data-e2e-done','1');
+})();
+</script>
+</body>

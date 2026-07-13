@@ -1,0 +1,29 @@
+RewriteEngine On
+
+# HTTP → HTTPS
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Blokada dotfiles (.git, .gitignore itd.) — 404 zamiast wycieku repo
+RedirectMatch 404 /\.(?!well-known)
+
+# Nagłówki bezpieczeństwa
+<IfModule mod_headers.c>
+    # UUID linka nie wycieka w Referer do żadnych zewnętrznych zasobów
+    Header always set Referrer-Policy "no-referrer"
+    # Viewer sekretów nie może być osadzony w ramce (clickjacking)
+    Header always set X-Frame-Options "DENY"
+    Header always set X-Content-Type-Options "nosniff"
+    # Wymuś HTTPS na rok (przeglądarka nie spróbuje już HTTP)
+    Header always set Strict-Transport-Security "max-age=31536000"
+</IfModule>
+
+# Nie przekierowuj istniejących plików/folderów
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# UUID pattern → view.php (klucz jest w #fragment, nie trafia do serwera)
+RewriteRule ^([0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})$ view.php?slug=$1 [L,QSA]
+
+# Customowa strona 404 dla wszystkich pozostałych ścieżek
+ErrorDocument 404 /404.php

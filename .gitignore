@@ -1,0 +1,53 @@
+# === Dane użytkowników (runtime) ===
+data/
+trash/
+
+# === Pliki tymczasowe ===
+tmp/
+temp/
+*.bak
+*.tmp
+*.log
+NDH6SA~M
+
+# === System / IDE ===
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# === Composer / npm (na przyszłość) ===
+vendor/
+node_modules/
+
+# === Dokumentacja wewnętrzna ===
+docs/
+security-audit/
+
+# === Narzędzia lokalne ===
+browser.php
+
+# === Design bundle (referencyjny, nie produkcyjny) ===
+_new_design/
+
+# === Env ===
+.env
+.env.local
+
+# === Interop (SDK integratora: port krypto Python/CLI + golden vector) ===
+# PRYWATNE rozwiazanie. Ma WLASNY, osobny git LOKALNY w interop/.git (bez remote,
+# nie pushowany nigdzie). Ta linia to JEDYNA rzecz trzymajaca interop poza publicznym
+# repo bitback - NIE USUWAC. Skasowanie = interop wyciekłby na publiczny GitHub + deploy X:.
+interop/
+
+# === API tokeny (sekret bearer, web-denied, recznie edytowane) ===
+inc/api-tokens.txt
+
+# === Zrodlowe wersje grafik (duze PNG, nie produkcyjne) ===
+assets/art/_src/
+
+# === Lokalne notatki AI (repo publiczne) ===
+CLAUDE.md
+.claude/
