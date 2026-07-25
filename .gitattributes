@@ -1,0 +1,17 @@
+# crypto.js jest publikowany razem z hashem SRI (README + atrybut integrity w
+# index.php/view.php). Hash liczy sie z BAJTOW pliku, wiec checkout, ktory zamieni
+# LF na CRLF (domyslne core.autocrlf=true na Windows), uniewaznia go i przegladarka
+# ODMAWIA wykonania krypto - aplikacja przestaje dzialac. Wymuszamy LF wszedzie.
+crypto.js -text eol=lf
+
+# Pozostale zrodla trzymamy tak samo, zeby deploy z Windows nie generowal
+# roznic bajtowych wzgledem repo.
+*.js  -text eol=lf
+*.php -text eol=lf
+*.html -text eol=lf
+*.css -text eol=lf
+*.md  -text eol=lf
+*.sh  -text eol=lf
+
+# Skrypty PowerShell zostaja z CRLF (natywne dla Windows).
+*.ps1 text eol=crlf
