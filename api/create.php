@@ -71,9 +71,11 @@ if ($api['present']) {
     // --- SCIEZKA PRZEGLADARKI (bez zmian) ---
     // --- HONEYPOT ---
     if (!empty($input['website_url'])) {
-        // cichy sukces dla bota
+        // cichy sukces dla bota. Ksztalt odpowiedzi 1:1 z realnym sukcesem (ok:true+url) -
+        // inaczej bot fingerprintuje honeypot po braku 'ok', a legalny user z autofillem
+        // ukrytego pola dostaje w kliencie result.ok=undefined -> falszywy "blad serwera".
         $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-        echo json_encode(['url' => $scheme . '://' . safe_host() . '/ok']);
+        echo json_encode(['ok' => true, 'url' => $scheme . '://' . safe_host() . '/ok']);
         exit;
     }
 

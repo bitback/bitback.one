@@ -18,14 +18,20 @@ $now = time();
 $count = 0;
 
 foreach (glob(DATA_DIR . '/*.json') as $file) {
-    $data = json_decode(file_get_contents($file), true);
-    if (!$data) continue;
+    // Read-modify-write pod exclusive lockiem - spojnie z view.php/expire.php.
+    // Bez tego cron czyta stan sprzed rownoleglego zapisu i nadpisuje go swoja
+    // kopia (np. kill z expire.php -> wskrzeszenie skasowanego linka).
+    $fp = @fopen($file, 'r+');
+    if ($fp === false) continue;
+    flock($fp, LOCK_EX);
+    $data = json_decode(stream_get_contents($fp), true);
+    if (!is_array($data)) { fclose($fp); continue; }
 
     $secretsExpireTime = strtotime($data['expires_secrets'] ?? '2099-01-01');
     $viewsExceeded = ($data['current_views'] ?? 0) >= ($data['max_views'] ?? 9999);
     $secretsExpired = ($secretsExpireTime <= $now) || $viewsExceeded;
 
-    if (!$secretsExpired) continue;
+    if (!$secretsExpired) { fclose($fp); continue; }
 
     $needSave = false;
 
@@ -39,6 +45,7 @@ foreach (glob(DATA_DIR . '/*.json') as $file) {
 
     // natychmiastowe usunięcie
     if ($deleteDays == 0) {
+        fclose($fp); // zwolnij lock przed rename (Windows nie przenosi otwartego pliku)
         rename($file, TRASH_DIR . '/' . basename($file));
         $count++;
         continue;
@@ -52,15 +59,21 @@ foreach (glob(DATA_DIR . '/*.json') as $file) {
     }
 
     if ($needSave) {
-        file_put_contents($file, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE), LOCK_EX);
+        rewind($fp);
+        ftruncate($fp, 0);
+        fwrite($fp, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+        fflush($fp);
     }
 
-    if ($expiredAt === null) continue; // dopiero oznaczony, jeszcze nie czas
+    if ($expiredAt === null) { fclose($fp); continue; } // dopiero oznaczony, jeszcze nie czas
 
     $deleteAt = $expiredAt + ($deleteDays * 86400);
     if ($now >= $deleteAt) {
+        fclose($fp); // zwolnij lock przed rename
         rename($file, TRASH_DIR . '/' . basename($file));
         $count++;
+    } else {
+        fclose($fp);
     }
 }
 

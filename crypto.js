@@ -31,6 +31,21 @@ async function sha256(data) {
 }
 
 /**
+ * Base64-encode bajty BEZ rozwijania calej tablicy w argumenty funkcji.
+ * String.fromCharCode(...huge) rzuca RangeError powyzej ~100k elementow, wiec
+ * duzy blob (sekret przy limicie 1 MB) nie dalby sie zaszyfrowac. Chunkowany
+ * apply daje wynik byte-identyczny ze starym spreadem.
+ */
+function bytesToBase64(bytes) {
+    let bin = '';
+    const CHUNK = 0x8000; // 32 KB
+    for (let i = 0; i < bytes.length; i += CHUNK) {
+        bin += String.fromCharCode.apply(null, bytes.subarray(i, i + CHUNK));
+    }
+    return btoa(bin);
+}
+
+/**
  * Encrypt an array of sections into a base64 blob.
  * Format: IV (16 bytes) + AES-256-CBC ciphertext -> base64
  *
@@ -52,7 +67,7 @@ async function encryptBlob(sections, hexKey) {
     const combined = new Uint8Array(iv.length + encrypted.byteLength);
     combined.set(iv, 0);
     combined.set(new Uint8Array(encrypted), iv.length);
-    return btoa(String.fromCharCode(...combined));
+    return bytesToBase64(combined);
 }
 
 /**
@@ -151,7 +166,7 @@ async function encryptBlobV3(sections, aesKey) {
     const combined = new Uint8Array(iv.length + encrypted.byteLength);
     combined.set(iv, 0);
     combined.set(new Uint8Array(encrypted), iv.length);
-    return btoa(String.fromCharCode(...combined));
+    return bytesToBase64(combined);
 }
 
 async function decryptBlobV3(base64Blob, aesKey) {

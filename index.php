@@ -859,7 +859,7 @@ $challenge = antibot_challenge();
     <span style="color:var(--bb-fg-8);margin:0 0.5rem;">|</span><?= htmlspecialchars($t['footer_source']) ?> <a href="https://github.com/bitback/bitback.one" target="_blank" rel="noopener" style="color:var(--bb-accent-link);text-decoration:none;">GitHub</a><span style="color:var(--bb-fg-8);margin:0 0.5rem;">|</span><strong style="color:var(--bb-accent-link);"><?= htmlspecialchars($t['footer_commercial']) ?></strong>
 </div>
 
-<script src="/crypto.js?v=<?= filemtime(__DIR__ . '/crypto.js') ?>" integrity="sha384-4BY47Z9e+fuHtuSztPUqLut6qM8DMIDJsVMAutU/wlrPqn2vo+ZHbxJlH6ymu/d0"></script>
+<script src="/crypto.js?v=<?= filemtime(__DIR__ . '/crypto.js') ?>" integrity="sha384-RQoDrUypIasRu3YH/1KbhpaEtfmzmQlvafmSuNpL1E3zl8rpuvHzLF/C9jqmsD53"></script>
 <script>
     const T = {
         error_ratelimit: <?= json_encode($t['error_ratelimit']) ?>,
@@ -1078,9 +1078,6 @@ $challenge = antibot_challenge();
         editor.focus();
         updatePreview();
     }
-
-    function markSecret() { toggleSecret(); }
-    function clearSecret() { toggleSecret(); }
 
     // --- SKRÓT Ctrl+E ---
     editor.addEventListener('keydown', function(e) {
@@ -1456,6 +1453,12 @@ $challenge = antibot_challenge();
         updateGuide();
     }
 
+    // parseInt bezpieczne dla 0: "usun po 0 dni" (od razu) NIE moze wpasc w falsy || default.
+    function intOrDefault(id, def) {
+        const v = parseInt(document.getElementById(id).value, 10);
+        return Number.isNaN(v) ? def : v;
+    }
+
     // v3: klucze per link. Z haslem: PBKDF2(haslo, salt="bb3|"+hexKey) -> master
     // -> {aesKey (enc), authTag (do serwera)}. Bez hasla: HKDF z SHA-256("bb3|"+hexKey).
     async function buildV3Keys(pwd, hexKey) {
@@ -1532,7 +1535,7 @@ $challenge = antibot_challenge();
                             website_url: honeypot,
                             expire_days: parseInt(document.getElementById('expireDays').value) || <?= DEFAULT_EXPIRE_DAYS ?>,
                             max_views: parseInt(document.getElementById('maxViews').value) || <?= DEFAULT_MAX_VIEWS ?>,
-                            delete_after_days: parseInt(document.getElementById('deleteDays').value) || <?= DEFAULT_DELETE_DAYS ?>,
+                            delete_after_days: intOrDefault('deleteDays', <?= DEFAULT_DELETE_DAYS ?>),
                             kdf: pwd ? { alg: 'PBKDF2-SHA256', iter: V3_ITER } : null,
                             math_a: CH.a, math_b: CH.b, math_exp: CH.exp, math_token: CH.token, math_answer: selectedAnswer,
                             records: payloads,
@@ -1605,7 +1608,7 @@ $challenge = antibot_challenge();
                         total_sections: payload.total_sections,
                         expire_days: parseInt(document.getElementById('expireDays').value) || <?= DEFAULT_EXPIRE_DAYS ?>,
                         max_views: parseInt(document.getElementById('maxViews').value) || <?= DEFAULT_MAX_VIEWS ?>,
-                        delete_after_days: parseInt(document.getElementById('deleteDays').value) || <?= DEFAULT_DELETE_DAYS ?>,
+                        delete_after_days: intOrDefault('deleteDays', <?= DEFAULT_DELETE_DAYS ?>),
                         format: 3,
                         kdf: v3.authTag ? { alg: 'PBKDF2-SHA256', iter: V3_ITER } : null,
                         auth_tag: v3.authTag,
@@ -1629,7 +1632,8 @@ $challenge = antibot_challenge();
                 // pokaż hasło jeśli było ustawione
                 const pwdEl = document.getElementById('resultPassword');
                 if (pwd) {
-                    pwdEl.innerHTML = T.your_password + ' <strong>' + pwd.replace(/</g, '&lt;') + '</strong><br><small>' + T.password_unrecoverable + '</small>';
+                    const pwdEsc = pwd.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                    pwdEl.innerHTML = T.your_password + ' <strong>' + pwdEsc + '</strong><br><small>' + T.password_unrecoverable + '</small>';
                     pwdEl.classList.add('show');
                 } else {
                     pwdEl.classList.remove('show');

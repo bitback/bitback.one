@@ -353,7 +353,7 @@ Write-Host "-- create.php gałęzie błędów --"
 chk "create: GET -> 405" ((PostJson '/api/create.php' $null 'GET').code -eq 405)
 chk "create: zły JSON -> 400 'Invalid JSON'" ((PostRaw '/api/create.php' '{niepoprawny').body.error -eq 'Invalid JSON')
 $r = PostJson '/api/create.php' (@{ website_url = 'http://bot'; encrypted_text = (b64 'x') })
-chk "create: honeypot -> cichy sukces (url /ok, bez ok:true)" ($r.body.url -match '/ok$')
+chk "create: honeypot -> ok:true + url /ok (spojnie z batch, klient nie widzi roznicy)" ($r.body.ok -eq $true -and $r.body.url -match '/ok$')
 $r = PostJson '/api/create.php' (@{ math_a = 1; math_b = 1; math_exp = $ch.exp; math_token = $ch.token; math_answer = 999; encrypted_text = (b64 'x') })
 chk "create: zła matematyka -> 400 'math'" ($r.code -eq 400 -and $r.body.error -eq 'math')
 $r = PostJson '/api/create.php' ($math + @{ encrypted_text = '' })

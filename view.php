@@ -100,11 +100,16 @@ if ($secretsExpired && $data['delete_after_days'] == 0) {
     exit;
 }
 
+$expiredAtJustSet = false;
 if ($secretsExpired && $data['delete_after_days'] > 0) {
     if (isset($data['_secrets_expired_at'])) {
         $deleteAt = $data['_secrets_expired_at'] + ($data['delete_after_days'] * 86400);
     } else {
         $data['_secrets_expired_at'] = $now;
+        // utrwal znacznik startu odliczania tez dla rekordow BEZ sekretow (blok nizej
+        // go pomija, bo isset(encrypted_secrets=null)===false) - inaczej odliczanie do
+        // permanentnego usuniecia startuje od nowa przy kazdym wejsciu az do crona.
+        $expiredAtJustSet = true;
     }
 
     if ($now >= ($deleteAt ?? $now + ($data['delete_after_days'] * 86400))) {
@@ -116,7 +121,7 @@ if ($secretsExpired && $data['delete_after_days'] > 0) {
 }
 
 // --- FIZYCZNE KASOWANIE SEKRETÓW (lazy — przy pierwszym odczycie po wygaśnięciu) ---
-$needSave = false;
+$needSave = $expiredAtJustSet;
 
 if ($secretsExpired && isset($data['encrypted_secrets'])) {
     // NIEODWRACALNE: usuwamy blob sekretów z pliku
@@ -364,7 +369,7 @@ function show_password_form_v3(array $t, string $slug, array $data, bool $wrongP
             <span style="color:var(--bb-fg-8);margin:0 0.5rem;">|</span><?= htmlspecialchars($t['footer_source']) ?> <a href="https://github.com/bitback/bitback.one" target="_blank" rel="noopener" style="color:var(--bb-accent-link);text-decoration:none;">GitHub</a><span style="color:var(--bb-fg-8);margin:0 0.5rem;">|</span><strong style="color:var(--bb-accent-link);"><?= htmlspecialchars($t['footer_commercial']) ?></strong>
         </div>
     </div>
-    <script src="/crypto.js?v=<?= filemtime(__DIR__ . '/crypto.js') ?>" integrity="sha384-4BY47Z9e+fuHtuSztPUqLut6qM8DMIDJsVMAutU/wlrPqn2vo+ZHbxJlH6ymu/d0"></script>
+    <script src="/crypto.js?v=<?= filemtime(__DIR__ . '/crypto.js') ?>" integrity="sha384-RQoDrUypIasRu3YH/1KbhpaEtfmzmQlvafmSuNpL1E3zl8rpuvHzLF/C9jqmsD53"></script>
     <script>
     // v3: haslo NIE opuszcza przegladarki. Liczymy master (PBKDF2, ~0.3-1s),
     // wysylamy tylko authTag; master laduje w sessionStorage dla strony widoku
@@ -809,7 +814,7 @@ function show_view_encrypted(array $t, array $data, string $encText, ?string $en
     </div>
     <?= view_footer_html() ?>
 
-    <script src="/crypto.js?v=<?= filemtime(__DIR__ . '/crypto.js') ?>" integrity="sha384-4BY47Z9e+fuHtuSztPUqLut6qM8DMIDJsVMAutU/wlrPqn2vo+ZHbxJlH6ymu/d0"></script>
+    <script src="/crypto.js?v=<?= filemtime(__DIR__ . '/crypto.js') ?>" integrity="sha384-RQoDrUypIasRu3YH/1KbhpaEtfmzmQlvafmSuNpL1E3zl8rpuvHzLF/C9jqmsD53"></script>
     <script src="/assets/js/qrcode.min.js?v=<?= filemtime(__DIR__ . '/assets/js/qrcode.min.js') ?>" integrity="sha384-mZT2gIty7ZDdOGkxfP6joZcYdMW1Jvj9dRlfpTmaJAKKXTqzygtB22k7FLe+KZC1"></script>
     <script src="/assets/js/totp-qr.js?v=<?= filemtime(__DIR__ . '/assets/js/totp-qr.js') ?>" integrity="sha384-B3FEtW6GOMAbXTOr7mk6bAo6FV6TKCFXiLMOpnFXmTxwsrViJxFZyOP5Cqp3kVf1"></script>
     <script>
@@ -982,6 +987,14 @@ function show_view_encrypted(array $t, array $data, string $encText, ?string $en
 
         if (!total) return textItems;
 
+        // Serwer clampuje total_sections do 1000; gdyby realny najwyzszy idx tekstu
+        // byl wiekszy (link z >1000 sekcjami), petla nizej urwalaby te sekcje.
+        // Nigdy nie renderuj mniej pozycji niz faktycznie mamy.
+        if (textItems.length > 0) {
+            const maxIdx = Math.max(...textItems.map(i => i.idx));
+            if (maxIdx + 1 > total) total = maxIdx + 1;
+        }
+
         const byIdx = {};
         for (const item of textItems) byIdx[item.idx] = item;
 
@@ -1111,7 +1124,7 @@ function show_view_encrypted_v2(array $t, array $data, string $encryptedPayload,
         <?= view_meta_html($t, $data, $expired) ?>
     </div>
     <?= view_footer_html() ?>
-    <script src="/crypto.js?v=<?= filemtime(__DIR__ . '/crypto.js') ?>" integrity="sha384-4BY47Z9e+fuHtuSztPUqLut6qM8DMIDJsVMAutU/wlrPqn2vo+ZHbxJlH6ymu/d0"></script>
+    <script src="/crypto.js?v=<?= filemtime(__DIR__ . '/crypto.js') ?>" integrity="sha384-RQoDrUypIasRu3YH/1KbhpaEtfmzmQlvafmSuNpL1E3zl8rpuvHzLF/C9jqmsD53"></script>
     <script src="/assets/js/qrcode.min.js?v=<?= filemtime(__DIR__ . '/assets/js/qrcode.min.js') ?>" integrity="sha384-mZT2gIty7ZDdOGkxfP6joZcYdMW1Jvj9dRlfpTmaJAKKXTqzygtB22k7FLe+KZC1"></script>
     <script src="/assets/js/totp-qr.js?v=<?= filemtime(__DIR__ . '/assets/js/totp-qr.js') ?>" integrity="sha384-B3FEtW6GOMAbXTOr7mk6bAo6FV6TKCFXiLMOpnFXmTxwsrViJxFZyOP5Cqp3kVf1"></script>
     <script>

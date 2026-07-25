@@ -71,10 +71,26 @@ document.getElementById('app').addEventListener('load', async () => {
 
         // sanity: realne funkcje sa dostepne
         const need = ['cleanPastedTable','hoistTableToEditor','isBulkMode','collectBulkRecords','tableToPlainText','sectionsToPayload','extractSections','generateHexKey','decryptBlob',
-                      'deriveMasterV3','authTagFromMaster','aesKeyFromMaster','aesKeyNoPassV3','encryptBlobV3','decryptBlobV3','hkdf256','bytesToHex','hexToBytes','encryptBlob'];
+                      'deriveMasterV3','authTagFromMaster','aesKeyFromMaster','aesKeyNoPassV3','encryptBlobV3','decryptBlobV3','hkdf256','bytesToHex','hexToBytes','encryptBlob','bytesToBase64','intOrDefault'];
         const missing = need.filter(f => typeof win[f] !== 'function');
         log(missing.length === 0, 'realne funkcje index.php dostepne' + (missing.length ? ' (BRAK: ' + missing.join(',') + ')' : ''));
         if (missing.length) { finish(); return; }
+
+        // intOrDefault: 0 to wartosc PRAWIDLOWA ("usun po 0 dni" = od razu), NIE falsy->default.
+        // Regresja delete_after_days: parseInt(...)||default wysylal 360 zamiast 0.
+        const ddInput = doc.getElementById('deleteDays');
+        if (ddInput) {
+            const prevDD = ddInput.value;
+            ddInput.value = '0';
+            log(win.intOrDefault('deleteDays', 360) === 0, 'intOrDefault: "0 dni" nie wpada w default');
+            ddInput.value = '';
+            log(win.intOrDefault('deleteDays', 360) === 360, 'intOrDefault: puste pole -> default');
+            ddInput.value = '7';
+            log(win.intOrDefault('deleteDays', 360) === 7, 'intOrDefault: liczba zwrocona wprost');
+            ddInput.value = prevDD;
+        } else {
+            log(false, 'deleteDays input obecny w index.php');
+        }
 
         // ======================= FAZA 1: import tabeli =======================
         grp('FAZA 1 - cleanPastedTable / hoist');
@@ -493,6 +509,14 @@ document.getElementById('app').addEventListener('load', async () => {
         const v3blob = await win.encryptBlobV3(v3sections, v3aes);
         const v3dec = await win.decryptBlobV3(v3blob, v3aes);
         log(JSON.stringify(v3dec) === JSON.stringify(v3sections), 'GCM round-trip poprawnym kluczem');
+        // bytesToBase64 byte-identyczny ze starym btoa(String.fromCharCode(...spread)) dla malego wejscia
+        const b64small = new win.Uint8Array([0, 1, 2, 65, 255, 128, 10, 13, 34]);
+        log(win.bytesToBase64(b64small) === win.btoa(String.fromCharCode.apply(null, b64small)), 'bytesToBase64 == spread dla malego wejscia');
+        // DUZY blob: stary btoa(String.fromCharCode(...spread)) rzucal RangeError powyzej
+        // ~100k bajtow; chunkowany bytesToBase64 musi przejsc round-trip bez wyjatku.
+        const bigSections = [{ idx: 0, content: 'x'.repeat(300000) }];
+        const bigBlob = await win.encryptBlobV3(bigSections, v3aes);
+        log(JSON.stringify(await win.decryptBlobV3(bigBlob, v3aes)) === JSON.stringify(bigSections), 'GCM round-trip duzego blobu 300 KB (chunked base64)');
         // struktura blobu: iv 12B + ciphertext + tag 16B
         const v3raw = win.Uint8Array.from(win.atob(v3blob), c => c.charCodeAt(0));
         log(v3raw.length === 12 + new win.TextEncoder().encode(JSON.stringify(v3sections)).length + 16, 'blob = iv(12) + ct + gcmTag(16)');
