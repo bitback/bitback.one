@@ -11,10 +11,12 @@ Share passwords, API keys, and confidential data through one-time links that phy
 ## How it works
 
 1. You type content and optionally mark fragments as **secret** (Ctrl+E)
-2. Content is encrypted with AES-256-CBC in the browser
+2. Content is encrypted with **AES-256-GCM** in the browser
 3. A link is generated: `https://bitback.one/<uuid>#<key>`
 4. The `#key` part (URL fragment) **never reaches the server** - not in logs, not in memory
 5. The recipient opens the link - decryption happens entirely in their browser
+
+New links use AES-256-GCM (record format 3). Older AES-256-CBC links (format 2) stay readable until they expire - the crypto layer keeps a read-only path for them.
 
 ## Two-stage expiration
 
@@ -27,16 +29,45 @@ bitback.one uses a two-blob architecture for physical secret destruction:
 
 This is not a software flag - the encrypted data is literally removed from disk.
 
+## Optional open password (zero-knowledge)
+
+You can lock a link behind a password the recipient must type before anything decrypts. The server never sees it.
+
+- The browser derives `master = PBKDF2-HMAC-SHA256(password, salt, 600k iterations)`, then splits it with HKDF into the AES key and a separate `auth_tag`.
+- Only the `auth_tag` is sent to the server, which stores `password_verifier = sha256(auth_tag)` and compares with `hash_equals`.
+- A wrong password is rejected at the gate and **does not burn a view**.
+- The AES key itself depends on the password, so a forgotten password means the data is **unrecoverable** - there is no reset.
+
+The record carries its own KDF parameters (`format:3`, `kdf:{alg,iter}`), so iteration counts can be raised or the scheme upgraded later without breaking old links. Legacy links use bcrypt server-side verification (read-only).
+
+## Bulk links
+
+Paste a table (for example straight from Excel) and bitback.one generates **one separate encrypted link per row** - each recipient gets their own link with its own AES key. Up to 200 recipients per batch. The "after expiry" preview shows a single recipient's record (masked values), because each person only ever sees their own link, never the whole table.
+
+## TOTP QR
+
+If the decrypted content contains an `otpauth://totp/...` URI, the viewer renders a scannable QR code beneath it, so the recipient can enroll it in an authenticator app. Like everything else, this happens client-side - the TOTP secret never leaves the browser.
+
+## Programmatic access (bring your own client)
+
+The browser is only the reference client. The server is a pure zero-trust store: it accepts and returns encrypted blobs it cannot read, and never touches the key. Anything the browser does - derive a key, encrypt, assemble the `#fragment` link - can be done by your own code against the same HTTP API.
+
+- Endpoints `api/create.php` and `api/create-batch.php` accept a Bearer API token (`Authorization: Bearer bbk_<id>_<secret>`).
+- The server stores only a SHA-256 fingerprint of each token, never the token itself.
+- Token auth skips the interactive anti-bot challenge, but not the payload format or KDF validation - a client must still produce well-formed encrypted records.
+
+A language-agnostic implementation of the crypto contract and a CLI client exist internally (used for machine-to-machine delivery of secrets); they are not published in this repository. The point is that the format is a documented contract, not a browser lock-in: the server side needed to accept programmatic clients is the public code in this repo.
+
 ## Security model
 
-- **AES-256-CBC** encryption with SHA-256 key derivation
+- **AES-256-GCM** encryption for new links (AES-256-CBC kept read-only for older ones)
 - Encryption key lives in URL `#fragment` - never sent to the server (per RFC 3986)
 - Server stores only encrypted blobs - no plaintext, no key, no way to decrypt
 - Two separate encrypted blobs: text and secrets - server physically deletes the secrets blob on expiry
-- Optional bcrypt password protection
+- Optional zero-knowledge open password - the server stores only `sha256(auth_tag)`, never the password
 - Apache logs show only the UUID, never the key
-- IP-based rate limiting (10 links/hour)
-- Honeypot + math challenge anti-bot protection
+- IP-based rate limiting (single links and bulk batches have separate hourly buckets)
+- Honeypot + math challenge anti-bot protection (bypassed only by authenticated API tokens)
 
 See [SECURITY.md](SECURITY.md) for the full threat model.
 
@@ -44,7 +75,7 @@ See [SECURITY.md](SECURITY.md) for the full threat model.
 
 bitback.one is deliberately simple. We treat minimalism as a security feature, not a limitation.
 
-**Why no SIEM, audit logs, or monitoring?** The attack surface is tiny: 2 endpoints, flat file storage, zero external dependencies, no database, no sessions, no user accounts. There is nothing to monitor because there is nothing to compromise on the server side - the server never sees plaintext data or encryption keys.
+**Why no SIEM, audit logs, or monitoring?** The attack surface is tiny: a handful of endpoints, flat file storage, zero external dependencies, no database, no sessions, no user accounts. There is nothing to monitor because there is nothing to compromise on the server side - the server never sees plaintext data or encryption keys.
 
 **Browser-side verification.** All encryption and decryption happens in the browser using the Web Crypto API. This is verifiable: anyone can inspect the JavaScript source and confirm that the key never leaves the browser. The server receives only encrypted base64 blobs it cannot decrypt.
 
@@ -68,7 +99,7 @@ All cryptographic functions (key generation, encryption, decryption) live in a s
 **Expected SHA-384 of `crypto.js`:**
 
 ```
-sha384-4BY47Z9e+fuHtuSztPUqLut6qM8DMIDJsVMAutU/wlrPqn2vo+ZHbxJlH6ymu/d0
+sha384-RQoDrUypIasRu3YH/1KbhpaEtfmzmQlvafmSuNpL1E3zl8rpuvHzLF/C9jqmsD53
 ```
 
 ### Verify any deployment
@@ -105,8 +136,8 @@ If the hashes match, the deployment uses the exact same crypto code as this repo
 
 - **Backend:** PHP 8.0 (no framework, no dependencies)
 - **Storage:** Flat JSON files (no database)
-- **Frontend:** Vanilla HTML/CSS/JS
-- **Crypto:** Web Crypto API (browser) + OpenSSL (PHP)
+- **Frontend:** Vanilla HTML/CSS/JS (self-hosted fonts and inline SVG icons, zero CDN)
+- **Crypto:** Web Crypto API (browser, AES-256-GCM + PBKDF2/HKDF) + OpenSSL (PHP)
 - **Server:** Apache2 with mod_rewrite
 - **Hosting:** Synology NAS (Web Station)
 
@@ -114,17 +145,26 @@ If the hashes match, the deployment uses the exact same crypto code as this repo
 
 ```
 bitback.one/
-├── index.php           # Main page (create link form, i18n)
-├── view.php            # Link viewer (password check, expiry, encrypted payload delivery)
+├── index.php           # Main page (create link form, bulk table, i18n)
+├── view.php            # Link viewer (password gate, expiry, encrypted payload delivery, TOTP QR)
 ├── crypto.js           # Client-side crypto functions (SRI-protected, verifiable)
 ├── .htaccess           # URL rewriting (UUID -> view.php)
 ├── api/
-│   └── create.php      # POST API: validate, encrypt, save, return URL
+│   ├── create.php      # POST API: validate, save encrypted record, return URL
+│   ├── create-batch.php# POST API: bulk records in one request
+│   ├── challenge.php   # Anti-bot math/honeypot challenge issuer
+│   └── expire.php      # Manual expire/kill of a link
 ├── inc/
-│   ├── config.php      # Constants (paths, defaults, cipher)
-│   ├── crypto.php      # AES-256-CBC encrypt/decrypt, UUID/key generation (server-side)
+│   ├── config.php      # Constants (paths, defaults, limits, cipher)
+│   ├── crypto.php      # Server-side helpers, AES-256-CBC decrypt for legacy records
+│   ├── apiauth.php     # Bearer API-token verification (stores only token hash)
+│   ├── antibot.php     # HMAC-signed challenge validation
 │   ├── i18n.php        # PL/EN translations (auto-detect from Accept-Language)
-│   └── ratelimit.php   # IP-based rate limiter
+│   ├── icons.php       # Inline Lucide SVG icons (no external requests)
+│   └── ratelimit.php   # IP-based rate limiter (single + batch buckets)
+├── assets/js/
+│   ├── totp-qr.js      # Renders a QR for otpauth:// URIs, client-side
+│   └── qrcode.min.js   # QR generator
 ├── tools/
 │   └── update-crypto-hash.sh  # Update SRI hashes after crypto.js changes
 ├── cron/
@@ -172,13 +212,18 @@ Set up daily cleanup (Synology Task Scheduler, crontab, etc.):
 Edit `inc/config.php`:
 
 ```php
-define('APP_NAME', 'bitback.one');    // App name (used in titles, headers)
-define('DEFAULT_EXPIRE_DAYS', 14);    // Secret data expiration
-define('DEFAULT_MAX_VIEWS', 5);       // Max views before secrets expire
-define('DEFAULT_DELETE_DAYS', 90);    // Days until permanent deletion
-define('RATE_LIMIT_MAX', 10);         // Max links per IP per hour
-// define('APP_HOST', 'bitback.one'); // Optional: pin the host used in generated URLs
+define('APP_NAME', 'bitback.one');       // App name (used in titles, headers)
+define('DEFAULT_EXPIRE_DAYS', 30);       // Secret data expiration
+define('DEFAULT_MAX_VIEWS', 15);         // Max views before secrets expire
+define('DEFAULT_DELETE_DAYS', 360);      // Days until permanent deletion
+define('RATE_LIMIT_MAX', 10);            // Max single links per IP per hour
+define('RATE_LIMIT_BATCH_MAX', 10);      // Max bulk batches per IP per hour
+define('BATCH_MAX_RECORDS', 200);        // Max recipients in one batch
+define('IP_HASH_SALT', '...');           // Random secret, min 24 chars - change this
+// define('APP_HOST', 'bitback.one');    // Optional: pin the host used in generated URLs
 ```
+
+For bulk batches of up to 200 recipients, make sure the server's PHP limits (`post_max_size`, `memory_limit`, `max_execution_time`) are generous enough.
 
 ### Custom branding
 
