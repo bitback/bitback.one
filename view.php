@@ -47,6 +47,28 @@ if (!is_array($data)) {
     exit;
 }
 
+// --- WYGASLY LEGACY: kasuj PRZED bramka hasla ---
+// Legacy (v2/v1) ma jeden wspolny blob, wiec po wygasnieciu nie ma czego pokazac -
+// pytanie o haslo byloby bez sensu. Gdyby kasowanie stalo za bramka, rekord
+// chroniony haslem NIGDY by sie nie wyczyscil przez web (nikt nie przechodzi
+// bramki bez hasla), a bcrypt liczony dla martwego linku to darmowy CPU-DoS.
+$legacyFields = ['encrypted_payload', 'sections'];
+$isLegacy = false;
+foreach ($legacyFields as $lf) { if (isset($data[$lf])) { $isLegacy = true; break; } }
+
+if ($isLegacy
+    && ((strtotime($data['expires_secrets'] ?? '2099-01-01') <= time())
+        || (($data['current_views'] ?? 0) >= ($data['max_views'] ?? 9999)))) {
+    foreach ($legacyFields as $lf) {
+        if (isset($data[$lf])) { $data[$lf] = null; }
+    }
+    $data['_secrets_expired_at'] = $data['_secrets_expired_at'] ?? time();
+    save_locked($fp, $data);
+    fclose($fp);
+    show_expired($t, $data['_killed_manually'] ?? null, $data['_expired_manually'] ?? null);
+    exit;
+}
+
 // --- HASLO ---
 // v3 (password_verifier): bramka na auth_tag policzonym w przegladarce
 //     (PBKDF2 z hasla + hexKey -> HKDF "bb3-auth"). Serwer NIGDY nie widzi hasla.

@@ -502,6 +502,23 @@ chk "v1 wygasly: tresc NIE trafia do przegladarki" ($g.text -notmatch 'LEGACY-V1
 chk "v1 wygasly: sections FIZYCZNIE skasowane z pliku" ($null -eq (Field $lv1File 'sections'))
 Remove-Item $lv1File -Force -ErrorAction SilentlyContinue
 
+# Wygasly legacy CHRONIONY HASLEM: kasowanie musi isc PRZED bramka hasla, inaczej
+# rekord nigdy sie nie czysci przez web (nikt nie przechodzi bramki bez hasla).
+$lvp = [guid]::NewGuid().ToString()
+$lvpFile = Join-Path $dataDir "$lvp.json"
+@{
+    id = $lvp; created = '2020-01-01T00:00:00Z'; expires_secrets = '2020-06-01T00:00:00Z'
+    delete_after_days = 3650; max_views = 5; current_views = 2; status = 'active'
+    password_hash = '$2y$12$RoAvDRjgJwqJyWAv73vWHuH2daBMn93D/Mukpgby2JRB08D2wRqy2'
+    total_sections = 1; view_log = @()
+    sections = @(@{ content = 'LEGACY-PWD-PLAINTEXT'; secret = $true })
+} | ConvertTo-Json -Depth 5 | Set-Content $lvpFile -Encoding UTF8
+$g = GetPage (ViewUrl $lvp)
+chk "legacy+haslo wygasly: NIE pyta o haslo (martwy link)" ($g.text -notmatch 'name="password"')
+chk "legacy+haslo wygasly: tresc NIE trafia do przegladarki" ($g.text -notmatch 'LEGACY-PWD-PLAINTEXT')
+chk "legacy+haslo wygasly: sections skasowane mimo braku hasla" ($null -eq (Field $lvpFile 'sections'))
+Remove-Item $lvpFile -Force -ErrorAction SilentlyContinue
+
 # ===== bramka hasla: throttling nieudanych prob (per IP) =====
 Write-Host ""
 Write-Host "-- bramka hasla: rate-limit prob --"
