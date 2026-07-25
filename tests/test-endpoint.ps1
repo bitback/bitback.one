@@ -470,6 +470,76 @@ $g = GetPage (ViewUrl $rec.uuid)
 chk "po kill: view.php nie oddaje ENC_TEXT (link martwy)" ($g.text -notmatch 'ENC_TEXT')
 Remove-Item $rec.file -Force -ErrorAction SilentlyContinue
 
+# ===== legacy v2/v1: wygasniecie kasuje CALY ciphertext =====
+# Jeden wspolny blob nie da sie przyciac do samych sekretow bez klucza, wiec
+# dawniej "wygasly" v2 nadal oddawal komplet danych (maskowanie tylko w JS).
+Write-Host ""
+Write-Host "-- legacy v2/v1 po wygasnieciu --"
+$lv2 = [guid]::NewGuid().ToString()
+$lv2File = Join-Path $dataDir "$lv2.json"
+@{
+    id = $lv2; created = '2020-01-01T00:00:00Z'; expires_secrets = '2020-06-01T00:00:00Z'
+    delete_after_days = 3650; max_views = 15; current_views = 0; status = 'active'
+    password_hash = $null; total_sections = 2; view_log = @()
+    encrypted_payload = (b64 'LEGACY-V2-CIPHERTEXT')
+} | ConvertTo-Json -Depth 4 | Set-Content $lv2File -Encoding UTF8
+$g = GetPage (ViewUrl $lv2)
+chk "v2 wygasly: ciphertext NIE trafia do przegladarki" ($g.text -notmatch 'LEGACY-V2-CIPHERTEXT')
+chk "v2 wygasly: blob FIZYCZNIE skasowany z pliku" ($null -eq (Field $lv2File 'encrypted_payload'))
+chk "v2 wygasly: oznaczony znacznikiem wygasniecia" ($null -ne (Field $lv2File '_secrets_expired_at'))
+Remove-Item $lv2File -Force -ErrorAction SilentlyContinue
+
+$lv1 = [guid]::NewGuid().ToString()
+$lv1File = Join-Path $dataDir "$lv1.json"
+@{
+    id = $lv1; created = '2020-01-01T00:00:00Z'; expires_secrets = '2020-06-01T00:00:00Z'
+    delete_after_days = 3650; max_views = 15; current_views = 0; status = 'active'
+    password_hash = $null; total_sections = 1; view_log = @()
+    sections = @(@{ content = 'LEGACY-V1-PLAINTEXT'; secret = $true })
+} | ConvertTo-Json -Depth 5 | Set-Content $lv1File -Encoding UTF8
+$g = GetPage (ViewUrl $lv1)
+chk "v1 wygasly: tresc NIE trafia do przegladarki" ($g.text -notmatch 'LEGACY-V1-PLAINTEXT')
+chk "v1 wygasly: sections FIZYCZNIE skasowane z pliku" ($null -eq (Field $lv1File 'sections'))
+Remove-Item $lv1File -Force -ErrorAction SilentlyContinue
+
+# ===== bramka hasla: throttling nieudanych prob (per IP) =====
+Write-Host ""
+Write-Host "-- bramka hasla: rate-limit prob --"
+Remove-Item (Join-Path $dataDir '_ratelimit') -Recurse -Force -ErrorAction SilentlyContinue
+$limFileP = Join-Path $dataDir '_limits.json'
+'{ "pwd": 2 }' | Set-Content $limFileP -Encoding UTF8
+# rekord v3 z haslem (verifier = sha256(auth_tag))
+$pwTag = 'b' * 64
+$pwSha = (Get-FileHash -InputStream ([IO.MemoryStream]::new([Text.Encoding]::UTF8.GetBytes($pwTag))) -Algorithm SHA256).Hash.ToLower()
+$pwUuid = [guid]::NewGuid().ToString()
+$pwFile = Join-Path $dataDir "$pwUuid.json"
+@{
+    id = $pwUuid; created = '2026-01-01T00:00:00Z'; expires_secrets = '2036-01-01T00:00:00Z'
+    delete_after_days = 30; max_views = 15; current_views = 0; status = 'active'
+    format = 3; kdf = @{ alg = 'PBKDF2-SHA256'; iter = 600000 }
+    password_hash = $null; password_verifier = $pwSha; total_sections = 1; view_log = @()
+    encrypted_text = (b64 'PWD-GATE-TEXT'); encrypted_secrets = $null
+} | ConvertTo-Json -Depth 5 | Set-Content $pwFile -Encoding UTF8
+
+$bad = @{ auth_tag = ('a' * 64) }
+$r1 = PostForm (ViewUrl $pwUuid) $bad
+$r2 = PostForm (ViewUrl $pwUuid) $bad
+chk "pwd-rate: 2 zle proby -> formularz z bledem (jeszcze nie blokada)" ($r2.text -match 'pwdForm')
+$r3 = PostForm (ViewUrl $pwUuid) $bad
+chk "pwd-rate: 3. proba nad progiem=2 -> komunikat o zbyt wielu probach" ($r3.text -match 'Zbyt wiele|Too many')
+chk "pwd-rate: zle proby NIE spalily wyswietlenia" ((Views $pwFile) -eq 0)
+# nad progiem nawet POPRAWNY tag jest odrzucany (throttle dziala przed weryfikacja)
+$r4 = PostForm (ViewUrl $pwUuid) @{ auth_tag = $pwTag }
+chk "pwd-rate: nad progiem nawet dobry tag nie otwiera (brak ENC_TEXT)" ($r4.text -notmatch 'PWD-GATE-TEXT')
+# po wyczyszczeniu bucketu poprawny tag otwiera - czyli blokada jest czasowa, nie trwala
+Remove-Item (Join-Path $dataDir '_ratelimit') -Recurse -Force -ErrorAction SilentlyContinue
+$r5 = PostForm (ViewUrl $pwUuid) @{ auth_tag = $pwTag }
+chk "pwd-rate: po zwolnieniu limitu dobry tag otwiera link" ($r5.text -match 'ENC_TEXT')
+chk "pwd-rate: udane otwarcie policzylo wyswietlenie" ((Views $pwFile) -eq 1)
+Remove-Item $pwFile -Force -ErrorAction SilentlyContinue
+Remove-Item $limFileP -Force -ErrorAction SilentlyContinue
+Remove-Item (Join-Path $dataDir '_ratelimit') -Recurse -Force -ErrorAction SilentlyContinue
+
 # ===== rate-limit 429 =====
 Write-Host ""
 Write-Host "-- rate-limit 429 --"

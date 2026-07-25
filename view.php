@@ -13,6 +13,8 @@ require_once __DIR__ . '/inc/config.php';
 require_once __DIR__ . '/inc/i18n.php';
 require_once __DIR__ . '/inc/logo.php';
 require_once __DIR__ . '/inc/icons.php';
+require_once __DIR__ . '/inc/ratelimit.php';
+require_once __DIR__ . '/inc/util.php';   // save_locked()
 
 $lang = detect_lang();
 $t = get_strings($lang);
@@ -45,19 +47,14 @@ if (!is_array($data)) {
     exit;
 }
 
-// Zapis danych pod trzymanym lockiem (nadpisanie w miejscu).
-function save_locked($fp, array $data): void {
-    $json = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-    rewind($fp);
-    ftruncate($fp, 0);
-    fwrite($fp, $json);
-    fflush($fp);
-}
-
 // --- HASLO ---
 // v3 (password_verifier): bramka na auth_tag policzonym w przegladarce
 //     (PBKDF2 z hasla + hexKey -> HKDF "bb3-auth"). Serwer NIGDY nie widzi hasla.
 // v2 (password_hash): legacy bramka plaintext POST - bez zmian az stare linki wygasna.
+// Throttling NIEUDANYCH prob per IP (nie per uuid - inaczej ktokolwiek zna link
+// moglby go zaryglowac odbiorcy). Poprawne haslo nie zjada budzetu.
+$clientIp = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+
 if (!empty($data['password_verifier'])) {
     $submittedTag = $_POST['auth_tag'] ?? null;
     if ($submittedTag === null || $submittedTag === '') {
@@ -65,9 +62,16 @@ if (!empty($data['password_verifier'])) {
         show_password_form_v3($t, $slug, $data);
         exit;
     }
+    if (pwd_rate_blocked($clientIp)) {
+        fclose($fp);
+        http_response_code(429);
+        show_password_form_v3($t, $slug, $data, false, true);
+        exit;
+    }
     if (!is_string($submittedTag)
         || !preg_match('/^[0-9a-f]{64}$/', $submittedTag)
         || !hash_equals($data['password_verifier'], hash('sha256', $submittedTag))) {
+        pwd_rate_fail($clientIp);
         fclose($fp);
         show_password_form_v3($t, $slug, $data, true);
         exit;
@@ -79,7 +83,16 @@ if (!empty($data['password_verifier'])) {
         show_password_form($t, $slug);
         exit;
     }
+    // Sprawdzenie PRZED password_verify: bcrypt to ~100 ms CPU serwera na probe,
+    // wiec throttling jest tu tez ochrona przed CPU-DoS.
+    if (pwd_rate_blocked($clientIp)) {
+        fclose($fp);
+        http_response_code(429);
+        show_password_form($t, $slug, false, true);
+        exit;
+    }
     if (!password_verify($submittedPassword, $data['password_hash'])) {
+        pwd_rate_fail($clientIp);
         fclose($fp);
         show_password_form($t, $slug, true);
         exit;
@@ -132,6 +145,23 @@ if ($secretsExpired && isset($data['encrypted_secrets'])) {
     $needSave = true;
 }
 
+// LEGACY v2/v1: jeden wspolny blob, wiec serwer nie umie wyciac z niego samych
+// sekretow bez klucza. Dawniej po wygasnieciu blob nadal szedl do przegladarki,
+// a maskowanie robil TYLKO JS - kto mial link z kluczem, odczytywal "wygaszone"
+// dane z devtools. Teraz wygasniecie kasuje caly ciphertext, zgodnie z obietnica
+// fizycznego usuwania. Rekord zostaje jako martwy (widok "link wygasl").
+if ($secretsExpired) {
+    foreach (['encrypted_payload', 'sections'] as $legacyField) {
+        if (isset($data[$legacyField])) {
+            $data[$legacyField] = null;
+            $needSave = true;
+        }
+    }
+    if ($needSave && !isset($data['_secrets_expired_at'])) {
+        $data['_secrets_expired_at'] = $now;
+    }
+}
+
 // --- LOGUJ WYŚWIETLENIE (tylko aktywne sekrety) ---
 // Zachowaj sekrety dla ostatniego wyświetlenia (zanim zostaną skasowane z pliku)
 $lastViewSecrets = $data['encrypted_secrets'] ?? null;
@@ -165,6 +195,8 @@ if ($needSave) {
 fclose($fp); // zwolnij lock przed renderowaniem strony
 
 // --- BACKWARD COMPAT: stary format (encrypted_payload lub sections) ---
+// UWAGA: isset() na null daje false, wiec legacy wyzerowany wyzej po wygasnieciu
+// NIE wchodzi w te galezie - spada nizej i konczy na show_expired(). Celowe.
 if (isset($data['encrypted_payload'])) {
     // stary format v2: jeden blob → nie obsługuje dwustopniowego wygasania
     show_view_encrypted_v2($t, $data, $data['encrypted_payload'], $secretsExpired);
@@ -235,7 +267,7 @@ function bb_page_art(): void {
     <?php
 }
 
-function show_password_form(array $t, string $slug, bool $wrongPassword = false): void {
+function show_password_form(array $t, string $slug, bool $wrongPassword = false, bool $tooMany = false): void {
     ?><!DOCTYPE html>
 <html lang="<?= detect_lang() ?>">
 <head>
@@ -282,7 +314,9 @@ function show_password_form(array $t, string $slug, bool $wrongPassword = false)
         <form method="POST" action="/<?= htmlspecialchars($slug) ?>" id="pwdForm">
             <input type="password" name="password" class="pwd-input" placeholder="<?= htmlspecialchars($t['password_placeholder'] ?? 'Enter password') ?>" autofocus required>
             <button type="submit" class="pwd-btn"><?= htmlspecialchars($t['password_submit'] ?? 'Open') ?></button>
-            <?php if ($wrongPassword): ?>
+            <?php if ($tooMany): ?>
+            <div class="error"><?= htmlspecialchars($t['password_too_many']) ?></div>
+            <?php elseif ($wrongPassword): ?>
             <div class="error"><?= htmlspecialchars($t['password_wrong'] ?? 'Wrong password') ?></div>
             <?php endif; ?>
         </form>
@@ -306,7 +340,7 @@ function show_password_form(array $t, string $slug, bool $wrongPassword = false)
  * Formularz hasła v3: KDF liczy się w przeglądarce, do serwera idzie tylko auth_tag.
  * Wygląd 1:1 z show_password_form (v2), różnice są wyłącznie w transporcie.
  */
-function show_password_form_v3(array $t, string $slug, array $data, bool $wrongPassword = false): void {
+function show_password_form_v3(array $t, string $slug, array $data, bool $wrongPassword = false, bool $tooMany = false): void {
     $iter = (int)($data['kdf']['iter'] ?? 600000);
     ?><!DOCTYPE html>
 <html lang="<?= detect_lang() ?>">
@@ -357,7 +391,9 @@ function show_password_form_v3(array $t, string $slug, array $data, bool $wrongP
             <input type="password" id="pwdInput" class="pwd-input" placeholder="<?= htmlspecialchars($t['password_placeholder'] ?? 'Enter password') ?>" autofocus required>
             <input type="hidden" name="auth_tag" id="authTag" value="">
             <button type="submit" class="pwd-btn" id="pwdBtn"><?= htmlspecialchars($t['password_submit'] ?? 'Open') ?></button>
-            <?php if ($wrongPassword): ?>
+            <?php if ($tooMany): ?>
+            <div class="error"><?= htmlspecialchars($t['password_too_many']) ?></div>
+            <?php elseif ($wrongPassword): ?>
             <div class="error"><?= htmlspecialchars($t['password_wrong'] ?? 'Wrong password') ?></div>
             <?php endif; ?>
             <div class="error" id="jsError" style="display:none;"></div>
@@ -742,29 +778,88 @@ function view_meta_html(array $t, array $data, bool $expired): string {
     return $html;
 }
 
+// Teksty z i18n, nie zaszyte per jezyk - inaczej zmiana noty licencyjnej albo
+// taglinu w inc/i18n.php omija ten widok i stopki rozjezdzaja sie miedzy stronami.
 function view_footer_html(): string {
-    $lang = detect_lang();
+    $t = get_strings(detect_lang());
     $s = '<span class="sep">|</span>';
-    if ($lang === 'pl') {
-        return '<div class="site-footer">'
-            . '<a href="https://bitback.pl" target="_blank" rel="noopener"><strong>bitback.pl</strong></a>'
-            . $s . 'Zabezpieczamy pocztę, serwery i komputery'
-            . $s . 'Zbigniew Gralewski'
-            . $s . '<a href="mailto:zbigniew.gralewski@bitback.pl">zbigniew.gralewski@bitback.pl</a>'
-            . $s . '609 505 065'
-            . $s . 'Kod źródłowy na <a href="https://github.com/bitback/bitback.one" target="_blank" rel="noopener">GitHub</a>'
-            . $s . '<strong style="color:var(--bb-accent-link);">Użycie komercyjne wymaga licencji</strong>'
-            . '</div>';
-    }
     return '<div class="site-footer">'
         . '<a href="https://bitback.pl" target="_blank" rel="noopener"><strong>bitback.pl</strong></a>'
-        . $s . 'We secure email, servers and computers'
+        . $s . htmlspecialchars($t['footer_tagline'])
         . $s . 'Zbigniew Gralewski'
         . $s . '<a href="mailto:zbigniew.gralewski@bitback.pl">zbigniew.gralewski@bitback.pl</a>'
         . $s . '609 505 065'
-        . $s . 'Source code on <a href="https://github.com/bitback/bitback.one" target="_blank" rel="noopener">GitHub</a>'
-        . $s . '<strong style="color:var(--bb-accent-link);">Commercial use requires a license</strong>'
+        . $s . htmlspecialchars($t['footer_source']) . ' <a href="https://github.com/bitback/bitback.one" target="_blank" rel="noopener">GitHub</a>'
+        . $s . '<strong style="color:var(--bb-accent-link);">' . htmlspecialchars($t['footer_commercial']) . '</strong>'
         . '</div>';
+}
+
+/**
+ * Wspolne helpery JS dla WSZYSTKICH trzech widokow (v3 / v2 / legacy).
+ * Wczesniej expireNow bylo skopiowane 3x, a escapeHtml+linkify 2x - kontrakt
+ * /api/expire.php i escapowanie tresci musza byc identyczne wszedzie, wiec
+ * rozjazd kopii przy poprawce w jednym miejscu bylby realnym ryzykiem.
+ * Deklaracje funkcji (nie const) - onclick="expireNow(...)" wymaga globalnego scope.
+ */
+function view_common_js(): string {
+    return <<<'JS'
+    function escapeHtml(str) {
+        const d = document.createElement('div');
+        d.textContent = str;
+        return d.innerHTML;
+    }
+
+    function linkify(escapedHtml) {
+        // Regex na escaped HTML - URL moze zawierac &amp; (escaped &).
+        // Klasa znakow wyklucza < > ' " wiec nie da sie wyjsc z atrybutu href.
+        return escapedHtml.replace(
+            /https?:\/\/[^\s<>'"]+/g,
+            function(match) {
+                return '<a href="' + match + '" target="_blank" rel="noopener" style="color:var(--bb-accent-link);">' + match + '</a>';
+            }
+        );
+    }
+
+    async function expireNow(btn, action) {
+        var wrap = document.getElementById('expireConfirmWrap');
+        var cb = document.getElementById('expireConfirmCb');
+        if (!cb.checked) {
+            wrap.classList.remove('shake');
+            void wrap.offsetWidth;
+            wrap.classList.add('shake');
+            return;
+        }
+        // Wylacz oba przyciski
+        document.querySelectorAll('.expire-now-btn').forEach(function(b) { b.disabled = true; });
+        cb.disabled = true;
+        btn.textContent = '...';
+        const ctrl = new AbortController();
+        const timer = setTimeout(function() { ctrl.abort(); }, 15000);
+        try {
+            const resp = await fetch('/api/expire.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                signal: ctrl.signal,
+                body: JSON.stringify({ uuid: btn.dataset.uuid, action: action || 'expire' }),
+            });
+            clearTimeout(timer);
+            const result = await resp.json();
+            if (result.ok) {
+                btn.textContent = '✓ ' + btn.dataset.success;
+                btn.classList.add('done');
+                setTimeout(function() { location.reload(); }, 1500);
+            } else {
+                btn.textContent = btn.dataset.error;
+                document.querySelectorAll('.expire-now-btn').forEach(function(b) { b.disabled = false; });
+                cb.disabled = false;
+            }
+        } catch (e) {
+            btn.textContent = btn.dataset.error;
+            document.querySelectorAll('.expire-now-btn').forEach(function(b) { b.disabled = false; });
+            cb.disabled = false;
+        }
+    }
+JS;
 }
 
 /**
@@ -1025,61 +1120,7 @@ function show_view_encrypted(array $t, array $data, string $encText, ?string $en
         contentBox.innerHTML = html;
     }
 
-    function linkify(escapedHtml) {
-        // Regex na escaped HTML — URL może zawierać &amp; (escaped &)
-        return escapedHtml.replace(
-            /https?:\/\/[^\s<>'"]+/g,
-            function(match) {
-                return '<a href="' + match + '" target="_blank" rel="noopener" style="color:var(--bb-accent-link);">' + match + '</a>';
-            }
-        );
-    }
-
-    function escapeHtml(str) {
-        const d = document.createElement('div');
-        d.textContent = str;
-        return d.innerHTML;
-    }
-
-    async function expireNow(btn, action) {
-        var wrap = document.getElementById('expireConfirmWrap');
-        var cb = document.getElementById('expireConfirmCb');
-        if (!cb.checked) {
-            wrap.classList.remove('shake');
-            void wrap.offsetWidth;
-            wrap.classList.add('shake');
-            return;
-        }
-        // Wyłącz oba przyciski
-        document.querySelectorAll('.expire-now-btn').forEach(function(b) { b.disabled = true; });
-        cb.disabled = true;
-        btn.textContent = '...';
-        const ctrl = new AbortController();
-        const timer = setTimeout(function() { ctrl.abort(); }, 15000);
-        try {
-            const resp = await fetch('/api/expire.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                signal: ctrl.signal,
-                body: JSON.stringify({ uuid: btn.dataset.uuid, action: action || 'expire' }),
-            });
-            clearTimeout(timer);
-            const result = await resp.json();
-            if (result.ok) {
-                btn.textContent = '\u2713 ' + btn.dataset.success;
-                btn.classList.add('done');
-                setTimeout(function() { location.reload(); }, 1500);
-            } else {
-                btn.textContent = btn.dataset.error;
-                document.querySelectorAll('.expire-now-btn').forEach(function(b) { b.disabled = false; });
-                cb.disabled = false;
-            }
-        } catch (e) {
-            btn.textContent = btn.dataset.error;
-            document.querySelectorAll('.expire-now-btn').forEach(function(b) { b.disabled = false; });
-            cb.disabled = false;
-        }
-    }
+<?= view_common_js() ?>
     </script>
 </body>
 </html><?php
@@ -1167,28 +1208,7 @@ function show_view_encrypted_v2(array $t, array $data, string $encryptedPayload,
             errorBox.style.display = 'block';
         }
     })();
-    function escapeHtml(str) { const d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
-    function linkify(escapedHtml) {
-        return escapedHtml.replace(/https?:\/\/[^\s<>'"]+/g, function(m) {
-            return '<a href="' + m + '" target="_blank" rel="noopener" style="color:var(--bb-accent-link);">' + m + '</a>';
-        });
-    }
-    async function expireNow(btn, action) {
-        var wrap = document.getElementById('expireConfirmWrap');
-        var cb = document.getElementById('expireConfirmCb');
-        if (!cb.checked) { wrap.classList.remove('shake'); void wrap.offsetWidth; wrap.classList.add('shake'); return; }
-        document.querySelectorAll('.expire-now-btn').forEach(b => b.disabled = true);
-        cb.disabled = true; btn.textContent = '...';
-        const ctrl = new AbortController();
-        const timer = setTimeout(() => ctrl.abort(), 15000);
-        try {
-            const r = await fetch('/api/expire.php', { method: 'POST', headers: {'Content-Type':'application/json'}, signal: ctrl.signal, body: JSON.stringify({uuid: btn.dataset.uuid, action: action || 'expire'}) });
-            clearTimeout(timer);
-            const j = await r.json();
-            if (j.ok) { btn.textContent = '\u2713 ' + btn.dataset.success; btn.classList.add('done'); setTimeout(()=>location.reload(), 1500); }
-            else { btn.textContent = btn.dataset.error; document.querySelectorAll('.expire-now-btn').forEach(b => b.disabled = false); cb.disabled = false; }
-        } catch(e) { btn.textContent = btn.dataset.error; document.querySelectorAll('.expire-now-btn').forEach(b => b.disabled = false); cb.disabled = false; }
-    }
+<?= view_common_js() ?>
     </script>
 </body>
 </html><?php
@@ -1246,22 +1266,7 @@ function show_view_legacy(array $t, array $data, array $sections, bool $expired)
     </div>
     <?= view_footer_html() ?>
     <script>
-    async function expireNow(btn, action) {
-        var wrap = document.getElementById('expireConfirmWrap');
-        var cb = document.getElementById('expireConfirmCb');
-        if (!cb.checked) { wrap.classList.remove('shake'); void wrap.offsetWidth; wrap.classList.add('shake'); return; }
-        document.querySelectorAll('.expire-now-btn').forEach(b => b.disabled = true);
-        cb.disabled = true; btn.textContent = '...';
-        const ctrl = new AbortController();
-        const timer = setTimeout(() => ctrl.abort(), 15000);
-        try {
-            const r = await fetch('/api/expire.php', { method: 'POST', headers: {'Content-Type':'application/json'}, signal: ctrl.signal, body: JSON.stringify({uuid: btn.dataset.uuid, action: action || 'expire'}) });
-            clearTimeout(timer);
-            const j = await r.json();
-            if (j.ok) { btn.textContent = '\u2713 ' + btn.dataset.success; btn.classList.add('done'); setTimeout(()=>location.reload(), 1500); }
-            else { btn.textContent = btn.dataset.error; document.querySelectorAll('.expire-now-btn').forEach(b => b.disabled = false); cb.disabled = false; }
-        } catch(e) { btn.textContent = btn.dataset.error; document.querySelectorAll('.expire-now-btn').forEach(b => b.disabled = false); cb.disabled = false; }
-    }
+<?= view_common_js() ?>
     </script>
 </body>
 </html><?php

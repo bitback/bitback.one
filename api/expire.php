@@ -13,6 +13,7 @@
 header('Content-Type: application/json; charset=utf-8');
 
 require_once __DIR__ . '/../inc/config.php';
+require_once __DIR__ . '/../inc/util.php';   // save_locked()
 
 // tylko POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -61,14 +62,6 @@ if (!is_array($data)) {
     http_response_code(500);
     echo json_encode(['error' => 'Read error']);
     exit;
-}
-
-function save_locked($fp, array $data): void {
-    $json = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-    rewind($fp);
-    ftruncate($fp, 0);
-    fwrite($fp, $json);
-    fflush($fp);
 }
 
 $manualDate = gmdate('Y-m-d\TH:i:s\Z');

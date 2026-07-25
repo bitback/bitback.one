@@ -17,25 +17,10 @@ require_once __DIR__ . '/../inc/ratelimit.php';
 require_once __DIR__ . '/../inc/antibot.php';
 require_once __DIR__ . '/../inc/apiauth.php';
 require_once __DIR__ . '/../inc/harden.php';
+require_once __DIR__ . '/../inc/util.php';   // safe_host(), request_scheme()
 
 // Upewnij sie ze katalogi runtime maja aktualna blokade WWW (self-healing).
 harden_runtime_dirs();
-
-/**
- * Host do generowanych URL-i. HTTP_HOST jest kontrolowany przez klienta
- * (header injection / phishing) - przyjmujemy tylko poprawny hostname[:port],
- * inaczej fallback do SERVER_NAME. APP_HOST w config.php wymusza na sztywno.
- */
-function safe_host(): string {
-    if (defined('APP_HOST') && APP_HOST !== '') {
-        return APP_HOST;
-    }
-    $host = $_SERVER['HTTP_HOST'] ?? '';
-    if (preg_match('/^[a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?(:\d{1,5})?$/', $host)) {
-        return $host;
-    }
-    return $_SERVER['SERVER_NAME'] ?? 'localhost';
-}
 
 // tylko POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -74,7 +59,7 @@ if ($api['present']) {
         // cichy sukces dla bota. Ksztalt odpowiedzi 1:1 z realnym sukcesem (ok:true+url) -
         // inaczej bot fingerprintuje honeypot po braku 'ok', a legalny user z autofillem
         // ukrytego pola dostaje w kliencie result.ok=undefined -> falszywy "blad serwera".
-        $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+        $scheme = request_scheme();
         echo json_encode(['ok' => true, 'url' => $scheme . '://' . safe_host() . '/ok']);
         exit;
     }
@@ -194,7 +179,7 @@ $file = DATA_DIR . '/' . $uuid . '.json';
 file_put_contents($file, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE), LOCK_EX);
 
 // --- ZWROT URL (bez klucza! klucz dodaje przeglądarka jako #fragment) ---
-$scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+$scheme = request_scheme();
 $url = $scheme . '://' . safe_host() . '/' . $uuid;
 
 echo json_encode([

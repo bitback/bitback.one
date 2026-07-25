@@ -41,6 +41,16 @@ foreach (glob(DATA_DIR . '/*.json') as $file) {
         $needSave = true;
     }
 
+    // LEGACY v2/v1 (jeden wspolny blob): po wygasnieciu kasujemy caly ciphertext -
+    // nie da sie z niego wyciac samych sekretow bez klucza, a serwowanie go dalej
+    // czynilo maskowanie pozornym. Tak samo jak w view.php.
+    foreach (['encrypted_payload', 'sections'] as $legacyField) {
+        if (isset($data[$legacyField])) {
+            $data[$legacyField] = null;
+            $needSave = true;
+        }
+    }
+
     $deleteDays = $data['delete_after_days'] ?? 30;
 
     // natychmiastowe usunięcie

@@ -36,6 +36,8 @@ if ($bbTestDir !== false && $bbTestDir !== '') {
     define('RATE_LIMIT_MAX', is_array($lim) && isset($lim['single']) ? (int)$lim['single'] : 100000);
     define('RATE_LIMIT_BATCH_MAX', is_array($lim) && isset($lim['batch']) ? (int)$lim['batch'] : 100000);
     define('API_RATE_MAX', is_array($lim) && isset($lim['api']) ? (int)$lim['api'] : 100000);
+    // Bramka hasla: prog nieudanych prob per IP (test 'pwd' obniza go do 2).
+    define('PWD_RATE_MAX', is_array($lim) && isset($lim['pwd']) ? (int)$lim['pwd'] : 100000);
     // Duze okno: inaczej lokalny config (15 s) wygaszalby wpisy w trakcie suite
     // i test 429 bylby niedeterministyczny (raz liczy, raz nie).
     define('RATE_LIMIT_WINDOW', 86400);

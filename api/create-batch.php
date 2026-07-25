@@ -24,20 +24,9 @@ require_once __DIR__ . '/../inc/ratelimit.php';
 require_once __DIR__ . '/../inc/antibot.php';
 require_once __DIR__ . '/../inc/apiauth.php';
 require_once __DIR__ . '/../inc/harden.php';
+require_once __DIR__ . '/../inc/util.php';   // safe_host(), request_scheme()
 
 harden_runtime_dirs();
-
-// Host do generowanych URL-i - kopia 1:1 z api/create.php (header injection guard).
-function safe_host(): string {
-    if (defined('APP_HOST') && APP_HOST !== '') {
-        return APP_HOST;
-    }
-    $host = $_SERVER['HTTP_HOST'] ?? '';
-    if (preg_match('/^[a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?(:\d{1,5})?$/', $host)) {
-        return $host;
-    }
-    return $_SERVER['SERVER_NAME'] ?? 'localhost';
-}
 
 $maxRecords = defined('BATCH_MAX_RECORDS') ? BATCH_MAX_RECORDS : 200;
 $maxTotal   = defined('BATCH_MAX_TOTAL_BYTES') ? BATCH_MAX_TOTAL_BYTES : 8 * 1024 * 1024;
@@ -58,7 +47,7 @@ if (!$input) {
 
 $records = $input['records'] ?? null;
 $n = is_array($records) ? count($records) : 0;
-$scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+$scheme = request_scheme();
 
 // --- AUTORYZACJA: token API (integrator) vs przegladarka ---
 $api = api_auth();
