@@ -30,7 +30,10 @@ security-audit/
 browser.php
 
 # === Design bundle (referencyjny, nie produkcyjny) ===
-_new_design/
+# Wzorzec, nie pojedynczy folder: kolejne iteracje designu dostaja wlasny katalog
+# (_new_design01, _new_design_<data>). Repo jest publiczne, a X: to web root -
+# mockupy i PNG-i nie moga tam trafic.
+_new_design*/
 
 # === Env ===
 .env
