@@ -14,7 +14,8 @@ require_once __DIR__ . '/inc/i18n.php';
 require_once __DIR__ . '/inc/logo.php';
 require_once __DIR__ . '/inc/icons.php';
 require_once __DIR__ . '/inc/ratelimit.php';
-require_once __DIR__ . '/inc/util.php';   // save_locked()
+require_once __DIR__ . '/inc/util.php';    // save_locked()
+require_once __DIR__ . '/inc/assets.php'; // asset_css()
 
 $lang = detect_lang();
 $t = get_strings($lang);
@@ -275,8 +276,7 @@ function og_view_meta(array $t): void {
     <meta name="twitter:title" content="<?= htmlspecialchars($t['og_view_title']) ?>">
     <meta name="twitter:description" content="<?= htmlspecialchars($t['og_view_description']) ?>">
     <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="/assets/fonts.css?v=<?= filemtime(__DIR__ . '/assets/fonts.css') ?>">
-    <link rel="stylesheet" href="/assets/tokens.css?v=<?= filemtime(__DIR__ . '/assets/tokens.css') ?>">
+    <?= asset_css('assets/fonts.css', 'assets/tokens.css') ?>
     <?php
 }
 
@@ -297,36 +297,7 @@ function show_password_form(array $t, string $slug, bool $wrongPassword = false,
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($t['title']) ?></title>
     <?php og_view_meta($t); ?>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: var(--bb-font-sans);
-            background: var(--bb-bg); color: var(--bb-fg-1);
-            min-height: 100vh; display: flex; align-items: center; justify-content: center;
-        }
-        .box { text-align: center; padding: 2rem; width: 100%; max-width: 380px; }
-        h1 { font-size: 1.4rem; font-weight: 300; color: var(--bb-fg); margin-bottom: 0.3rem; }
-        .sub { color: var(--bb-fg-3); font-size: 0.88rem; margin-bottom: 1.5rem; }
-        .pwd-input {
-            width: 100%; padding: 0.65rem 0.85rem;
-            background: var(--bb-surface-sunk); border: 1px solid var(--bb-border-mid); border-radius: 8px;
-            color: var(--bb-fg); font-size: 0.95rem; outline: none; text-align: center;
-            font-family: var(--bb-font-mono);
-        }
-        .pwd-input:focus { border-color: var(--bb-accent); box-shadow: 0 0 0 3px rgba(61, 130, 232, 0.15); }
-        /* FLAT solid blue */
-        .pwd-btn {
-            width: 100%; padding: 0.7rem; margin-top: 0.7rem;
-            border-radius: 8px; border: none;
-            background: var(--bb-accent);
-            color: #fff; font-size: 0.92rem; font-weight: 700;
-            cursor: pointer; transition: background 140ms var(--bb-ease), transform 140ms var(--bb-ease);
-        }
-        .pwd-btn:hover { background: var(--bb-accent-hover); transform: translateY(-1px); }
-        .pwd-btn:active { background: var(--bb-accent-press); transform: translateY(0); }
-        .error { color: var(--bb-danger-light); font-size: 0.84rem; margin-top: 0.5rem; }
-        .logo { color: var(--bb-fg-7); font-size: 0.75rem; margin-top: 2rem; letter-spacing: 0.1em; }
-    </style>
+    <?= asset_css('assets/css/gate.css') ?>
 </head>
 <body>
     <?php bb_page_art(); ?>
@@ -371,37 +342,7 @@ function show_password_form_v3(array $t, string $slug, array $data, bool $wrongP
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($t['title']) ?></title>
     <?php og_view_meta($t); ?>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: var(--bb-font-sans);
-            background: var(--bb-bg); color: var(--bb-fg-1);
-            min-height: 100vh; display: flex; align-items: center; justify-content: center;
-        }
-        .box { text-align: center; padding: 2rem; width: 100%; max-width: 380px; }
-        h1 { font-size: 1.4rem; font-weight: 300; color: var(--bb-fg); margin-bottom: 0.3rem; }
-        .sub { color: var(--bb-fg-3); font-size: 0.88rem; margin-bottom: 1.5rem; }
-        .pwd-input {
-            width: 100%; padding: 0.65rem 0.85rem;
-            background: var(--bb-surface-sunk); border: 1px solid var(--bb-border-mid); border-radius: 8px;
-            color: var(--bb-fg); font-size: 0.95rem; outline: none; text-align: center;
-            font-family: var(--bb-font-mono);
-        }
-        .pwd-input:focus { border-color: var(--bb-accent); box-shadow: 0 0 0 3px rgba(61, 130, 232, 0.15); }
-        /* FLAT solid blue */
-        .pwd-btn {
-            width: 100%; padding: 0.7rem; margin-top: 0.7rem;
-            border-radius: 8px; border: none;
-            background: var(--bb-accent);
-            color: #fff; font-size: 0.92rem; font-weight: 700;
-            cursor: pointer; transition: background 140ms var(--bb-ease), transform 140ms var(--bb-ease);
-        }
-        .pwd-btn:hover { background: var(--bb-accent-hover); transform: translateY(-1px); }
-        .pwd-btn:active { background: var(--bb-accent-press); transform: translateY(0); }
-        .pwd-btn:disabled { opacity: 0.7; cursor: default; transform: none; }
-        .error { color: var(--bb-danger-light); font-size: 0.84rem; margin-top: 0.5rem; }
-        .logo { color: var(--bb-fg-7); font-size: 0.75rem; margin-top: 2rem; letter-spacing: 0.1em; }
-    </style>
+    <?= asset_css('assets/css/gate.css') ?>
 </head>
 <body>
     <?php bb_page_art(); ?>
@@ -477,44 +418,7 @@ function show_not_found(array $t): void {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>404 — <?= htmlspecialchars($t['title']) ?></title>
     <?php og_view_meta($t); ?>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: var(--bb-font-sans);
-            background: var(--bb-bg); color: var(--bb-fg-1);
-            min-height: 100vh; display: flex; align-items: center; justify-content: center;
-            padding-bottom: 2.5rem;
-        }
-        .box { text-align: center; padding: 2rem; max-width: 500px; }
-        .ghost {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-            animation: float 3s ease-in-out infinite;
-        }
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-12px); }
-        }
-        .code {
-            font-size: 3.5rem;
-            font-weight: 200;
-            color: var(--bb-fg-7);
-            letter-spacing: 0.15em;
-            margin-bottom: 0.5rem;
-        }
-        h1 { font-size: 1.2rem; font-weight: 400; color: var(--bb-fg-4); margin-bottom: 0.8rem; }
-        .sub { color: var(--bb-fg-6); font-size: 0.82rem; line-height: 1.6; margin-bottom: 0.5rem; }
-        .hint { color: var(--bb-fg-7); font-size: 0.72rem; margin-top: 1rem; }
-        .hint code { color: var(--bb-secret); background: #1a1a0a; padding: 0.1em 0.3em; border-radius: 3px; }
-        .home-link {
-            display: inline-block; margin-top: 1.5rem;
-            padding: 0.5rem 1.2rem; border-radius: 6px;
-            border: 1px solid var(--bb-border); background: var(--bb-surface-1);
-            color: var(--bb-accent-link); text-decoration: none; font-size: 0.8rem;
-            transition: background 0.15s;
-        }
-        .home-link:hover { background: var(--bb-surface-2); }
-    </style>
+    <?= asset_css('assets/css/notfound.css') ?>
 </head>
 <body>
     <?php bb_page_art(); ?>
@@ -558,19 +462,7 @@ function show_expired(array $t, ?string $killedAt = null, ?string $expiredManual
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($t['link_expired']) ?> — <?= htmlspecialchars($t['title']) ?></title>
     <?php og_view_meta($t); ?>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: var(--bb-font-sans);
-            background: var(--bb-bg); color: var(--bb-fg-1);
-            min-height: 100vh; display: flex; align-items: center; justify-content: center;
-        }
-        .box { text-align: center; padding: 2rem; }
-        h1 { font-size: 1.4rem; font-weight: 300; color: var(--bb-fg); margin-bottom: 0.5rem; }
-        p { color: var(--bb-fg-5); font-size: 0.85rem; }
-        .manual-info { color: var(--bb-secret-ink); font-size: 0.8rem; margin-top: 0.5rem; }
-        .logo { color: var(--bb-fg-7); font-size: 0.75rem; margin-top: 2rem; letter-spacing: 0.1em; }
-    </style>
+    <?= asset_css('assets/css/expired.css') ?>
 </head>
 <body>
     <?php bb_page_art(); ?>
@@ -589,81 +481,6 @@ function show_expired(array $t, ?string $killedAt = null, ?string $expiredManual
 </body>
 </html><?php
     exit;
-}
-
-// === CSS wspólne dla widoku ===
-function view_css(): string {
-    return '
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: var(--bb-font-sans); background: var(--bb-bg); color: var(--bb-fg-1); min-height: 100vh; padding-bottom: 2.5rem; }
-        .header { text-align: center; padding: 2rem 1rem 1.5rem; }
-        .header h1 { font-size: 1.4rem; font-weight: 300; letter-spacing: 0.08em; color: var(--bb-fg); }
-        .container { max-width: 700px; margin: 0 auto; padding: 0 1rem 3rem; }
-        .expired-banner { border-radius: 10px; padding: 0.75rem 1rem; margin-bottom: 1rem; font-size: 0.88rem; color: var(--bb-secret); /* background i border z bb-card-secret */ }
-        .error-banner { background: var(--bb-danger-bg); border: 1px solid var(--bb-danger-border); border-radius: 10px; padding: 0.75rem 1rem; margin-bottom: 1rem; font-size: 0.88rem; color: var(--bb-danger-light); }
-        .content-box { background: var(--bb-surface-sunk); border: 1px solid var(--bb-border); border-radius: 10px; padding: 1rem; font-family: var(--bb-font-mono); font-size: 0.95rem; line-height: 1.7; white-space: pre-wrap; word-break: break-word; }
-        .s-text { color: var(--bb-fg-2); }
-        .s-text a { color: var(--bb-accent-link); }
-        .s-secret { background: rgba(212, 146, 42, 0.15); color: var(--bb-secret); border-radius: 3px; padding: 0.05em 0.2em; border-bottom: 2px solid rgba(212, 146, 42, 0.4); }
-        .s-secret a { color: inherit; }
-        .s-masked { background: rgba(100, 100, 100, 0.2); color: var(--bb-fg-5); border-radius: 3px; padding: 0.05em 0.2em; letter-spacing: 0.1em; }
-        .bb-totp-zone { margin-top: 1.2rem; display: flex; flex-direction: column; gap: 1rem; }
-        .bb-totp { border: 1px solid var(--bb-border); background: var(--bb-surface-1); padding: 1rem; display: flex; flex-direction: column; align-items: center; gap: 0.75rem; }
-        .bb-totp-head { font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--bb-fg-4); text-align: center; }
-        .bb-totp-label { font-family: var(--bb-font-mono); font-size: 0.82rem; color: var(--bb-fg-3); text-align: center; word-break: break-all; }
-        .bb-totp-qr { background: #fff; padding: 12px; line-height: 0; }
-        .bb-totp-qr svg { display: block; max-width: 100%; height: auto; shape-rendering: crispEdges; image-rendering: pixelated; }
-        .bb-totp-row { display: flex; align-items: stretch; width: 100%; max-width: 360px; }
-        .bb-totp-secret { flex: 1; font-family: var(--bb-font-mono); font-size: 0.82rem; background: var(--bb-surface-sunk); color: var(--bb-secret); padding: 0.5rem 0.7rem; word-break: break-all; user-select: all; border: 1px solid var(--bb-border); border-right: none; display: flex; align-items: center; }
-        .bb-totp-copy { background: var(--bb-accent); color: #fff; border: none; padding: 0 1rem; font-size: 0.8rem; font-weight: 700; cursor: pointer; white-space: nowrap; transition: background 140ms var(--bb-ease); }
-        .bb-totp-copy:hover { background: var(--bb-accent-hover); }
-        .loading { text-align: center; padding: 2rem; color: var(--bb-fg-5); font-size: 0.85rem; }
-        .loading .spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid var(--bb-fg-7); border-top-color: var(--bb-fg-4); border-radius: 50%; animation: spin 0.6s linear infinite; margin-right: 0.5rem; vertical-align: middle; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .meta { margin-top: 1.2rem; display: flex; justify-content: space-between; align-items: flex-end; gap: 1rem; font-size: 0.8rem; color: var(--bb-fg-5); }
-        .meta-big { font-size: 2rem; font-weight: 300; color: var(--bb-fg-3); line-height: 1; }
-        .meta-big.warn { color: var(--bb-secret); }
-        .meta-sub { font-size: 0.72rem; color: var(--bb-fg-6); margin-top: 0.15rem; }
-        .expire-info { background: var(--bb-surface-1); border: 1px solid var(--bb-border); border-radius: 10px; padding: 0.75rem 1rem; margin-top: 1rem; font-size: 0.84rem; color: var(--bb-fg-5); display: flex; justify-content: space-between; align-items: center; }
-        .expire-info .date { color: var(--bb-fg-3); }
-        .zt-badge { margin-top: 1.5rem; text-align: center; font-size: 0.72rem; color: var(--bb-fg-7); }
-        .zt-badge span { color: var(--bb-fg-6); }
-        .expire-now-wrap { margin-top: 1rem; display: flex; flex-direction: column; align-items: center; gap: 0.6rem; }
-        .expire-now-confirm { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.65rem 1.5rem; border: 1.5px solid transparent; border-radius: 8px; transition: border-color 0.2s; cursor: pointer; font-size: 0.85rem; line-height: 1.2; box-sizing: border-box; }
-        .expire-now-confirm input[type="checkbox"] { accent-color: var(--bb-secret-ink); width: 16px; height: 16px; cursor: pointer; flex-shrink: 0; }
-        .expire-now-confirm label { color: var(--bb-fg-4); font-size: 0.85rem; cursor: pointer; user-select: none; line-height: 1.2; }
-        .expire-now-confirm.shake { border-color: var(--bb-danger); animation: shakeBox 0.4s ease; }
-        @keyframes shakeBox { 0%,100% { transform: translateX(0); } 20%,60% { transform: translateX(-4px); } 40%,80% { transform: translateX(4px); } }
-        /* expire-now: FLAT solid gold (akcja secret) */
-        .expire-now-btn {
-          padding: 0.7rem 1.5rem; border-radius: 8px; border: none;
-          background: var(--bb-secret);
-          color: #2a1d08;
-          font-size: 0.92rem; font-weight: 700; line-height: 1.2; letter-spacing: 0.01em;
-          cursor: pointer; box-sizing: border-box;
-          transition: filter 140ms var(--bb-ease), transform 140ms var(--bb-ease);
-        }
-        .expire-now-btn:hover { filter: brightness(1.07); transform: translateY(-1px); }
-        .expire-now-btn:active { filter: brightness(0.93); transform: translateY(0); }
-        .expire-now-btn:disabled { opacity: 0.4; cursor: default; transform: none; }
-
-        /* done state: FLAT solid green (sukces) */
-        .expire-now-btn.done {
-          background: var(--bb-success);
-          color: var(--bb-success-ink);
-        }
-
-        /* kill variant: FLAT solid red (danger) */
-        .expire-now-btn.kill {
-          background: var(--bb-danger);
-          color: #fff;
-          font-size: 0.84rem; padding: 0.5rem 1.2rem;
-        }
-        .site-footer { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; background: var(--bb-bg); border-top: 1px solid var(--bb-border-soft); padding: 0.5rem 1rem; text-align: center; font-size: 0.8rem; color: var(--bb-fg-5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .site-footer a { color: var(--bb-accent-link); text-decoration: none; }
-        .site-footer a:hover { color: #8abcf0; text-decoration: underline; }
-        .site-footer .sep { color: var(--bb-fg-8); margin: 0 0.5rem; }
-    ';
 }
 
 function view_meta_html(array $t, array $data, bool $expired): string {
@@ -901,7 +718,7 @@ function show_view_encrypted(array $t, array $data, string $encText, ?string $en
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($t['title']) ?></title>
     <?php og_view_meta($t); ?>
-    <style><?= view_css() ?></style>
+    <?= asset_css('assets/css/view.css') ?>
 </head>
 <body>
     <?php bb_page_art(); ?>
@@ -1164,7 +981,7 @@ function show_view_encrypted_v2(array $t, array $data, string $encryptedPayload,
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($t['title']) ?></title>
     <?php og_view_meta($t); ?>
-    <style><?= view_css() ?></style>
+    <?= asset_css('assets/css/view.css') ?>
 </head>
 <body>
     <?php bb_page_art(); ?>
@@ -1257,7 +1074,7 @@ function show_view_legacy(array $t, array $data, array $sections, bool $expired)
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($t['title']) ?></title>
     <?php og_view_meta($t); ?>
-    <style><?= view_css() ?></style>
+    <?= asset_css('assets/css/view.css') ?>
 </head>
 <body>
     <?php bb_page_art(); ?>

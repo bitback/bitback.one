@@ -1,0 +1,101 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: var(--bb-font-sans);
+    background: var(--bb-bg);
+    color: var(--bb-fg-1);
+    min-height: 100vh;
+    padding-bottom: 2.5rem;
+}
+
+/* logo do lewej (z wcieciem), podtytul do prawej - jedna linia
+   wypelnia szerokosc, tresc apki wedruje w gore */
+.header {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.4rem 1.6rem;
+    padding: 1.3rem 2.4rem 1rem;
+}
+.header .bb-logo svg { width: 214px; height: auto; }
+.header h1 {
+    font-size: 1.6rem;
+    font-weight: 300;
+    letter-spacing: 0.08em;
+    color: var(--bb-fg);
+}
+.header p {
+    color: var(--bb-teal);
+    font-size: 1rem; /* twarda regula: nie mniejsze niz obecne */
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.24em;
+}
+
+/* ====== TRUST BAR ====== */
+.trust {
+    max-width: 1100px;
+    margin: 0 auto 1.5rem;
+    padding: 0 1rem;
+}
+/* trust bar (m01): neon ramka + ciemne wnetrze, corner streaks
+   przez bb-art (aurora prawy rog) i bb-art-left (magenta lewy).
+   Stonowane: na ciemnym tle screen blend mocno pcha jasnosc,
+   a tekst musi zostac czytelny (mockup: akcenty przy krawedziach). */
+.trust-box {
+    padding: 1rem;
+    background: var(--bb-surface-sunk);
+    border: 1px solid var(--bb-neon-border);
+    box-shadow: var(--bb-neon-glow);
+}
+/* smugi od GORNEJ krawedzi: pionowe lustro kanonicznej bitmapy
+   (maska flipuje sie razem z transformem) */
+.trust-box.bb-art::after {
+    width: 36%;
+    opacity: 0.45;
+    transform: scaleY(-1);
+    -webkit-mask-image: radial-gradient(120% 130% at 100% 100%, #000 18%, transparent 58%);
+    mask-image: radial-gradient(120% 130% at 100% 100%, #000 18%, transparent 58%);
+}
+.trust-box.bb-art-left::before {
+    width: 24%;
+    opacity: 0.32;
+    transform: scale(-1, -1);
+    -webkit-mask-image: radial-gradient(120% 130% at 100% 100%, #000 18%, transparent 58%);
+    mask-image: radial-gradient(120% 130% at 100% 100%, #000 18%, transparent 58%);
+}
+.trust-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+@media (max-width: 768px) {
+    .trust-grid { grid-template-columns: 1fr; }
+}
+/* item trust bara (m01): chip inline po lewej tytulu,
+   opis pod spodem na calej szerokosci */
+.trust-item {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    column-gap: 0.65rem;
+    row-gap: 0.45rem;
+    align-items: center;
+    padding: 0.4rem;
+}
+.trust-item .trust-desc { grid-column: 1 / -1; }
+.trust-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--bb-fg);
+}
+.trust-desc {
+    font-size: 0.8rem;
+    color: var(--bb-fg-3);
+    line-height: 1.55;
+}
+

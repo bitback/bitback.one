@@ -1,0 +1,11 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: var(--bb-font-sans);
+    background: var(--bb-bg); color: var(--bb-fg-1);
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+}
+.box { text-align: center; padding: 2rem; }
+h1 { font-size: 1.4rem; font-weight: 300; color: var(--bb-fg); margin-bottom: 0.5rem; }
+p { color: var(--bb-fg-5); font-size: 0.85rem; }
+.manual-info { color: var(--bb-secret-ink); font-size: 0.8rem; margin-top: 0.5rem; }
+.logo { color: var(--bb-fg-7); font-size: 0.75rem; margin-top: 2rem; letter-spacing: 0.1em; }
