@@ -22,9 +22,9 @@
     margin-bottom: 1.05rem;
 }
 .config-group:last-child { margin-bottom: 0; }
-/* separator miedzy wierszami ustawien (m01): cienka teal linia */
+/* Separator wierszy ustawien: ta sama cicha linia co ramki. */
 .config-group + .config-group {
-    border-top: 1px solid rgba(37, 194, 168, 0.14);
+    border-top: 1px solid var(--bb-border);
     padding-top: 1.05rem;
 }
 
@@ -52,19 +52,19 @@
     gap: 0.5rem;
 }
 
-/* pola ustawien (m01): teal ramka + delikatny glow jak ramki sekcji */
+/* Pola ustawien: cicha ramka, bez poswiaty. */
 .config-input {
     width: 70px;
     padding: 0.45rem 0.5rem;
     background: var(--bb-surface-sunk);
-    border: 1px solid var(--bb-neon-border);
+    border: 1px solid var(--bb-border);
     color: var(--bb-fg);
     font-size: 0.92rem;
     text-align: center;
     outline: none;
-    box-shadow: 0 0 10px rgba(37, 194, 168, 0.08);
 }
-.config-input:focus { border-color: var(--bb-teal); box-shadow: 0 0 12px rgba(37, 194, 168, 0.22); }
+/* Focus widoczny, ale bez neonu: mocniejsza ta sama linia. */
+.config-input:focus { border-color: var(--bb-border-hover); box-shadow: none; }
 
 .config-unit {
     font-size: 0.8rem;
@@ -116,8 +116,7 @@
     pointer-events: none;
 }
 
-/* CTA: jedyny dozwolony gradient na stronie. Struktura plaska
-   (innerHTML swap spinnera - patrz handoff gotchas). */
+/* CTA. Struktura plaska - innerHTML podmienia spinnera. */
 .generate-btn {
     display: flex;
     align-items: center;
@@ -126,27 +125,21 @@
     width: 100%;
     padding: 0.95rem 1rem;
     margin-top: 1rem;
-    border: 2px solid transparent;
-    background: linear-gradient(90deg, #1b1233 0%, #0a0e15 50%, #0b2127 100%) padding-box,
-                linear-gradient(90deg, var(--bb-teal) 0%, var(--bb-accent) 50%, var(--bb-violet) 100%) border-box;
+    /* Byla ramka 2px z gradientem teal->niebieski->fiolet i gradientowe tlo.
+       To jedyny element, ktory zostal poza systemem cichych linii. */
+    border: 1px solid var(--bb-border);
+    background: var(--bb-surface-1);
     color: #fff;
     font-size: 0.95rem;
     font-weight: 800;
     cursor: pointer;
-    transition: filter 140ms var(--bb-ease);
+    transition: border-color 140ms var(--bb-ease), background 140ms var(--bb-ease);
     text-transform: uppercase;
     letter-spacing: 0.16em;
-    filter: drop-shadow(0 0 9px rgba(122, 92, 230, 0.45));
 }
 .generate-btn [data-lucide] { width: 19px; height: 19px; stroke-width: 2.2; }
-/* hover ujednolicony z mark-secret: bez ruchu, mocniejszy glow,
-   jasniejsze wnetrze */
-.generate-btn:hover {
-    filter: drop-shadow(0 0 15px rgba(122, 92, 230, 0.80)) brightness(1.15);
-    background: linear-gradient(90deg, #2b1d50 0%, #141a2b 50%, #123640 100%) padding-box,
-                linear-gradient(90deg, var(--bb-teal) 0%, var(--bb-accent) 50%, var(--bb-violet) 100%) border-box;
-}
-.generate-btn:active { filter: brightness(0.92); }
+.generate-btn:hover { border-color: var(--bb-border-hover); background: var(--bb-surface-2); }
+.generate-btn:active { background: var(--bb-surface-1); }
 
 /* guide: pulsuje sam glow, ramka i grubosc bez zmian.
    drop-shadow zamiast box-shadow - bb-frame trzyma box-shadow
@@ -202,16 +195,20 @@
    przyciety wielokatem ze scietymi rogami, wewnetrzny span = ciemne
    wnetrze tym samym wielokatem (1px mniej); drop-shadow podaza
    za ksztaltem. */
+/* Przycisk oznaczania: zwykly, zaokraglony. Byl zlota gradientowa ramka ze
+   scietymi narozami i poswiata; z calego zestawu on krzyczal najglosniej.
+   Zloto zostaje TYLKO na ikonie kloki - jako jedyna wskazowka, ze chodzi
+   o dane poufne (czym docelowo komunikowac poufnosc, jest jeszcze otwarte:
+   patrz docs/task-redesign.md). */
 .mark-secret-btn {
     display: inline-flex;
-    padding: 2px;
+    padding: 0;
     margin-top: 0.6rem;
-    border: none;
-    background: linear-gradient(90deg, var(--bb-secret), var(--bb-secret-ink));
-    clip-path: polygon(13px 0, 100% 0, 100% calc(100% - 13px), calc(100% - 13px) 100%, 0 100%, 0 13px);
-    filter: drop-shadow(0 0 9px rgba(240, 192, 96, 0.42));
+    border: 1px solid var(--bb-border);
+    border-radius: var(--bb-radius);
+    background: var(--bb-surface-1);
     cursor: pointer;
-    transition: filter 140ms var(--bb-ease);
+    transition: border-color 140ms var(--bb-ease), background 140ms var(--bb-ease);
 }
 .mark-secret-btn .inner {
     display: inline-flex;
@@ -220,12 +217,9 @@
     justify-content: center;
     gap: 0.6em;
     padding: 0.6rem 1rem;
-    background: linear-gradient(90deg, #1c1508 0%, #0a0e15 50%, #1c1508 100%);
-    /* notch 12px (zewnetrzny 13) - diagonal trzyma ~2px jak boki */
-    clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
-    color: #fff;
+    color: var(--bb-fg-1);
     font-size: 0.86rem;
-    font-weight: 700;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.04em;
 }
@@ -240,13 +234,8 @@
 .action-row .generate-btn { flex: 1; margin-top: 0; width: auto; white-space: nowrap; }
 @media (max-width: 768px) { .action-row { flex-direction: column; } }
 
-.mark-secret-btn:hover {
-    filter: drop-shadow(0 0 15px rgba(240, 192, 96, 0.80)) brightness(1.15);
-}
-.mark-secret-btn:hover .inner {
-    background: linear-gradient(90deg, #382a0d 0%, #18130a 50%, #382a0d 100%);
-}
-.mark-secret-btn:active { filter: drop-shadow(0 0 5px rgba(240, 192, 96, 0.3)) brightness(0.92); }
+.mark-secret-btn:hover { border-color: var(--bb-border-hover); background: var(--bb-surface-2); }
+.mark-secret-btn:active { background: var(--bb-surface-1); }
 .mark-secret-btn [data-lucide] { width: 18px; height: 18px; stroke-width: 2; color: var(--bb-secret); }
 
 

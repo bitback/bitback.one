@@ -105,9 +105,8 @@ function bb_config_data(array $t, array $challenge): array {
             <!-- LEWA — edytor -->
             <div class="col-left">
                 <div class="col-label"><?= htmlspecialchars($t['content_label']) ?></div>
-                <div class="bb-frame frame-pad">
+                <div class="content-col">
                     <div class="hint-bar">
-                        <kbd><span>Ctrl+E</span></kbd>
                         <span class="hint-text"><?= $t['hint_text'] ?></span>
                     </div>
                     <div class="editor-wrap">
