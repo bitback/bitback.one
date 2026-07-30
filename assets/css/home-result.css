@@ -13,7 +13,8 @@
     display: flex;
     gap: 0.3rem;
 }
-/* taby podgladu (m01): bordered, aktywny = teal z tintem i glow */
+/* Taby podgladu: wybor sygnalizuje sama jasnosc, bez koloru i bez poswiaty -
+   to przelacznik widoku, nie akcja. */
 .preview-tab {
     padding: 0.35rem 0.85rem;
     border: 1px solid var(--bb-border);
@@ -26,12 +27,11 @@
     cursor: pointer;
     transition: all 0.15s;
 }
-.preview-tab:hover { border-color: var(--bb-teal); color: var(--bb-fg-3); }
+.preview-tab:hover { border-color: var(--bb-border-hover); color: var(--bb-fg-3); }
 .preview-tab.active {
-    border-color: var(--bb-teal);
-    color: var(--bb-teal);
-    background: hsl(var(--bb-h-positive) var(--bb-s-signal) 45% / 0.08);
-    box-shadow: 0 0 10px hsl(var(--bb-h-positive) var(--bb-s-signal) 45% / 0.18);
+    border-color: var(--bb-border-hover);
+    color: var(--bb-fg-2);
+    background: var(--bb-surface-2);
 }
 .preview-box {
     padding: 0.85rem;
@@ -123,11 +123,11 @@
 .copy-btn {
     padding: 0.5rem 1rem;
     border-radius: 8px;
-    border: none;
-    background: var(--bb-success);
-    color: var(--bb-success-ink);
+    border: 1px solid var(--bb-border);
+    background: var(--bb-btn-2-bg);
+    color: var(--bb-btn-2-fg);
     font-size: 0.85rem;
-    font-weight: 700;
+    font-weight: 600;
     cursor: pointer;
     transition: filter 140ms var(--bb-ease), transform 140ms var(--bb-ease);
     white-space: nowrap;

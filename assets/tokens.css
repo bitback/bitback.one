@@ -58,12 +58,23 @@
      przestal byc trzecim chlodnym odcieniem obok niebieskiego i turkusu. */
   --bb-h-accent:   255;   /* fiolet  - akcja, linki, focus, ikony */
   --bb-h-positive: 170;   /* turkus  - JEDYNY zielony w aplikacji */
-  --bb-h-secret:    40;   /* zloto   - dane poufne (jedyna barwa ciepla) */
+  /* Poufne dzieli odcien z pozytywem: przycisk oznaczania jest zielony, wiec
+     oznaczony tekst tez - inaczej akcja i jej efekt mialyby rozne barwy.
+     Zloto (40) wyszlo z palety; zeby wrocic, wystarczy ta jedna liczba. */
+  --bb-h-secret:   170;   /* dane poufne - ten sam odcien co pozytyw */
   --bb-h-danger:     4;   /* czerwien - wylacznie bledy */
   --bb-h-neutral:  220;   /* powierzchnie, tekst, ramki */
 
   --bb-s-signal:    60%;  /* wspolne nasycenie wszystkich sygnalow */
   --bb-s-deep:      45%;  /* nasycenie tel i atramentow */
+
+  /* Przyciski maja trzy warianty i tylko tyle:
+     GLOWNY  - zielony z ciemnym tekstem (akcja niosaca znaczenie),
+     DRUGI   - szary, w kolorze linii (akcje poboczne: generuj haslo, kopiuj),
+     KAFEL   - GENERUJ LINK, wlasne tlo panelu. */
+  --bb-btn-2-bg:     var(--bb-surface-2);
+  --bb-btn-2-fg:     var(--bb-fg-5);
+  --bb-btn-2-fg-on:  var(--bb-fg-3);
 
   /* --- Text: jedna rampa jasnosci na odcieniu neutralnym --- */
   --bb-fg:           hsl(var(--bb-h-neutral) 25% 95%);  /* primary */

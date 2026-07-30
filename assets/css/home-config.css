@@ -94,16 +94,15 @@
     transition: all 0.15s;
     user-select: none;
 }
+/* Weryfikacja nalezy do pozytywu, nie do akcji - stad zielen, nie fiolet. */
 .antibot-opt:hover {
-    border-color: var(--bb-violet);
-    color: var(--bb-fg-body);
+    border-color: var(--bb-success);
+    color: var(--bb-fg-2);
 }
-/* wybrana odpowiedz = violet (mockup m01) */
 .antibot-opt.selected {
-    border-color: var(--bb-violet);
-    background: hsl(var(--bb-h-accent) var(--bb-s-signal) 62% / 0.12);
-    color: #fff;
-    box-shadow: none;
+    border-color: var(--bb-success);
+    background: hsl(var(--bb-h-positive) var(--bb-s-signal) 52% / 0.12);
+    color: var(--bb-fg);
 }
 
 /* honeypot */
@@ -189,26 +188,19 @@
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* przycisk oznaczania poufnych - wariant z mockupu m01: ciemny box
-   z gradientowa ramka teal->violet i bialym uppercase tekstem.
-   Nested clip-path jak chip Ctrl+E: zewnetrzna warstwa = gradient
-   przyciety wielokatem ze scietymi rogami, wewnetrzny span = ciemne
-   wnetrze tym samym wielokatem (1px mniej); drop-shadow podaza
-   za ksztaltem. */
-/* Przycisk oznaczania: zwykly, zaokraglony. Byl zlota gradientowa ramka ze
-   scietymi narozami i poswiata; z calego zestawu on krzyczal najglosniej.
-   Zloto zostaje TYLKO na ikonie kloki - jako jedyna wskazowka, ze chodzi
-   o dane poufne (czym docelowo komunikowac poufnosc, jest jeszcze otwarte:
-   patrz docs/task-redesign.md). */
+/* Przycisk oznaczania - GLOWNY wariant przycisku: pelna zielen z ciemnym
+   tekstem i ciemna ikona. To jedyna akcja na stronie, ktora nadaje trescie
+   znaczenie, wiec jako jedyna niesie pelny kolor. Oznaczony tekst ma ten sam
+   odcien - akcja i jej efekt musza wygladac jak jedno. */
 .mark-secret-btn {
     display: inline-flex;
     padding: 0;
     margin-top: 0.6rem;
-    border: 1px solid var(--bb-border);
+    border: none;
     border-radius: var(--bb-radius);
-    background: var(--bb-surface-1);
+    background: var(--bb-success);
     cursor: pointer;
-    transition: border-color 140ms var(--bb-ease), background 140ms var(--bb-ease);
+    transition: background 140ms var(--bb-ease);
 }
 .mark-secret-btn .inner {
     display: inline-flex;
@@ -217,7 +209,7 @@
     justify-content: center;
     gap: 0.6em;
     padding: 0.6rem 1rem;
-    color: var(--bb-fg-1);
+    color: var(--bb-success-ink);
     font-size: 0.86rem;
     font-weight: 600;
     text-transform: uppercase;
@@ -234,9 +226,10 @@
 .action-row .generate-btn { flex: 1; margin-top: 0; width: auto; white-space: nowrap; }
 @media (max-width: 768px) { .action-row { flex-direction: column; } }
 
-.mark-secret-btn:hover { border-color: var(--bb-border-hover); background: var(--bb-surface-2); }
-.mark-secret-btn:active { background: var(--bb-surface-1); }
-.mark-secret-btn [data-lucide] { width: 18px; height: 18px; stroke-width: 2; color: var(--bb-secret); }
+.mark-secret-btn:hover { background: var(--bb-success-hover); }
+.mark-secret-btn:active { background: var(--bb-success); }
+/* Kloka w kolorze tekstu przycisku - jeden ciemny znak na zielonym. */
+.mark-secret-btn [data-lucide] { width: 18px; height: 18px; stroke-width: 2; color: var(--bb-success-ink); }
 
 
 /* Pole hasla wypelnia szerokosc wiersza (obok stoi wezszy przycisk generatora). */
