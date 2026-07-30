@@ -1,22 +1,36 @@
 /* ====== PASEK PODPOWIEDZI ====== */
+/* Nad polem stoi tylko CZYNNOSC. Skutek oznaczenia mieszka obok przycisku
+   (.mark-note) - wczesniej obie rzeczy byly jednym zlepkiem i przez to
+   zdanie sie rozmywalo. */
 .hint-bar {
     padding: 0.1rem 0 0.7rem;
     display: flex;
     align-items: center;
     gap: 0.6rem;
-    font-size: 0.85rem;
-    color: var(--bb-fg-3);
-}
-.hint-bar .hint-text { color: var(--bb-fg-3); }
-.hint-bar .hint-text strong { color: var(--bb-fg); font-weight: 600; }
-/* Skrot w tekscie podpowiedzi: mono, spokojny. To jedyne miejsce, gdzie
-   Ctrl+E jest teraz pokazany (plakietka usunieta jako powtorzenie). */
-.hint-bar .hint-text strong:first-of-type {
-    color: var(--bb-fg);
-    font-family: var(--bb-font-mono);
+    font-size: 0.9rem;
     font-weight: 500;
+    color: var(--bb-fg-1);
 }
-.hint-bar .hint-text strong:last-of-type { color: var(--bb-secret); }
+.hint-bar .hint-text { color: var(--bb-fg-1); }
+/* Skrot klawiszowy jako plakietka w linii tekstu. */
+.hint-text .kbd-chip {
+    display: inline-block;
+    padding: 0.1em 0.45em;
+    border-radius: 5px;
+    background: var(--bb-surface-2);
+    border: 1px solid var(--bb-border);
+    font-family: var(--bb-font-mono);
+    font-size: 0.85em;
+    color: var(--bb-fg-2);
+}
+/* Slowo "poufny" niesie ten sam kolor co przycisk i co oznaczony tekst. */
+.hint-text .hl {
+    background: hsl(var(--bb-h-positive) var(--bb-s-signal) 52% / 0.16);
+    color: var(--bb-fg);
+    font-weight: 700;
+    padding: 0.05em 0.3em;
+    border-radius: 4px;
+}
 
 .main {
     max-width: 1100px;

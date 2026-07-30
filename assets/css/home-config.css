@@ -216,7 +216,13 @@
     letter-spacing: 0.04em;
 }
 /* wiersz przycisku + dekoracyjne sciezki circuit po prawej (m01) */
-.mark-row { display: flex; margin-top: 0.6rem; }
+.mark-row { display: flex; align-items: center; gap: 1rem; margin-top: 0.6rem; }
+/* Skutek oznaczenia - w wolnej przestrzeni na prawo od przycisku. */
+.mark-note { flex: 1; margin: 0; font-size: 0.78rem; line-height: 1.5; color: var(--bb-fg-5); }
+@media (max-width: 768px) {
+    .mark-row { flex-wrap: wrap; }
+    .mark-note { flex: 1 1 100%; }
+}
 .mark-row .mark-secret-btn { margin-top: 0; }
 /* akcje: weryfikacja + generuj obok siebie; generuj rosnie na wysokosc panelu.
    DOM order content->settings->verify->generate->result->preview = poprawny

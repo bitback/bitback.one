@@ -118,6 +118,7 @@ function bb_config_data(array $t, array $challenge): array {
                         <label id="plainTextToggleWrap" class="plain-text-toggle" style="display:none;">
                             <input type="checkbox" id="plainTextToggle"> <?= htmlspecialchars($t['plain_text_toggle']) ?>
                         </label>
+                        <p class="mark-note"><?= htmlspecialchars($t['mark_note']) ?></p>
                     </div>
                 </div>
             </div>

@@ -95,7 +95,8 @@ function get_strings(?string $lang = null): array {
             'trust3_title' => 'Bez śladu na serwerze',
             'trust3_desc' => 'Serwer przechowuje wyłącznie zaszyfrowany blob. Klucz nie pojawia się w logach, bazie danych, ani w pamięci serwera. Deszyfrowanie odbywa się wyłącznie w przeglądarce odbiorcy.',
             // index: hint bar
-            'hint_text' => 'Zaznacz fragment tekstu i naciśnij <strong>Ctrl+E</strong> lub przycisk poniżej, aby oznaczyć go jako <strong>poufny</strong>. Poufne fragmenty zostaną ukryte po wygaśnięciu linka - reszta treści pozostanie widoczna. Ponowne użycie odznacza.',
+            'hint_text' => 'Zaznacz fragment tekstu i naciśnij <span class="kbd-chip">Ctrl+E</span>, aby oznaczyć go jako <strong class="hl">poufny</strong>.',
+            'mark_note' => 'Poufne fragmenty zostaną ukryte po wygaśnięciu linka - reszta treści pozostanie widoczna do czasu usunięcia linka. Ponowne użycie odznacza.',
             'mark_secret_btn' => 'Oznacz zaznaczony tekst jako poufny',
             // index: editor placeholder
             'editor_placeholder' => "Wpisz treść tutaj...\nNp. Login: admin\nHasło: s3cret123  ← zaznacz i Ctrl+E",
@@ -190,7 +191,8 @@ function get_strings(?string $lang = null): array {
             'trust3_title' => 'No trace on the server',
             'trust3_desc' => 'The server stores only the encrypted blob. The key never appears in logs, database, or server memory. Decryption happens exclusively in the recipient\'s browser.',
             // index: hint bar
-            'hint_text' => 'Select text and press <strong>Ctrl+E</strong> or use the button below to mark it as <strong>secret</strong>. Secret fragments will be hidden after link expiration - the rest remains visible. Use again to unmark.',
+            'hint_text' => 'Select text and press <span class="kbd-chip">Ctrl+E</span> to mark it as <strong class="hl">secret</strong>.',
+            'mark_note' => 'Secret fragments will be hidden after the link expires - the rest of the content stays visible until the link is deleted. Use again to unmark.',
             'mark_secret_btn' => 'Mark selected text as secret',
             // index: editor placeholder
             'editor_placeholder' => "Type your content here...\ne.g. Login: admin\nPassword: s3cret123  ← select and Ctrl+E",
