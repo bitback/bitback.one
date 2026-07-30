@@ -1,9 +1,20 @@
 /* =========================================================================
    bitback.one - Design Tokens
-   Paleta FLAT (zaakceptowana na mockupie temp/palette-preview.html):
-   zero gradientow CSS, konkretne nasycone kolory z rolami, chlodna
-   granatowa rampa powierzchni. Atmosfere niosa bitmapy narozne
-   (assets/art/), nie gradienty.
+
+   UWAGA: ten plik jest w trakcie przebudowy - patrz docs/task-redesign.md.
+   Kierunek: MALO zmiennych, spokojne niskokontrastowe ramki, zaokraglone
+   narozniki, odcienie liczone z jednego koloru bazowego.
+
+   Odcienie robimy kanalami RGB + alpha (`--x-rgb: 61 130 232` uzywane jako
+   `rgb(var(--x-rgb) / 0.25)`), a NIE przez color-mix(). Powod nie jest
+   estetyczny: color-mix wymaga przegladarki z 2023, a strone odczytu linka
+   otwiera ODBIORCA, ktorego przegladarki nie wybieramy (stare iOS zostaja
+   na starym Safari). Skladnia rgb z alpha jest starsza niz cokolwiek, czego
+   ta aplikacja juz wymaga, wiec nie podnosi progu wejscia.
+
+   Stan zastany, ktory ta przebudowa demontuje: dekoracja oparta na bitmapach
+   naroznych i lamanych ramkach. `php tools/audit-css.php` pokazuje aktualna
+   skale tej warstwy oraz zmienne nieuzywane i zdublowane.
    ========================================================================= */
 
 :root {
@@ -50,7 +61,7 @@
   /* --- Info (violet - trzeci filar) --- */
   --bb-violet:       #9b7ce8;
 
-  /* --- Secret (gold - sygnatura, NIETYKANE) --- */
+  /* --- Secret (fragment poufny) --- */
   --bb-secret:       #f0c060;
   --bb-secret-ink:   #d4922a;
 
@@ -94,7 +105,10 @@
   --bb-font-sans: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --bb-font-mono: 'JetBrains Mono', 'Consolas', 'Monaco', 'Courier New', monospace;
 
-  /* --- Radii: ZERO (zaakceptowane: ostre krawedzie wszedzie) --- */
+  /* --- Radii ---
+     Te cztery zmienne sa dzis NIEUZYWANE (nikt ich nie wola) i maja zero.
+     O ostrych krawedziach decyduje wylacznie globalny reset na koncu pliku.
+     Docelowo: 1-2 zmienne, realnie uzywane. */
   --bb-radius-xs: 0;
   --bb-radius-sm: 0;
   --bb-radius-md: 0;
@@ -372,10 +386,14 @@ html, body {
    maluje sie po negative-z dzieciach i calkowicie je zaslania. */
 body { isolation: isolate; }
 
-/* Ostre krawedzie WSZEDZIE (zaakceptowane): przyciski, sekcje, pola,
-   bannery - zero zaokraglen. Globalna regula z !important wygrywa
-   z hardkodowanymi border-radius w inline <style> PHP.
-   Wyjatki: okragle chipy ikon i spinnery (celowo kola). */
+/* JEDYNE miejsce wymuszajace ostre krawedzie w calej aplikacji. Kierunek
+   projektu to narozniki ZAOKRAGLONE (docs/task-redesign.md), wiec ta regula
+   jest do zdjecia - a zmiana samych zmiennych promienia bez jej usuniecia nic
+   nie da, bo !important je przebija.
+   Powstala, by wygrywac z promieniami zaszytymi w blokach <style> w PHP.
+   Tych blokow JUZ NIE MA (styl jest w assets/css/), wiec pierwotny powod
+   istnienia tej reguly zniknal.
+   Wyjatki nizej: okragle chipy ikon i spinnery (celowo kola). */
 * { border-radius: 0 !important; }
 .bb-chip,
 .generate-btn .spinner,
