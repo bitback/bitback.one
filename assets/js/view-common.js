@@ -15,6 +15,17 @@ function linkify(escapedHtml) {
     );
 }
 
+// Podlaczenie przyciskow wygaszania/usuwania. Wczesniej byl to atrybut
+// onclick generowany w view_meta_html(); teraz HTML jest czystym dokumentem,
+// a akcje nosi data-bb-action. Delegacja na document, bo te przyciski
+// pojawiaja sie w roznych wariantach widoku (aktywny / wygaszony).
+document.addEventListener('click', function(ev) {
+    const btn = ev.target.closest('[data-bb-action]');
+    if (!btn) return;
+    const action = btn.dataset.bbAction;
+    if (action === 'expire' || action === 'kill') expireNow(btn, action);
+});
+
 async function expireNow(btn, action) {
     var wrap = document.getElementById('expireConfirmWrap');
     var cb = document.getElementById('expireConfirmCb');

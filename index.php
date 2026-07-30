@@ -100,7 +100,7 @@ function bb_config_data(array $t, array $challenge): array {
 </div>
 
 <div class="main bb-rise-3">
-    <form id="createForm" autocomplete="off" onsubmit="return false;">
+    <form id="createForm" autocomplete="off">
         <input type="text" name="website_url" class="ohnohoney" tabindex="-1" autocomplete="off">
 
         <div class="two-col">
@@ -117,7 +117,7 @@ function bb_config_data(array $t, array $challenge): array {
                         <div class="editor" id="editor" contenteditable="true" spellcheck="false" role="textbox" aria-multiline="true" aria-label="<?= htmlspecialchars($t['content_label']) ?>" data-ph="<?= htmlspecialchars($t['editor_placeholder']) ?>"></div>
                     </div>
                     <div class="mark-row">
-                        <button type="button" class="mark-secret-btn" onmousedown="event.preventDefault()" onclick="toggleSecret()"><span class="inner"><?= bb_icon('lock') ?> <?= htmlspecialchars($t['mark_secret_btn']) ?></span></button>
+                        <button type="button" class="mark-secret-btn" data-bb-action="toggle-secret" data-bb-keep-selection><span class="inner"><?= bb_icon('lock') ?> <?= htmlspecialchars($t['mark_secret_btn']) ?></span></button>
                         <label id="plainTextToggleWrap" class="plain-text-toggle" style="display:none;">
                             <input type="checkbox" id="plainTextToggle"> <?= htmlspecialchars($t['plain_text_toggle']) ?>
                         </label>
@@ -157,7 +157,7 @@ function bb_config_data(array $t, array $challenge): array {
                         <label><?= htmlspecialchars($t['password_label']) ?></label>
                         <div class="config-row">
                             <input type="text" class="config-input" id="linkPassword" style="width:100%;text-align:left;" placeholder="<?= htmlspecialchars($t['password_placeholder_config']) ?>" autocomplete="off">
-                            <button type="button" class="copy-btn" style="padding:0.45rem 0.7rem;font-size:0.78rem;" onclick="generatePassword()"><?= htmlspecialchars($t['password_generate']) ?></button>
+                            <button type="button" class="copy-btn" style="padding:0.45rem 0.7rem;font-size:0.78rem;" data-bb-action="generate-password"><?= htmlspecialchars($t['password_generate']) ?></button>
                         </div>
                     </div>
                 </div>
@@ -171,7 +171,7 @@ function bb_config_data(array $t, array $challenge): array {
                 <div class="antibot-q" id="mathQuestion" aria-live="polite"></div>
                 <div class="antibot-options" id="mathOptions" role="group" aria-label="<?= htmlspecialchars($t['verify_label']) ?>"></div>
             </div>
-            <button type="button" class="generate-btn dimmed" onclick="generateLink()"><span><?= htmlspecialchars($t['generate_btn']) ?></span><?= bb_icon('arrow-right') ?></button>
+            <button type="button" class="generate-btn dimmed" data-bb-action="generate-link"><span><?= htmlspecialchars($t['generate_btn']) ?></span><?= bb_icon('arrow-right') ?></button>
         </div>
 
         <!-- LINK WYJŚCIOWY -->
@@ -180,7 +180,7 @@ function bb_config_data(array $t, array $challenge): array {
                 <div class="result-label"><?= htmlspecialchars($t['your_link']) ?></div>
                 <div class="result-link">
                     <input type="text" class="result-url" id="resultUrl" readonly>
-                    <button type="button" class="copy-btn" onclick="copyLink()"><?= htmlspecialchars($t['copy']) ?></button>
+                    <button type="button" class="copy-btn" data-bb-action="copy-link"><?= htmlspecialchars($t['copy']) ?></button>
                 </div>
                 <div class="result-password" id="resultPassword"></div>
             </div>
@@ -194,8 +194,8 @@ function bb_config_data(array $t, array $challenge): array {
             <div class="preview-bar">
                 <div class="col-label"><?= htmlspecialchars($t['preview_label']) ?></div>
                 <div class="preview-tabs">
-                    <button type="button" class="preview-tab active" onclick="setPreview('expired', this)"><?= htmlspecialchars($t['preview_expired']) ?></button>
-                    <button type="button" class="preview-tab" onclick="setPreview('active', this)"><?= htmlspecialchars($t['preview_active']) ?></button>
+                    <button type="button" class="preview-tab active" data-bb-action="preview" data-bb-mode="expired"><?= htmlspecialchars($t['preview_expired']) ?></button>
+                    <button type="button" class="preview-tab" data-bb-action="preview" data-bb-mode="active"><?= htmlspecialchars($t['preview_active']) ?></button>
                 </div>
             </div>
             <div class="preview-box bb-frame" id="preview"></div>
@@ -215,7 +215,12 @@ function bb_config_data(array $t, array $challenge): array {
 
 <script src="/crypto.js?v=<?= filemtime(__DIR__ . '/crypto.js') ?>" integrity="sha384-RQoDrUypIasRu3YH/1KbhpaEtfmzmQlvafmSuNpL1E3zl8rpuvHzLF/C9jqmsD53"></script>
 <?= json_island('bb-config', bb_config_data($t, $challenge)) ?>
-<?= asset_js('assets/js/home-editor.js', 'assets/js/home-bulk.js', 'assets/js/home-generate.js') ?>
+<?= asset_js(
+    'assets/js/home-editor.js',
+    'assets/js/home-bulk.js',
+    'assets/js/home-generate.js',
+    'assets/js/home-wire.js'
+) ?>
 
 </body>
 </html>

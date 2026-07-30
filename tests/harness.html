@@ -583,6 +583,53 @@ document.getElementById('app').addEventListener('load', async () => {
         log(gp !== (win.generatePassword(), doc.getElementById('linkPassword').value), 'generatePassword: kolejne wywolanie daje inne haslo');
         doc.getElementById('linkPassword').value = '';
 
+        // ============ podlaczenie zdarzen (warstwa wiring) ============
+        // Ta grupa istnieje, bo reszta suity wola funkcje strony WPROST
+        // (win.generateLink()), wiec urwane podlaczenie przycisku przeszloby
+        // niezauwazone - dokladnie to, co moglo sie zepsuc przy zamianie
+        // atrybutow onclick na data-bb-action. Tu sprawdzamy sam mostek:
+        // funkcje sa podmieniane na atrapy, liczy sie tylko to, czy klik je wola.
+        grp('podlaczenie zdarzen (data-bb-action zamiast onclick)');
+        {
+            const calls = [];
+            const orig = {};
+            ['toggleSecret', 'generatePassword', 'generateLink', 'copyLink', 'setPreview'].forEach(n => {
+                orig[n] = win[n];
+                win[n] = function (...a) { calls.push(n + (typeof a[0] === 'string' ? ':' + a[0] : '')); };
+            });
+            const clickA = sel => { const el = doc.querySelector(sel); if (el) el.click(); return !!el; };
+
+            log(clickA('[data-bb-action="toggle-secret"]') && calls.includes('toggleSecret'), 'wiring: przycisk oznaczania wola toggleSecret()');
+            log(clickA('[data-bb-action="generate-password"]') && calls.includes('generatePassword'), 'wiring: przycisk generatora hasla wola generatePassword()');
+            log(clickA('[data-bb-action="generate-link"]') && calls.includes('generateLink'), 'wiring: przycisk wola generateLink()');
+            log(clickA('[data-bb-action="copy-link"]') && calls.includes('copyLink'), 'wiring: przycisk wola copyLink()');
+            log(clickA('[data-bb-action="preview"][data-bb-mode="active"]') && calls.includes('setPreview:active'), 'wiring: zakladka podgladu wola setPreview("active")');
+            log(clickA('[data-bb-action="preview"][data-bb-mode="expired"]') && calls.includes('setPreview:expired'), 'wiring: zakladka podgladu wola setPreview("expired")');
+
+            // Klik trafia zwykle w ikone/span WEWNATRZ przycisku, nie w sam
+            // przycisk - delegacja musi to podniesc przez closest().
+            calls.length = 0;
+            const inner = doc.querySelector('[data-bb-action="generate-link"] span, [data-bb-action="generate-link"] svg');
+            if (inner) inner.dispatchEvent(new win.MouseEvent('click', { bubbles: true }));
+            log(!!inner && calls.includes('generateLink'), 'wiring: klik w element wewnatrz przycisku tez dziala (closest)');
+
+            calls.length = 0;
+            editor.dispatchEvent(new win.MouseEvent('click', { bubbles: true }));
+            log(calls.length === 0, 'wiring: klik poza przyciskiem akcji nie wola niczego');
+
+            Object.keys(orig).forEach(n => { win[n] = orig[n]; });
+
+            // Bez preventDefault na mousedown klik zabralby zaznaczenie z edytora,
+            // a toggleSecret dziala wlasnie na window.getSelection().
+            const mdEv = new win.MouseEvent('mousedown', { bubbles: true, cancelable: true });
+            doc.querySelector('[data-bb-keep-selection]').dispatchEvent(mdEv);
+            log(mdEv.defaultPrevented, 'wiring: mousedown na przycisku oznaczania ma preventDefault (zaznaczenie zostaje)');
+
+            const subEv = new win.Event('submit', { bubbles: true, cancelable: true });
+            doc.getElementById('createForm').dispatchEvent(subEv);
+            log(subEv.defaultPrevented, 'wiring: submit formularza zablokowany (strona sie nie przeladowuje)');
+        }
+
         // ============ view.php: deszyfrowanie GCM + XSS + linkify + TOTP (drugi iframe) ============
         // Rekord tworzony przez tests/fixture.php (aktywny tylko przy BB_TEST_DATA_DIR),
         // bloby liczone tu w #app; potem /view.php?slug=uuid#hexKey w iframe #view.
@@ -623,6 +670,47 @@ document.getElementById('app').addEventListener('load', async () => {
             log(vwin.escapeHtml('<b>&x') === '&lt;b&gt;&amp;x', 'view escapeHtml(): <,>,& zescapowane');
             log(vwin.linkify('a https://x.pl/y b').indexOf('<a href="https://x.pl/y"') !== -1, 'view linkify(): wstawia <a> dla URL');
             log(vwin.escapeHtml('czysty tekst') === 'czysty tekst', 'view escapeHtml(): zwykly tekst bez zmian');
+
+            // Podlaczenie przyciskow wygaszania (dawny onclick="expireNow(...)").
+            // To akcja NIEODWRACALNA, a zaden inny test nie klika tych przyciskow -
+            // endpoint jest testowany osobno, po HTTP. fetch podmieniony na atrape
+            // zwracajaca ok:false, zeby nie ruszyc rekordu i nie wywolac reloadu.
+            const expBtn = vdoc.querySelector('[data-bb-action="expire"]');
+            const killBtn = vdoc.querySelector('[data-bb-action="kill"]');
+            log(!!expBtn && !!killBtn, 'view wiring: przyciski wygaszenia i usuniecia obecne w DOM');
+            if (expBtn) {
+                const sent = [];
+                const origFetch = vwin.fetch;
+                vwin.fetch = function (url, opt) {
+                    sent.push({ url: String(url), body: opt && opt.body });
+                    return Promise.resolve({ json: async () => ({ ok: false }) });
+                };
+                const cb = vdoc.getElementById('expireConfirmCb');
+
+                cb.checked = false;
+                expBtn.click();
+                await new Promise(r => setTimeout(r, 120));
+                log(sent.length === 0, 'view wiring: bez zaznaczonego potwierdzenia NIE strzela do api (tylko shake)');
+
+                cb.checked = true;
+                expBtn.click();
+                await new Promise(r => setTimeout(r, 250));
+                log(sent.length === 1 && sent[0].url.indexOf('/api/expire.php') !== -1, 'view wiring: klik wygaszenia wola /api/expire.php');
+                let body = {};
+                try { body = JSON.parse(sent[0] && sent[0].body); } catch (e) { /* atrapa nie dostala body */ }
+                log(body.action === 'expire' && body.uuid === fx.uuid, 'view wiring: przekazane action=expire i uuid rekordu');
+
+                // Drugi przycisk musi trafic w INNA akcje - inaczej "usun" tylko wygasza.
+                sent.length = 0;
+                vdoc.querySelectorAll('.expire-now-btn').forEach(b => { b.disabled = false; });
+                cb.disabled = false;
+                cb.checked = true;
+                killBtn.click();
+                await new Promise(r => setTimeout(r, 250));
+                log(sent.length === 1 && JSON.parse(sent[0].body).action === 'kill', 'view wiring: klik usuniecia przekazuje action=kill (nie expire)');
+
+                vwin.fetch = origFetch;
+            }
         }
 
         // fillMasked przez czarna skrzynke: wygasly sekret -> maska, tekst zostaje

@@ -543,12 +543,12 @@ function view_meta_html(array $t, array $data, bool $expired): string {
         $html .= '<input type="checkbox" id="expireConfirmCb" autocomplete="off">';
         $html .= '<label for="expireConfirmCb">' . htmlspecialchars($checkLabel) . '</label>';
         $html .= '</div>';
-        $html .= '<button type="button" class="expire-now-btn" onclick="expireNow(this,\'expire\')"';
+        $html .= '<button type="button" class="expire-now-btn" data-bb-action="expire"';
         $html .= ' data-uuid="' . htmlspecialchars($uuid) . '"';
         $html .= ' data-success="' . htmlspecialchars($successExpire) . '"';
         $html .= ' data-error="' . htmlspecialchars($errorMsg) . '"';
         $html .= '>' . htmlspecialchars($btnExpire) . '</button>';
-        $html .= '<button type="button" class="expire-now-btn kill" onclick="expireNow(this,\'kill\')"';
+        $html .= '<button type="button" class="expire-now-btn kill" data-bb-action="kill"';
         $html .= ' data-uuid="' . htmlspecialchars($uuid) . '"';
         $html .= ' data-success="' . htmlspecialchars($successKill) . '"';
         $html .= ' data-error="' . htmlspecialchars($errorMsg) . '"';
@@ -577,7 +577,7 @@ function view_meta_html(array $t, array $data, bool $expired): string {
         $html .= '<input type="checkbox" id="expireConfirmCb" autocomplete="off">';
         $html .= '<label for="expireConfirmCb">' . htmlspecialchars($checkLabelKill) . '</label>';
         $html .= '</div>';
-        $html .= '<button type="button" class="expire-now-btn kill" onclick="expireNow(this,\'kill\')"';
+        $html .= '<button type="button" class="expire-now-btn kill" data-bb-action="kill"';
         $html .= ' data-uuid="' . htmlspecialchars($uuid) . '"';
         $html .= ' data-success="' . htmlspecialchars($successKillOnly) . '"';
         $html .= ' data-error="' . htmlspecialchars($errorMsgKill) . '"';
