@@ -249,3 +249,6 @@
 .mark-secret-btn:active { filter: drop-shadow(0 0 5px rgba(240, 192, 96, 0.3)) brightness(0.92); }
 .mark-secret-btn [data-lucide] { width: 18px; height: 18px; stroke-width: 2; color: var(--bb-secret); }
 
+
+/* Pole hasla wypelnia szerokosc wiersza (obok stoi wezszy przycisk generatora). */
+.config-input.config-input-full { width: 100%; text-align: left; }

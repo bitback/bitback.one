@@ -1,0 +1,27 @@
+/* Stopka serwisu - wspolna dla wszystkich stron (patrz inc/footer.php).
+   Pasek jest fixed i jednoliniowy, wiec overflow z wielokropkiem jest tu
+   konieczny: na waskim ekranie dane kontaktowe inaczej wychodza za krawedz. */
+.site-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: var(--bb-bg);
+    border-top: 1px solid var(--bb-border-soft);
+    padding: 0.5rem 1rem;
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--bb-fg-5);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Wariant stron przejsciowych (bramka hasla, 404, wygasniecie). */
+.site-footer.compact { font-size: 0.75rem; }
+
+.site-footer a { color: var(--bb-accent-link); text-decoration: none; }
+.site-footer a:hover { color: #8abcf0; text-decoration: underline; }
+.site-footer .sep { color: var(--bb-fg-8); margin: 0 0.5rem; }
+.site-footer .commercial { color: var(--bb-accent-link); }

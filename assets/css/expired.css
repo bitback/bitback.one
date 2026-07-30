@@ -9,3 +9,6 @@ h1 { font-size: 1.4rem; font-weight: 300; color: var(--bb-fg); margin-bottom: 0.
 p { color: var(--bb-fg-5); font-size: 0.85rem; }
 .manual-info { color: var(--bb-secret-ink); font-size: 0.8rem; margin-top: 0.5rem; }
 .logo { color: var(--bb-fg-7); font-size: 0.75rem; margin-top: 2rem; letter-spacing: 0.1em; }
+
+/* Link logo: dziedziczy kolor bloku .logo, bez podkreslenia. */
+.logo a { color: inherit; text-decoration: none; }

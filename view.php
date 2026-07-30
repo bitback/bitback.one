@@ -16,6 +16,7 @@ require_once __DIR__ . '/inc/icons.php';
 require_once __DIR__ . '/inc/ratelimit.php';
 require_once __DIR__ . '/inc/util.php';    // save_locked()
 require_once __DIR__ . '/inc/assets.php'; // asset_css()
+require_once __DIR__ . '/inc/footer.php'; // site_footer_html()
 
 $lang = detect_lang();
 $t = get_strings($lang);
@@ -297,7 +298,7 @@ function show_password_form(array $t, string $slug, bool $wrongPassword = false,
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($t['title']) ?></title>
     <?php og_view_meta($t); ?>
-    <?= asset_css('assets/css/gate.css') ?>
+    <?= asset_css('assets/css/gate.css', 'assets/css/footer.css') ?>
 </head>
 <body>
     <?php bb_page_art(); ?>
@@ -313,11 +314,8 @@ function show_password_form(array $t, string $slug, bool $wrongPassword = false,
             <div class="error"><?= htmlspecialchars($t['password_wrong'] ?? 'Wrong password') ?></div>
             <?php endif; ?>
         </form>
-        <div class="logo"><a href="/" style="color:inherit;text-decoration:none;"><?= htmlspecialchars($t['title']) ?></a></div>
-        <div style="position:fixed;bottom:0;left:0;right:0;z-index:100;background:var(--bb-bg);border-top:1px solid var(--bb-border-soft);padding:0.5rem 1rem;text-align:center;font-size:0.75rem;color:var(--bb-fg-5);white-space:nowrap;">
-            <a href="https://bitback.pl" target="_blank" rel="noopener" style="color:var(--bb-accent-link);text-decoration:none;"><strong>bitback.pl</strong></a>
-            <span style="color:var(--bb-fg-8);margin:0 0.5rem;">|</span><?= htmlspecialchars($t['footer_source']) ?> <a href="https://github.com/bitback/bitback.one" target="_blank" rel="noopener" style="color:var(--bb-accent-link);text-decoration:none;">GitHub</a><span style="color:var(--bb-fg-8);margin:0 0.5rem;">|</span><strong style="color:var(--bb-accent-link);"><?= htmlspecialchars($t['footer_commercial']) ?></strong>
-        </div>
+        <div class="logo"><a href="/"><?= htmlspecialchars($t['title']) ?></a></div>
+        <?= site_footer_html(true) ?>
     </div>
     <?= json_island('bb-gate', ['slug' => $slug]) ?>
     <?= asset_js('assets/js/gate-v2.js') ?>
@@ -339,7 +337,7 @@ function show_password_form_v3(array $t, string $slug, array $data, bool $wrongP
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($t['title']) ?></title>
     <?php og_view_meta($t); ?>
-    <?= asset_css('assets/css/gate.css') ?>
+    <?= asset_css('assets/css/gate.css', 'assets/css/footer.css') ?>
 </head>
 <body>
     <?php bb_page_art(); ?>
@@ -359,11 +357,8 @@ function show_password_form_v3(array $t, string $slug, array $data, bool $wrongP
             <div class="error" id="jsError" style="display:none;"></div>
             <noscript><div class="error"><?= htmlspecialchars($t['password_js_required']) ?></div></noscript>
         </form>
-        <div class="logo"><a href="/" style="color:inherit;text-decoration:none;"><?= htmlspecialchars($t['title']) ?></a></div>
-        <div style="position:fixed;bottom:0;left:0;right:0;z-index:100;background:var(--bb-bg);border-top:1px solid var(--bb-border-soft);padding:0.5rem 1rem;text-align:center;font-size:0.75rem;color:var(--bb-fg-5);white-space:nowrap;">
-            <a href="https://bitback.pl" target="_blank" rel="noopener" style="color:var(--bb-accent-link);text-decoration:none;"><strong>bitback.pl</strong></a>
-            <span style="color:var(--bb-fg-8);margin:0 0.5rem;">|</span><?= htmlspecialchars($t['footer_source']) ?> <a href="https://github.com/bitback/bitback.one" target="_blank" rel="noopener" style="color:var(--bb-accent-link);text-decoration:none;">GitHub</a><span style="color:var(--bb-fg-8);margin:0 0.5rem;">|</span><strong style="color:var(--bb-accent-link);"><?= htmlspecialchars($t['footer_commercial']) ?></strong>
-        </div>
+        <div class="logo"><a href="/"><?= htmlspecialchars($t['title']) ?></a></div>
+        <?= site_footer_html(true) ?>
     </div>
     <script src="/crypto.js?v=<?= filemtime(__DIR__ . '/crypto.js') ?>" integrity="sha384-RQoDrUypIasRu3YH/1KbhpaEtfmzmQlvafmSuNpL1E3zl8rpuvHzLF/C9jqmsD53"></script>
     <?= json_island('bb-gate', [
@@ -389,7 +384,7 @@ function show_not_found(array $t): void {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>404 — <?= htmlspecialchars($t['title']) ?></title>
     <?php og_view_meta($t); ?>
-    <?= asset_css('assets/css/notfound.css') ?>
+    <?= asset_css('assets/css/notfound.css', 'assets/css/footer.css') ?>
 </head>
 <body>
     <?php bb_page_art(); ?>
@@ -400,10 +395,7 @@ function show_not_found(array $t): void {
         <div class="sub"><?= htmlspecialchars($t['not_found_sub']) ?></div>
         <div class="hint"><?= htmlspecialchars($t['not_found_hint']) ?> <code>#</code></div>
         <a href="/" class="home-link"><?= htmlspecialchars($t['title']) ?> →</a>
-        <div style="position:fixed;bottom:0;left:0;right:0;z-index:100;background:var(--bb-bg);border-top:1px solid var(--bb-border-soft);padding:0.5rem 1rem;text-align:center;font-size:0.75rem;color:var(--bb-fg-5);white-space:nowrap;">
-            <a href="https://bitback.pl" target="_blank" rel="noopener" style="color:var(--bb-accent-link);text-decoration:none;"><strong>bitback.pl</strong></a>
-            <span style="color:var(--bb-fg-8);margin:0 0.5rem;">|</span><?= htmlspecialchars($t['footer_source']) ?> <a href="https://github.com/bitback/bitback.one" target="_blank" rel="noopener" style="color:var(--bb-accent-link);text-decoration:none;">GitHub</a><span style="color:var(--bb-fg-8);margin:0 0.5rem;">|</span><strong style="color:var(--bb-accent-link);"><?= htmlspecialchars($t['footer_commercial']) ?></strong>
-        </div>
+        <?= site_footer_html(true) ?>
     </div>
 </body>
 </html><?php
@@ -433,7 +425,7 @@ function show_expired(array $t, ?string $killedAt = null, ?string $expiredManual
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($t['link_expired']) ?> — <?= htmlspecialchars($t['title']) ?></title>
     <?php og_view_meta($t); ?>
-    <?= asset_css('assets/css/expired.css') ?>
+    <?= asset_css('assets/css/expired.css', 'assets/css/footer.css') ?>
 </head>
 <body>
     <?php bb_page_art(); ?>
@@ -443,11 +435,8 @@ function show_expired(array $t, ?string $killedAt = null, ?string $expiredManual
         <?php if ($manualInfo): ?>
         <p class="manual-info"><?= htmlspecialchars($manualInfo) ?></p>
         <?php endif; ?>
-        <div class="logo"><a href="/" style="color:inherit;text-decoration:none;"><?= htmlspecialchars($t['title']) ?></a></div>
-        <div style="position:fixed;bottom:0;left:0;right:0;z-index:100;background:var(--bb-bg);border-top:1px solid var(--bb-border-soft);padding:0.5rem 1rem;text-align:center;font-size:0.75rem;color:var(--bb-fg-5);white-space:nowrap;">
-            <a href="https://bitback.pl" target="_blank" rel="noopener" style="color:var(--bb-accent-link);text-decoration:none;"><strong>bitback.pl</strong></a>
-            <span style="color:var(--bb-fg-8);margin:0 0.5rem;">|</span><?= htmlspecialchars($t['footer_source']) ?> <a href="https://github.com/bitback/bitback.one" target="_blank" rel="noopener" style="color:var(--bb-accent-link);text-decoration:none;">GitHub</a><span style="color:var(--bb-fg-8);margin:0 0.5rem;">|</span><strong style="color:var(--bb-accent-link);"><?= htmlspecialchars($t['footer_commercial']) ?></strong>
-        </div>
+        <div class="logo"><a href="/"><?= htmlspecialchars($t['title']) ?></a></div>
+        <?= site_footer_html(true) ?>
     </div>
 </body>
 </html><?php
@@ -588,22 +577,6 @@ function view_meta_html(array $t, array $data, bool $expired): string {
     return $html;
 }
 
-// Teksty z i18n, nie zaszyte per jezyk - inaczej zmiana noty licencyjnej albo
-// taglinu w inc/i18n.php omija ten widok i stopki rozjezdzaja sie miedzy stronami.
-function view_footer_html(): string {
-    $t = get_strings(detect_lang());
-    $s = '<span class="sep">|</span>';
-    return '<div class="site-footer">'
-        . '<a href="https://bitback.pl" target="_blank" rel="noopener"><strong>bitback.pl</strong></a>'
-        . $s . htmlspecialchars($t['footer_tagline'])
-        . $s . 'Zbigniew Gralewski'
-        . $s . '<a href="mailto:zbigniew.gralewski@bitback.pl">zbigniew.gralewski@bitback.pl</a>'
-        . $s . '609 505 065'
-        . $s . htmlspecialchars($t['footer_source']) . ' <a href="https://github.com/bitback/bitback.one" target="_blank" rel="noopener">GitHub</a>'
-        . $s . '<strong style="color:var(--bb-accent-link);">' . htmlspecialchars($t['footer_commercial']) . '</strong>'
-        . '</div>';
-}
-
 /**
  * NOWY FORMAT: dwa osobne bloby (encrypted_text + encrypted_secrets)
  * Po wygaśnięciu encrypted_secrets jest null (fizycznie usunięty z JSON)
@@ -621,7 +594,7 @@ function show_view_encrypted(array $t, array $data, string $encText, ?string $en
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($t['title']) ?></title>
     <?php og_view_meta($t); ?>
-    <?= asset_css('assets/css/view.css') ?>
+    <?= asset_css('assets/css/view.css', 'assets/css/footer.css') ?>
 </head>
 <body>
     <?php bb_page_art(); ?>
@@ -631,7 +604,7 @@ function show_view_encrypted(array $t, array $data, string $encText, ?string $en
         <div class="expired-banner bb-card bb-card-secret bb-art bb-art-gold">
             <?= htmlspecialchars($t['secrets_expired']) ?> — <?= htmlspecialchars($t['secrets_expired_info']) ?>
             <?php if (isset($data['_expired_manually'])): ?>
-            <br><small style="color:var(--bb-secret-ink);"><?= $lang === 'pl'
+            <br><small><?= $lang === 'pl'
                 ? 'Ręcznie wygaszone dnia ' . substr($data['_expired_manually'], 0, 10) . '.'
                 : 'Manually expired on ' . substr($data['_expired_manually'], 0, 10) . '.' ?></small>
             <?php endif; ?>
@@ -649,7 +622,7 @@ function show_view_encrypted(array $t, array $data, string $encText, ?string $en
 
         <?= view_meta_html($t, $data, $expired) ?>
     </div>
-    <?= view_footer_html() ?>
+    <?= site_footer_html() ?>
 
     <script src="/crypto.js?v=<?= filemtime(__DIR__ . '/crypto.js') ?>" integrity="sha384-RQoDrUypIasRu3YH/1KbhpaEtfmzmQlvafmSuNpL1E3zl8rpuvHzLF/C9jqmsD53"></script>
     <script src="/assets/js/qrcode.min.js?v=<?= filemtime(__DIR__ . '/assets/js/qrcode.min.js') ?>" integrity="sha384-mZT2gIty7ZDdOGkxfP6joZcYdMW1Jvj9dRlfpTmaJAKKXTqzygtB22k7FLe+KZC1"></script>
@@ -693,7 +666,7 @@ function show_view_encrypted_v2(array $t, array $data, string $encryptedPayload,
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($t['title']) ?></title>
     <?php og_view_meta($t); ?>
-    <?= asset_css('assets/css/view.css') ?>
+    <?= asset_css('assets/css/view.css', 'assets/css/footer.css') ?>
 </head>
 <body>
     <?php bb_page_art(); ?>
@@ -703,7 +676,7 @@ function show_view_encrypted_v2(array $t, array $data, string $encryptedPayload,
         <div class="expired-banner bb-card bb-card-secret bb-art bb-art-gold">
             <?= htmlspecialchars($t['secrets_expired']) ?> — <?= htmlspecialchars($t['secrets_expired_info']) ?>
             <?php if (isset($data['_expired_manually'])): ?>
-            <br><small style="color:var(--bb-secret-ink);"><?= $lang === 'pl'
+            <br><small><?= $lang === 'pl'
                 ? 'Ręcznie wygaszone dnia ' . substr($data['_expired_manually'], 0, 10) . '.'
                 : 'Manually expired on ' . substr($data['_expired_manually'], 0, 10) . '.' ?></small>
             <?php endif; ?>
@@ -715,7 +688,7 @@ function show_view_encrypted_v2(array $t, array $data, string $encryptedPayload,
         <div id="totpZone" class="bb-totp-zone"></div>
         <?= view_meta_html($t, $data, $expired) ?>
     </div>
-    <?= view_footer_html() ?>
+    <?= site_footer_html() ?>
     <script src="/crypto.js?v=<?= filemtime(__DIR__ . '/crypto.js') ?>" integrity="sha384-RQoDrUypIasRu3YH/1KbhpaEtfmzmQlvafmSuNpL1E3zl8rpuvHzLF/C9jqmsD53"></script>
     <script src="/assets/js/qrcode.min.js?v=<?= filemtime(__DIR__ . '/assets/js/qrcode.min.js') ?>" integrity="sha384-mZT2gIty7ZDdOGkxfP6joZcYdMW1Jvj9dRlfpTmaJAKKXTqzygtB22k7FLe+KZC1"></script>
     <script src="/assets/js/totp-qr.js?v=<?= filemtime(__DIR__ . '/assets/js/totp-qr.js') ?>" integrity="sha384-B3FEtW6GOMAbXTOr7mk6bAo6FV6TKCFXiLMOpnFXmTxwsrViJxFZyOP5Cqp3kVf1"></script>
@@ -751,7 +724,7 @@ function show_view_legacy(array $t, array $data, array $sections, bool $expired)
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($t['title']) ?></title>
     <?php og_view_meta($t); ?>
-    <?= asset_css('assets/css/view.css') ?>
+    <?= asset_css('assets/css/view.css', 'assets/css/footer.css') ?>
 </head>
 <body>
     <?php bb_page_art(); ?>
@@ -761,7 +734,7 @@ function show_view_legacy(array $t, array $data, array $sections, bool $expired)
         <div class="expired-banner bb-card bb-card-secret bb-art bb-art-gold">
             <?= htmlspecialchars($t['secrets_expired']) ?> — <?= htmlspecialchars($t['secrets_expired_info']) ?>
             <?php if (isset($data['_expired_manually'])): ?>
-            <br><small style="color:var(--bb-secret-ink);"><?= $ll === 'pl'
+            <br><small><?= $ll === 'pl'
                 ? 'Ręcznie wygaszone dnia ' . substr($data['_expired_manually'], 0, 10) . '.'
                 : 'Manually expired on ' . substr($data['_expired_manually'], 0, 10) . '.' ?></small>
             <?php endif; ?>
@@ -780,7 +753,7 @@ function show_view_legacy(array $t, array $data, array $sections, bool $expired)
         ?></div>
         <?= view_meta_html($t, $data, $expired) ?>
     </div>
-    <?= view_footer_html() ?>
+    <?= site_footer_html() ?>
     <?= asset_js('assets/js/view-common.js') ?>
 </body>
 </html><?php

@@ -5,6 +5,7 @@ require_once __DIR__ . '/inc/logo.php';
 require_once __DIR__ . '/inc/antibot.php';
 require_once __DIR__ . '/inc/icons.php';
 require_once __DIR__ . '/inc/assets.php';
+require_once __DIR__ . '/inc/footer.php';
 $lang = detect_lang();
 $t = get_strings($lang);
 $challenge = antibot_challenge();
@@ -62,7 +63,8 @@ function bb_config_data(array $t, array $challenge): array {
         'assets/css/home-base.css',
         'assets/css/home-editor.css',
         'assets/css/home-config.css',
-        'assets/css/home-result.css'
+        'assets/css/home-result.css',
+        'assets/css/footer.css'
     ) ?>
 </head>
 <body class="bb-landing">
@@ -156,8 +158,8 @@ function bb_config_data(array $t, array $challenge): array {
                     <div class="config-group">
                         <label><?= htmlspecialchars($t['password_label']) ?></label>
                         <div class="config-row">
-                            <input type="text" class="config-input" id="linkPassword" style="width:100%;text-align:left;" placeholder="<?= htmlspecialchars($t['password_placeholder_config']) ?>" autocomplete="off">
-                            <button type="button" class="copy-btn" style="padding:0.45rem 0.7rem;font-size:0.78rem;" data-bb-action="generate-password"><?= htmlspecialchars($t['password_generate']) ?></button>
+                            <input type="text" class="config-input config-input-full" id="linkPassword" placeholder="<?= htmlspecialchars($t['password_placeholder_config']) ?>" autocomplete="off">
+                            <button type="button" class="copy-btn copy-btn-sm" data-bb-action="generate-password"><?= htmlspecialchars($t['password_generate']) ?></button>
                         </div>
                     </div>
                 </div>
@@ -204,14 +206,7 @@ function bb_config_data(array $t, array $challenge): array {
 
 </div>
 
-<div style="position:fixed;bottom:0;left:0;right:0;z-index:100;background:var(--bb-bg);border-top:1px solid var(--bb-border-soft);padding:0.5rem 1rem;text-align:center;font-size:0.8rem;color:var(--bb-fg-5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-    <a href="https://bitback.pl" target="_blank" rel="noopener" style="color:var(--bb-accent-link);text-decoration:none;"><strong>bitback.pl</strong></a>
-    <span style="color:var(--bb-fg-8);margin:0 0.5rem;">|</span><?= htmlspecialchars($t['footer_tagline']) ?>
-    <span style="color:var(--bb-fg-8);margin:0 0.5rem;">|</span>Zbigniew Gralewski
-    <span style="color:var(--bb-fg-8);margin:0 0.5rem;">|</span><a href="mailto:zbigniew.gralewski@bitback.pl" style="color:var(--bb-accent-link);text-decoration:none;">zbigniew.gralewski@bitback.pl</a>
-    <span style="color:var(--bb-fg-8);margin:0 0.5rem;">|</span>609 505 065
-    <span style="color:var(--bb-fg-8);margin:0 0.5rem;">|</span><?= htmlspecialchars($t['footer_source']) ?> <a href="https://github.com/bitback/bitback.one" target="_blank" rel="noopener" style="color:var(--bb-accent-link);text-decoration:none;">GitHub</a><span style="color:var(--bb-fg-8);margin:0 0.5rem;">|</span><strong style="color:var(--bb-accent-link);"><?= htmlspecialchars($t['footer_commercial']) ?></strong>
-</div>
+<?= site_footer_html() ?>
 
 <script src="/crypto.js?v=<?= filemtime(__DIR__ . '/crypto.js') ?>" integrity="sha384-RQoDrUypIasRu3YH/1KbhpaEtfmzmQlvafmSuNpL1E3zl8rpuvHzLF/C9jqmsD53"></script>
 <?= json_island('bb-config', bb_config_data($t, $challenge)) ?>

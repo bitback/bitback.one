@@ -152,3 +152,8 @@
     font-weight: 500;
 }
 
+
+/* Wariant wezszy - przycisk stojacy w wierszu konfiguracji, nie w wynikach.
+   Selektor zlozony (nie samo .copy-btn-sm), bo .copy-btn siedzi w arkuszu
+   ladowanym pozniej i przy rownej wadze wygralby kolejnoscia. */
+.copy-btn.copy-btn-sm { padding: 0.45rem 0.7rem; font-size: 0.78rem; }

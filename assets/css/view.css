@@ -63,7 +63,6 @@ body { font-family: var(--bb-font-sans); background: var(--bb-bg); color: var(--
   color: #fff;
   font-size: 0.84rem; padding: 0.5rem 1.2rem;
 }
-.site-footer { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; background: var(--bb-bg); border-top: 1px solid var(--bb-border-soft); padding: 0.5rem 1rem; text-align: center; font-size: 0.8rem; color: var(--bb-fg-5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.site-footer a { color: var(--bb-accent-link); text-decoration: none; }
-.site-footer a:hover { color: #8abcf0; text-decoration: underline; }
-.site-footer .sep { color: var(--bb-fg-8); margin: 0 0.5rem; }
+
+/* Dopisek pod banerem wygasniecia (data recznego wygaszenia/usuniecia). */
+.expired-banner small { color: var(--bb-secret-ink); }

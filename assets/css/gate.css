@@ -27,3 +27,6 @@ h1 { font-size: 1.4rem; font-weight: 300; color: var(--bb-fg); margin-bottom: 0.
 .pwd-btn:disabled { opacity: 0.7; cursor: default; transform: none; }
 .error { color: var(--bb-danger-light); font-size: 0.84rem; margin-top: 0.5rem; }
 .logo { color: var(--bb-fg-7); font-size: 0.75rem; margin-top: 2rem; letter-spacing: 0.1em; }
+
+/* Link logo: dziedziczy kolor bloku .logo, bez podkreslenia. */
+.logo a { color: inherit; text-decoration: none; }

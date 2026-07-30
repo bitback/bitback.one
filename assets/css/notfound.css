@@ -34,3 +34,5 @@ h1 { font-size: 1.2rem; font-weight: 400; color: var(--bb-fg-4); margin-bottom: 
     transition: background 0.15s;
 }
 .home-link:hover { background: var(--bb-surface-2); }
+/* Link logo: dziedziczy kolor otoczenia, bez podkreslenia. */
+.logo a { color: inherit; text-decoration: none; }
