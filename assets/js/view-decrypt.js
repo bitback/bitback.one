@@ -57,9 +57,9 @@ let inlineWrap = null, inlineErr = null;
         // Jeśli sekrety wygasły, wstaw maskowniki w miejsce brakujących idx
         if (!ENC_SECRETS) {
             const filled = fillMasked(all);
-            renderSections(filled, true);
+            renderSections(filled);
         } else {
-            renderSections(all, false);
+            renderSections(all);
         }
 
         loadingBox.style.display = 'none';
@@ -127,6 +127,10 @@ function promptPasswordInline() {
             document.getElementById('errorBox').parentNode.insertBefore(inlineWrap, document.getElementById('loadingBox'));
             inlineErr = inlineWrap.querySelector('#inlinePwdErr');
         }
+        // Pokazujemy przez WYCZYSZCZENIE inline stylu. Dlatego ukrywanie elementow
+        // w tym projekcie zostaje na `style="display:none"` w HTML i NIE wolno tego
+        // zamienic na klase typu `.hidden`: po zamianie wyczyszczenie inline stylu
+        // oddaloby glos klasie i element zostalby niewidoczny.
         inlineWrap.style.display = '';
         const input = inlineWrap.querySelector('#inlinePwd');
         const btn = inlineWrap.querySelector('#inlinePwdBtn');
@@ -191,7 +195,7 @@ function fillMasked(textItems) {
     return result;
 }
 
-function renderSections(sections, expired) {
+function renderSections(sections) {
     const contentBox = document.getElementById('contentBox');
     let html = '';
     for (const s of sections) {

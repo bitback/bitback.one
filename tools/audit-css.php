@@ -99,6 +99,53 @@ $features = [
     'bb-rise (wjazdy)'          => 'bb-rise',
 ];
 
+// --- zmienne: ile ich jest, ile realnie roznych wartosci, co nieuzywane ---
+$tokens = $root . '/assets/tokens.css';
+if (is_file($tokens)) {
+    $tok = css_selectors_only(file_get_contents($tokens));
+    preg_match_all('/(--bb-[a-z0-9-]+)\s*:\s*([^;]+);/i', $tok, $vm, PREG_SET_ORDER);
+
+    $decl = [];
+    foreach ($vm as $v) { $decl[$v[1]] = trim($v[2]); }
+
+    // uzycia liczone w CALYM CSS (tokens tez - zmienna moze budowac inna)
+    $useIn = '';
+    foreach ($cssFiles as $f) { $useIn .= file_get_contents($f); }
+    $unused = $usedOnce = [];
+    foreach ($decl as $name => $val) {
+        $n = preg_match_all('/var\(\s*' . preg_quote($name, '/') . '\s*[,)]/i', $useIn);
+        if ($n === 0) { $unused[] = $name; }
+        elseif ($n === 1) { $usedOnce[] = $name; }
+    }
+
+    // te same wartosci pod roznymi nazwami = zbedne aliasy
+    $byVal = [];
+    foreach ($decl as $name => $val) { $byVal[strtolower($val)][] = $name; }
+    $dupes = array_filter($byVal, fn($names) => count($names) > 1);
+
+    echo "\nZMIENNE (assets/tokens.css)\n";
+    echo str_repeat('-', 60) . "\n";
+    printf("%-34s %d\n", 'zadeklarowanych', count($decl));
+    printf("%-34s %d\n", 'roznych wartosci', count($byVal));
+    printf("%-34s %d\n", 'nieuzywanych w zadnym arkuszu', count($unused));
+    printf("%-34s %d\n", 'uzytych DOKLADNIE raz', count($usedOnce));
+    printf("%-34s %d\n", 'grup o identycznej wartosci', count($dupes));
+
+    if ($dupes) {
+        echo "\n  Ta sama wartosc pod roznymi nazwami (kandydaci na jeden token):\n";
+        foreach ($dupes as $val => $names) {
+            echo '    ' . $val . '  <-  ' . implode(', ', $names) . "\n";
+        }
+    }
+    if ($unused) {
+        echo "\n  Nieuzywane: " . implode(', ', $unused) . "\n";
+    }
+    if ($usedOnce) {
+        echo "\n  Uzyte raz (kandydaci do wpisania wprost albo scalenia):\n    "
+            . implode(', ', $usedOnce) . "\n";
+    }
+}
+
 echo "\nWARSTWA DEKORACYJNA (liczba wystapien)\n";
 echo str_repeat('-', 60) . "\n";
 printf("%-30s %s\n", 'linii CSS razem', substr_count($all, "\n"));
