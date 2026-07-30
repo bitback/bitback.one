@@ -27,11 +27,19 @@
   --bb-surface-3:    #161b28;  /* input/raised */
   --bb-surface-sunk: #080c14;  /* sunken field (editor, url) */
 
-  /* --- Borders / dividers --- */
-  --bb-border:       #2a3040;
-  --bb-border-soft:  #232838;
-  --bb-border-mid:   #2a3040;  /* input borders */
-  --bb-border-hover: #3d4458;
+  /* --- POKRETLA WYGLADU ---
+     Trzy wartosci do recznego tuningu. Ramki nie sa wpisywane osobno: wszystkie
+     licza sie z jednej bazy i jednej sily, wiec zmiana --bb-line-strength
+     przesuwa KAZDA ramke w aplikacji naraz. */
+  --bb-line-rgb:      148 163 184;  /* chlodna szarosc, baza wszystkich linii */
+  --bb-line-strength: 0.10;         /* ile ramka ma byc widoczna (0 = niewidoczna) */
+  --bb-radius:        10px;         /* promien narozy */
+
+  /* --- Borders / dividers (liczone z pokretel wyzej) --- */
+  --bb-border:       rgb(var(--bb-line-rgb) / var(--bb-line-strength));
+  --bb-border-soft:  rgb(var(--bb-line-rgb) / calc(var(--bb-line-strength) * 0.6));
+  --bb-border-mid:   rgb(var(--bb-line-rgb) / var(--bb-line-strength));
+  --bb-border-hover: rgb(var(--bb-line-rgb) / calc(var(--bb-line-strength) * 2.2));
 
   /* --- Text (chlodna rampa, czytelna) --- */
   --bb-fg:           #eef1f6;  /* primary */
@@ -95,9 +103,12 @@
   --bb-shadow-sm:    0 1px 2px rgba(0,0,0,0.5);
   --bb-shadow-md:    0 4px 12px rgba(0,0,0,0.45), 0 1px 2px rgba(0,0,0,0.5);
 
-  /* --- Neon frame (mockup m01): cienka teal ramka sekcji + glow --- */
-  --bb-neon-border: rgba(37, 194, 168, 0.25);
-  --bb-neon-glow: 0 0 16px rgba(37, 194, 168, 0.05), inset 0 0 22px rgba(37, 194, 168, 0.025);
+  /* --- Ramka sekcji ---
+     Byla teal z poswiata i to ona odpowiadala za "walenie kontrastem".
+     Teraz ta sama cicha linia co reszta - stad ujednolicony wyglad.
+     Nazwy zostaja, bo uzywa ich kilkanascie regul; kolor idzie z pokretel. */
+  --bb-neon-border: var(--bb-border);
+  --bb-neon-glow: none;
 
   /* --- Fonts ---
      Manrope (UI, zaakceptowana na mockupie) + JetBrains Mono (dane).
@@ -269,18 +280,46 @@ html, body {
   background: var(--bb-bg) !important;
   min-height: 100vh;
 }
-/* JEDYNE miejsce wymuszajace ostre krawedzie w calej aplikacji. Kierunek
-   projektu to narozniki ZAOKRAGLONE (docs/task-redesign.md), wiec ta regula
-   jest do zdjecia - a zmiana samych zmiennych promienia bez jej usuniecia nic
-   nie da, bo !important je przebija.
-   Powstala, by wygrywac z promieniami zaszytymi w blokach <style> w PHP.
-   Tych blokow JUZ NIE MA (styl jest w assets/css/), wiec pierwotny powod
-   istnienia tej reguly zniknal.
-   Wyjatki nizej: okragle chipy ikon i spinnery (celowo kola). */
-* { border-radius: 0 !important; }
+/* =========================================================================
+   Zaokraglenia - jedno miejsce dla calej aplikacji.
+
+   Ta lista jest jawna, nie globalna (`*`), bo globalna regula zaokraglilaby
+   tez elementy, ktore maja byc prostokatne (komorki tabel, paski) albo kolami
+   (chipy). Kontenery mialy dotad promienie wpisane na sztywno w kilku
+   wartosciach (3, 5, 8, 10 px) i nie bylo ich widac, bo globalny reset
+   zerowal wszystko - teraz jada z jednego pokretla --bb-radius.
+   ========================================================================= */
+.trust-box,
+.config-panel,
+.config-verify,
+.bb-frame,
+.bb-card,
+.editor-wrap,
+.editor,
+.preview-box,
+.result-box,
+.generate-btn,
+.antibot-opt,
+.config-input,
+.pwd-input,
+.pwd-btn,
+.copy-btn,
+.box,
+.content-box,
+.expired-banner,
+.error-banner,
+.meta,
+.loading,
+.bb-totp,
+.bb-totp-zone,
+.bb-totp-qr,
+.hint code,
+.home-link { border-radius: var(--bb-radius); }
+
+/* Chipy ikon i spinnery sa kolami niezaleznie od --bb-radius. */
 .bb-chip,
 .generate-btn .spinner,
-.loading .spinner { border-radius: 50% !important; }
+.loading .spinner { border-radius: 50%; }
 
 /* Staggered page-load reveal - subtelny fade-up dla glownych sekcji
    na landing. Jedna dobrze orkiestrowana animacja > 10 micro-interakcji. */
