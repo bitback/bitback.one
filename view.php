@@ -281,15 +281,6 @@ function og_view_meta(array $t): void {
     <?php
 }
 
-function bb_page_art(): void {
-    ?>
-    <div class="bb-page-art bb-page-art-tl" aria-hidden="true"></div>
-    <div class="bb-page-art bb-page-art-tr" aria-hidden="true"></div>
-    <div class="bb-page-art bb-page-art-br" aria-hidden="true"></div>
-    <div class="bb-page-art bb-page-art-bl" aria-hidden="true"></div>
-    <?php
-}
-
 function show_password_form(array $t, string $slug, bool $wrongPassword = false, bool $tooMany = false): void {
     ?><!DOCTYPE html>
 <html lang="<?= detect_lang() ?>">
@@ -301,7 +292,6 @@ function show_password_form(array $t, string $slug, bool $wrongPassword = false,
     <?= asset_css('assets/css/gate.css', 'assets/css/footer.css') ?>
 </head>
 <body>
-    <?php bb_page_art(); ?>
     <div class="box bb-frame">
         <?= render_logo($t['title'], '/') ?>
         <div class="sub"><?= htmlspecialchars($t['password_required'] ?? 'This link is password protected') ?></div>
@@ -340,7 +330,6 @@ function show_password_form_v3(array $t, string $slug, array $data, bool $wrongP
     <?= asset_css('assets/css/gate.css', 'assets/css/footer.css') ?>
 </head>
 <body>
-    <?php bb_page_art(); ?>
     <div class="box bb-frame">
         <?= render_logo($t['title'], '/') ?>
         <div class="sub"><?= htmlspecialchars($t['password_required'] ?? 'This link is password protected') ?></div>
@@ -387,7 +376,6 @@ function show_not_found(array $t): void {
     <?= asset_css('assets/css/notfound.css', 'assets/css/footer.css') ?>
 </head>
 <body>
-    <?php bb_page_art(); ?>
     <div class="box bb-frame">
         <div class="ghost"><?= bb_icon('ghost') ?></div>
         <div class="code">404</div>
@@ -428,7 +416,6 @@ function show_expired(array $t, ?string $killedAt = null, ?string $expiredManual
     <?= asset_css('assets/css/expired.css', 'assets/css/footer.css') ?>
 </head>
 <body>
-    <?php bb_page_art(); ?>
     <div class="box bb-frame">
         <h1><?= htmlspecialchars($t['link_expired']) ?></h1>
         <p><?= htmlspecialchars($t['link_expired_info']) ?></p>
@@ -597,11 +584,10 @@ function show_view_encrypted(array $t, array $data, string $encText, ?string $en
     <?= asset_css('assets/css/view.css', 'assets/css/footer.css') ?>
 </head>
 <body>
-    <?php bb_page_art(); ?>
     <div class="header"><?= render_logo($t['title'], '/') ?></div>
     <div class="container">
         <?php if ($expired): ?>
-        <div class="expired-banner bb-card bb-card-secret bb-art bb-art-gold">
+        <div class="expired-banner bb-card bb-card-secret">
             <?= htmlspecialchars($t['secrets_expired']) ?> — <?= htmlspecialchars($t['secrets_expired_info']) ?>
             <?php if (isset($data['_expired_manually'])): ?>
             <br><small><?= $lang === 'pl'
@@ -669,11 +655,10 @@ function show_view_encrypted_v2(array $t, array $data, string $encryptedPayload,
     <?= asset_css('assets/css/view.css', 'assets/css/footer.css') ?>
 </head>
 <body>
-    <?php bb_page_art(); ?>
     <div class="header"><?= render_logo($t['title'], '/') ?></div>
     <div class="container">
         <?php if ($expired): ?>
-        <div class="expired-banner bb-card bb-card-secret bb-art bb-art-gold">
+        <div class="expired-banner bb-card bb-card-secret">
             <?= htmlspecialchars($t['secrets_expired']) ?> — <?= htmlspecialchars($t['secrets_expired_info']) ?>
             <?php if (isset($data['_expired_manually'])): ?>
             <br><small><?= $lang === 'pl'
@@ -727,11 +712,10 @@ function show_view_legacy(array $t, array $data, array $sections, bool $expired)
     <?= asset_css('assets/css/view.css', 'assets/css/footer.css') ?>
 </head>
 <body>
-    <?php bb_page_art(); ?>
     <div class="header"><?= render_logo($t['title'], '/') ?></div>
     <div class="container">
         <?php if ($expired): $ll = detect_lang(); ?>
-        <div class="expired-banner bb-card bb-card-secret bb-art bb-art-gold">
+        <div class="expired-banner bb-card bb-card-secret">
             <?= htmlspecialchars($t['secrets_expired']) ?> — <?= htmlspecialchars($t['secrets_expired_info']) ?>
             <?php if (isset($data['_expired_manually'])): ?>
             <br><small><?= $ll === 'pl'

@@ -69,10 +69,6 @@ function bb_config_data(array $t, array $challenge): array {
 </head>
 <body class="bb-landing">
 
-<div class="bb-page-art bb-page-art-tl" aria-hidden="true"></div>
-<div class="bb-page-art bb-page-art-tr" aria-hidden="true"></div>
-<div class="bb-page-art bb-page-art-br" aria-hidden="true"></div>
-<div class="bb-page-art bb-page-art-bl" aria-hidden="true"></div>
 
 <div class="header bb-rise-1">
     <?= render_logo('bitback.one', 'https://bitback.one') ?>
@@ -80,7 +76,7 @@ function bb_config_data(array $t, array $challenge): array {
 </div>
 
 <div class="trust bb-rise-2">
-    <div class="trust-box bb-art bb-art-aurora bb-art-left bb-art-left-magenta">
+    <div class="trust-box">
         <div class="trust-grid">
             <div class="trust-item">
                 <div class="bb-chip bb-chip-violet"><?= bb_icon('lock') ?></div>
@@ -178,7 +174,7 @@ function bb_config_data(array $t, array $challenge): array {
 
         <!-- LINK WYJŚCIOWY -->
         <div class="result" id="result">
-            <div class="result-box bb-card bb-card-success bb-art bb-art-green">
+            <div class="result-box bb-card bb-card-success">
                 <div class="result-label"><?= htmlspecialchars($t['your_link']) ?></div>
                 <div class="result-link">
                     <input type="text" class="result-url" id="resultUrl" readonly>

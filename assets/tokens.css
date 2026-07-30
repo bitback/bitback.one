@@ -162,9 +162,11 @@
 /* Zt-badge kłódka - mała */
 .zt-badge [data-lucide] { width: 10px; height: 10px; vertical-align: -0.1em; }
 
-/* Logo - uzywane w naglowkach stron
-   !important bo inline <style> z .header h1 w PHP jest loadowane PO
-   tokens.css i nadpisuje bez tego */
+/* Logo - uzywane w naglowkach stron.
+   Te !important zostaly z czasow, gdy styl stron siedzial w blokach <style>
+   w PHP ladowanych PO tokens.css. Tych blokow JUZ NIE MA (styl jest
+   w assets/css/), wiec przy przebudowie sprawdzic, czy sa jeszcze potrzebne -
+   nie usuwac na slepo, bo o wielkosci logo decyduje tu wlasnie !important. */
 .bb-logo {
   margin: 0 !important;
   padding: 0 !important;
@@ -203,122 +205,8 @@
 }
 
 /* =========================================================================
-   Sloty na grafiki narozne (bitmapy generowane w Higgsfield)
-   Bitmapy na CZYSTEJ CZERNI + mix-blend-mode: screen = czern znika,
-   zostaja smugi swiatla. Dziala na kazdej ciemnej powierzchni bez
-   dopasowywania koloru tla karty.
-   Uzycie: <div class="bb-card bb-art bb-art-aurora">...
-   ========================================================================= */
-.bb-art {
-  position: relative;
-  overflow: hidden;
-  /* wlasny stacking context: ::after z z-index -1 laduje NAD tlem karty
-     a POD cala trescia (takze golymi text node'ami, ktorych z-index
-     nie podniesie) i blend nie przebija na strone */
-  isolation: isolate;
-}
-.bb-art::after {
-  content: "";
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: 55%;
-  height: 100%;
-  background: var(--bb-art, none) right bottom / cover no-repeat;
-  mix-blend-mode: screen;
-  pointer-events: none;
-  z-index: -1;
-  /* maska RADIALNA z prawego dolnego rogu: gasi WSZYSTKIE krawedzie
-     bitmapy naraz (gora/lewo/diagonal) niezaleznie od jej zawartosci -
-     zadna krawedz ciecia nie ma prawa byc widoczna. Grafika = poswiata
-     naroznika, tekst nad nia czytelny. */
-  -webkit-mask-image: radial-gradient(140% 150% at 100% 100%, #000 30%, transparent 70%);
-  mask-image: radial-gradient(140% 150% at 100% 100%, #000 30%, transparent 70%);
-  opacity: 0.85;
-}
-/* warianty - URL podpinane po wygenerowaniu bitmap */
-.bb-art-aurora { --bb-art: url('/assets/art/aurora-1.webp'); }
-.bb-art-gold   { --bb-art: url('/assets/art/gold-1.webp'); }
-.bb-art-green  { --bb-art: url('/assets/art/green-1.webp'); }
-
-/* drugi rog karty (lewy-dolny) przez ::before - kanoniczna bitmapa
-   (art w prawym-dolnym rogu) odbita scaleX. Uzycie razem z .bb-art:
-   <div class="bb-art bb-art-aurora bb-art-left bb-art-left-magenta"> */
-.bb-art-left::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 45%;
-  height: 100%;
-  background: var(--bb-art-l, none) right bottom / cover no-repeat;
-  mix-blend-mode: screen;
-  pointer-events: none;
-  z-index: -1;
-  transform: scaleX(-1);
-  -webkit-mask-image: radial-gradient(140% 150% at 100% 100%, #000 30%, transparent 70%);
-  mask-image: radial-gradient(140% 150% at 100% 100%, #000 30%, transparent 70%);
-  opacity: 0.7;
-}
-.bb-art-left-magenta { --bb-art-l: url('/assets/art/magenta-2.webp'); }
-
-/* =========================================================================
-   Smugi narozne na POZIOMIE STRONY (mockup m01): fixed bitmapy w gornych
-   rogach viewportu. Kanoniczne bitmapy maja art w prawym-dolnym rogu -
-   orientacje do rogu robi transform (maska radialna obraca sie razem
-   z elementem). z-index -1 = nad tlem canvas, pod cala trescia; solidne
-   tla kart zaslaniaja smugi, wiec zyja tylko na czarnym tle strony.
-   ========================================================================= */
-.bb-page-art {
-  position: fixed;
-  width: min(36vw, 560px);
-  aspect-ratio: 1 / 1;
-  pointer-events: none;
-  z-index: -1;
-  background: var(--bb-page-art, none) center / cover no-repeat;
-  mix-blend-mode: screen;
-  opacity: 1;
-  /* maska trzyma pelna jasnosc dluzej - smugi zywe jak w mockupie */
-  -webkit-mask-image: radial-gradient(130% 130% at 100% 100%, #000 40%, transparent 80%);
-  mask-image: radial-gradient(130% 130% at 100% 100%, #000 40%, transparent 80%);
-}
-.bb-page-art-tl {
-  top: 0; left: 0;
-  --bb-page-art: url('/assets/art/magenta-2.webp');
-  transform: rotate(180deg);
-  opacity: 0.5;
-  -webkit-mask-image: radial-gradient(90% 90% at 100% 100%, #000 18%, transparent 56%);
-  mask-image: radial-gradient(90% 90% at 100% 100%, #000 18%, transparent 56%);
-}
-.bb-page-art-tr {
-  top: 0; right: 0;
-  --bb-page-art: url('/assets/art/aurora-1.webp');
-  transform: scaleY(-1);
-  opacity: 0.5;
-  -webkit-mask-image: radial-gradient(90% 90% at 100% 100%, #000 18%, transparent 56%);
-  mask-image: radial-gradient(90% 90% at 100% 100%, #000 18%, transparent 56%);
-}
-/* dolne rogi (m01): BR zywy teal, BL przyciszona magenta */
-.bb-page-art-br {
-  bottom: 0; right: 0;
-  --bb-page-art: url('/assets/art/aurora-1.webp');
-  opacity: 0.5;
-  -webkit-mask-image: radial-gradient(90% 90% at 100% 100%, #000 18%, transparent 56%);
-  mask-image: radial-gradient(90% 90% at 100% 100%, #000 18%, transparent 56%);
-}
-.bb-page-art-bl {
-  bottom: 0; left: 0;
-  --bb-page-art: url('/assets/art/magenta-2.webp');
-  transform: scaleX(-1);
-  opacity: 0.5;
-  -webkit-mask-image: radial-gradient(90% 90% at 100% 100%, #000 18%, transparent 56%);
-  mask-image: radial-gradient(90% 90% at 100% 100%, #000 18%, transparent 56%);
-}
-
-/* =========================================================================
-   Karty FLAT (zaakceptowane na mockupie): jednolita powierzchnia
-   --bb-surface-1 + border --bb-border. ZERO gradientow - tozsamosc
-   koloru niosa: chipy ikon, status-pille i bitmapy narozne (bb-art).
+   Karty: jednolita powierzchnia --bb-surface-1 + border --bb-border.
+   Tozsamosc koloru niosa chipy ikon i status-pille.
    Warianty roznia sie wylacznie odcieniem ramki.
    !important bo inline <style> w PHP laduje sie PO tokens.css.
    ========================================================================= */
@@ -381,11 +269,6 @@ html, body {
   background: var(--bb-bg) !important;
   min-height: 100vh;
 }
-/* isolation: wlasny stacking context body - smugi bb-page-art (z-index -1)
-   laduja NAD tlem body, a POD cala trescia. Bez tego tlo body (in-flow)
-   maluje sie po negative-z dzieciach i calkowicie je zaslania. */
-body { isolation: isolate; }
-
 /* JEDYNE miejsce wymuszajace ostre krawedzie w calej aplikacji. Kierunek
    projektu to narozniki ZAOKRAGLONE (docs/task-redesign.md), wiec ta regula
    jest do zdjecia - a zmiana samych zmiennych promienia bez jej usuniecia nic
