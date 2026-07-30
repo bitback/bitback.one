@@ -27,6 +27,22 @@ function asset_css(string ...$rel): string {
 }
 
 /**
+ * Wyspa danych dla skryptow strony: wartosci z PHP jada JSON-em, a nie
+ * interpolacja do kodu. Dzieki temu pliki .js sa w pelni statyczne
+ * (cache'owalne) i zaden tekst z serwera nie trafia do kontekstu
+ * wykonywalnego.
+ *
+ * JSON_HEX_TAG jest tu istotny: bez niego wartosc zawierajaca sekwencje
+ * zamykajaca tag script rozerwalaby wyspe, a reszta JSON-a wyladowalaby
+ * w HTML jako tresc.
+ */
+function json_island(string $id, array $data): string {
+    return '<script type="application/json" id="' . htmlspecialchars($id) . '">'
+        . json_encode($data, JSON_HEX_TAG | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
+        . '</script>';
+}
+
+/**
  * Skrypty klasyczne (BEZ type="module"). Kolejnosc argumentow = kolejnosc
  * wykonania.
  *

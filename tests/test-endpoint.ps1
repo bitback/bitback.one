@@ -292,18 +292,18 @@ $gu = ($r.body.url -split '/')[-1]
 $gFile = Join-Path $dataDir "$gu.json"
 # GET -> formularz hasla, bez blobu, view nie policzony
 $g = GetPage (ViewUrl $gu)
-chk "gate: GET -> formularz (jest pwdForm, brak ENC_TEXT)" ($g.text -match 'pwdForm' -and $g.text -notmatch 'ENC_TEXT')
+chk "gate: GET -> formularz (jest pwdForm, brak encText)" ($g.text -match 'pwdForm' -and $g.text -notmatch 'encText')
 chk "gate: GET nie liczy view" ((Views $gFile) -eq 0)
 # zly auth_tag -> formularz z bledem, bez blobu, view nie policzony
 $g = PostForm (ViewUrl $gu) @{ auth_tag = ('00' * 32) }
-chk "gate: zly auth_tag -> formularz, brak blobu" ($g.text -match 'pwdForm' -and $g.text -notmatch 'ENC_TEXT')
+chk "gate: zly auth_tag -> formularz, brak blobu" ($g.text -match 'pwdForm' -and $g.text -notmatch 'encText')
 chk "gate: zly auth_tag nie liczy view" ((Views $gFile) -eq 0)
 # pusty auth_tag (submit bez JS) -> formularz BEZ komunikatu bledu
 $g = PostForm (ViewUrl $gu) @{ auth_tag = '' }
 chk "gate: pusty auth_tag -> formularz (jak GET)" ($g.text -match 'pwdForm')
 # dobry auth_tag -> strona widoku z blobem, view policzony
 $g = PostForm (ViewUrl $gu) @{ auth_tag = $gateTag }
-chk "gate: dobry auth_tag -> strona widoku (ENC_TEXT)" ($g.text -match 'ENC_TEXT')
+chk "gate: dobry auth_tag -> strona widoku (encText)" ($g.text -match 'encText')
 chk "gate: dobry auth_tag liczy view (1)" ((Views $gFile) -eq 1)
 Remove-Item $gFile -Force
 
@@ -326,7 +326,7 @@ chk "v2: GET -> formularz hasla (plaintext gate)" ($g.text -match 'name="passwor
 $g = PostForm (ViewUrl $v2uuid) @{ password = 'zle-haslo' }
 chk "v2: zle haslo -> formularz, view=0" ($g.text -match 'pwdForm' -and (Views $v2File) -eq 0)
 $g = PostForm (ViewUrl $v2uuid) @{ password = 'test123' }
-chk "v2: dobre haslo -> strona widoku (ENC_TEXT), view=1" ($g.text -match 'ENC_TEXT' -and (Views $v2File) -eq 1)
+chk "v2: dobre haslo -> strona widoku (encText), view=1" ($g.text -match 'encText' -and (Views $v2File) -eq 1)
 Remove-Item $v2File -Force
 
 # Zapisuje rekord v3 wprost do DataDir (omija antybot/ratelimit) i zwraca uuid+plik.
@@ -434,7 +434,7 @@ chk "view: path traversal slug -> 404, brak wycieku config" ($pt.code -eq 404 -a
 # uszkodzony JSON -> not_found (nie 500 na produkcji)
 $badId = [guid]::NewGuid().ToString(); $badF = Join-Path $dataDir "$badId.json"
 Set-Content $badF 'niejson' -Encoding UTF8
-chk "view: uszkodzony JSON -> nie renderuje bloba" ((GetPage (ViewUrl $badId)).text -notmatch 'ENC_TEXT')
+chk "view: uszkodzony JSON -> nie renderuje bloba" ((GetPage (ViewUrl $badId)).text -notmatch 'encText')
 Remove-Item $badF -Force
 
 # LAZY DELETE: expires_secrets w przeszlosci -> pierwszy odczyt FIZYCZNIE kasuje secrets
@@ -449,7 +449,7 @@ Remove-Item $rec.file -Force
 # MAX_VIEWS: ostatnie dozwolone wyswietlenie kasuje secrets w tym samym widoku
 $rec = NewRecord @{ max_views = 1; expires_secrets = '2036-01-01T00:00:00Z' }
 $g = GetPage (ViewUrl $rec.uuid)
-chk "max_views: ostatni widok pokazuje tresc (ENC_TEXT)" ($g.text -match 'ENC_TEXT')
+chk "max_views: ostatni widok pokazuje tresc (encText)" ($g.text -match 'encText')
 chk "max_views=1: po 1 widoku current_views=1" ((Field $rec.file 'current_views') -eq 1)
 chk "max_views=1: sekrety skasowane po ostatnim widoku" ($null -eq (Field $rec.file 'encrypted_secrets'))
 $g2 = GetPage (ViewUrl $rec.uuid)
@@ -467,7 +467,7 @@ Remove-Item $trashF -Force -ErrorAction SilentlyContinue
 $rec = NewRecord @{}
 $null = PostJson '/api/expire.php' @{ uuid = $rec.uuid; action = 'kill' }
 $g = GetPage (ViewUrl $rec.uuid)
-chk "po kill: view.php nie oddaje ENC_TEXT (link martwy)" ($g.text -notmatch 'ENC_TEXT')
+chk "po kill: view.php nie oddaje encText (link martwy)" ($g.text -notmatch 'encText')
 Remove-Item $rec.file -Force -ErrorAction SilentlyContinue
 
 # ===== legacy v2/v1: wygasniecie kasuje CALY ciphertext =====
@@ -547,11 +547,11 @@ chk "pwd-rate: 3. proba nad progiem=2 -> komunikat o zbyt wielu probach" ($r3.te
 chk "pwd-rate: zle proby NIE spalily wyswietlenia" ((Views $pwFile) -eq 0)
 # nad progiem nawet POPRAWNY tag jest odrzucany (throttle dziala przed weryfikacja)
 $r4 = PostForm (ViewUrl $pwUuid) @{ auth_tag = $pwTag }
-chk "pwd-rate: nad progiem nawet dobry tag nie otwiera (brak ENC_TEXT)" ($r4.text -notmatch 'PWD-GATE-TEXT')
+chk "pwd-rate: nad progiem nawet dobry tag nie otwiera (brak encText)" ($r4.text -notmatch 'PWD-GATE-TEXT')
 # po wyczyszczeniu bucketu poprawny tag otwiera - czyli blokada jest czasowa, nie trwala
 Remove-Item (Join-Path $dataDir '_ratelimit') -Recurse -Force -ErrorAction SilentlyContinue
 $r5 = PostForm (ViewUrl $pwUuid) @{ auth_tag = $pwTag }
-chk "pwd-rate: po zwolnieniu limitu dobry tag otwiera link" ($r5.text -match 'ENC_TEXT')
+chk "pwd-rate: po zwolnieniu limitu dobry tag otwiera link" ($r5.text -match 'encText')
 chk "pwd-rate: udane otwarcie policzylo wyswietlenie" ((Views $pwFile) -eq 1)
 Remove-Item $pwFile -Force -ErrorAction SilentlyContinue
 Remove-Item $limFileP -Force -ErrorAction SilentlyContinue

@@ -90,7 +90,20 @@ if (!function_exists('openssl_encrypt')) {
     $blob = base64_encode($iv . openssl_encrypt($plain, CIPHER_METHOD, $key, OPENSSL_RAW_DATA, $iv));
     ok(decrypt_secret($blob, $hexKey) === $plain, 'decrypt_secret: round-trip z poprawnym kluczem');
     ok(decrypt_payload($blob, $hexKey) === ['a' => 1, 'b' => 'zażółć gęślą jaźń'], 'decrypt_payload: zwraca tablice');
-    ok(decrypt_secret($blob, bin2hex(random_bytes(16))) === null, 'decrypt_secret: zly klucz -> null (nie wyjatek)');
+    // Zly klucz na LOSOWYM blobie NIE jest deterministyczny: CBC nie ma
+    // uwierzytelnienia, wiec dla ~1 na 256 kluczy dopelnienie PKCS7 wypada
+    // przypadkowo poprawnie i openssl oddaje smieci zamiast false. Ten test
+    // przez to sypal srednio raz na ~250 przebiegow. Kontrakt "null" jest wiec
+    // sprawdzany na USTALONYM wektorze, a na losowym tylko to, co prawdziwe
+    // zawsze: nie oddaje plaintextu i nie rzuca wyjatkiem. Wlasnie ta cecha CBC
+    // jest powodem, dla ktorego aktualny format 3 uzywa GCM.
+    $fixedHex  = '00112233445566778899aabbccddeeff';
+    $fixedIv   = hex2bin('0f0e0d0c0b0a09080706050403020100');
+    $fixedBlob = base64_encode($fixedIv . openssl_encrypt(
+        $plain, CIPHER_METHOD, hash('sha256', $fixedHex, true), OPENSSL_RAW_DATA, $fixedIv
+    ));
+    ok(decrypt_secret($fixedBlob, 'ffeeddccbbaa99887766554433221100') === null, 'decrypt_secret: zly klucz -> null (wektor ustalony)');
+    ok(decrypt_secret($blob, bin2hex(random_bytes(16))) !== $plain, 'decrypt_secret: zly klucz nigdy nie oddaje plaintextu (i nie rzuca)');
     ok(decrypt_secret(base64_encode('krotkie'), $hexKey) === null, 'decrypt_secret: payload < 17B -> null');
     ok(decrypt_payload(base64_encode($iv . 'niejson'), $hexKey) === null, 'decrypt_payload: nie-JSON -> null');
 }
@@ -144,15 +157,22 @@ ok(count($footerHardcode) === 0, 'i18n: stopka fixed nie zaszywa PL (uzywa foote
 // deriveMasterV3 bierze haslo jako surowe bajty (NFC + TextEncoder), wiec backslash
 // i inne znaki sa bezpieczne - jedyne ryzyko rozjazdu to wlasnie trim po jednej stronie.
 // Uwaga: to guard po ZRODLE, wiec jest wrazliwy na przenoszenie kodu miedzy
-// plikami. Sciezka celuje w plik, gdzie skrypt realnie zyje - nie w szablon.
-$idxSrc = file_get_contents(__DIR__ . '/../assets/js/home-generate.js');
-$vwSrc  = file_get_contents(__DIR__ . '/../view.php');
+// plikami. Sciezki celuja w pliki, gdzie ten kod realnie zyje - nie w szablony
+// PHP. Kazdy plik jest sprawdzany, czy w ogole ma tresc: guard po stringu
+// przechodzilby cicho na pustym albo przeniesionym pliku, czyli dokladnie
+// wtedy, kiedy ma alarmowac.
+$srcCreate = file_get_contents(__DIR__ . '/../assets/js/home-generate.js');
+$srcGate   = file_get_contents(__DIR__ . '/../assets/js/gate-v3.js');
+$srcView   = file_get_contents(__DIR__ . '/../assets/js/view-decrypt.js');
 echo "\n-- haslo: parytet trim create/view --\n";
-ok(substr_count($idxSrc, "linkPassword').value.trim()") >= 2, 'trim: home-generate.js tnie haslo przy tworzeniu (single + bulk)');
-ok(strpos($vwSrc, "getElementById('pwdInput').value.trim()") !== false, 'trim: view.php formularz v3 tnie haslo');
-ok(strpos($vwSrc, 'resolve(input.value.trim())') !== false, 'trim: view.php inline prompt tnie haslo');
-ok(strpos($vwSrc, "getElementById('pwdInput').value,") === false, 'trim: brak nietrymowanego odczytu pwdInput (regresja)');
-ok(strpos($vwSrc, 'resolve(input.value)') === false, 'trim: brak nietrymowanego resolve inline (regresja)');
+foreach (['home-generate' => $srcCreate, 'gate-v3' => $srcGate, 'view-decrypt' => $srcView] as $name => $src) {
+    ok(strlen($src) > 500, "trim: zrodlo $name.js istnieje i ma tresc (guard nie testuje pustki)");
+}
+ok(substr_count($srcCreate, "linkPassword').value.trim()") >= 2, 'trim: home-generate.js tnie haslo przy tworzeniu (single + bulk)');
+ok(strpos($srcGate, "getElementById('pwdInput').value.trim()") !== false, 'trim: gate-v3.js formularz tnie haslo');
+ok(strpos($srcView, 'resolve(input.value.trim())') !== false, 'trim: view-decrypt.js inline prompt tnie haslo');
+ok(strpos($srcGate, "getElementById('pwdInput').value,") === false, 'trim: brak nietrymowanego odczytu pwdInput (regresja)');
+ok(strpos($srcView, 'resolve(input.value)') === false, 'trim: brak nietrymowanego resolve inline (regresja)');
 
 echo "\n";
 echo "UNIT: $pass PASS / $fail FAIL" . ($skip ? " / $skip SKIP" : '') . "\n";

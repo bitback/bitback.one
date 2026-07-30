@@ -9,15 +9,8 @@ $lang = detect_lang();
 $t = get_strings($lang);
 $challenge = antibot_challenge();
 
-/**
- * Dane, ktore skrypty strony dostaja z serwera. Jada wyspa JSON w HTML, a nie
- * interpolacja do kodu - dzieki temu pliki .js sa w pelni statyczne (cache'owalne)
- * i zaden tekst i18n nie trafia do kontekstu wykonywalnego.
- *
- * JSON_HEX_TAG jest tu istotny: bez niego wartosc zawierajaca sekwencje
- * zamykajaca tag script rozerwalaby wyspe i reszta JSON-a wyladowalaby w HTML.
- */
-function bb_config_json(array $t, array $challenge): string {
+/** Dane, ktore skrypty strony glownej dostaja z serwera (wyspa #bb-config). */
+function bb_config_data(array $t, array $challenge): array {
     $jsKeys = [
         'error_ratelimit', 'error_math', 'error_server', 'error_connection',
         'your_password', 'password_unrecoverable', 'password_generate',
@@ -30,7 +23,7 @@ function bb_config_json(array $t, array $challenge): string {
         $strings[$k] = $t[$k];
     }
 
-    return json_encode([
+    return [
         't' => $strings,
         // Liczba linii placeholdera edytora: gutter numeruje je, gdy pole jest puste.
         'placeholderLines' => count(explode("\n", $t['editor_placeholder'])),
@@ -41,7 +34,7 @@ function bb_config_json(array $t, array $challenge): string {
             'maxViews'   => DEFAULT_MAX_VIEWS,
             'deleteDays' => DEFAULT_DELETE_DAYS,
         ],
-    ], JSON_HEX_TAG | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    ];
 }
 ?>
 <!DOCTYPE html>
@@ -221,7 +214,7 @@ function bb_config_json(array $t, array $challenge): string {
 </div>
 
 <script src="/crypto.js?v=<?= filemtime(__DIR__ . '/crypto.js') ?>" integrity="sha384-RQoDrUypIasRu3YH/1KbhpaEtfmzmQlvafmSuNpL1E3zl8rpuvHzLF/C9jqmsD53"></script>
-<script type="application/json" id="bb-config"><?= bb_config_json($t, $challenge) ?></script>
+<?= json_island('bb-config', bb_config_data($t, $challenge)) ?>
 <?= asset_js('assets/js/home-editor.js', 'assets/js/home-bulk.js', 'assets/js/home-generate.js') ?>
 
 </body>
