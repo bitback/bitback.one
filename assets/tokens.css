@@ -5,27 +5,25 @@
    Kierunek: MALO zmiennych, spokojne niskokontrastowe ramki, zaokraglone
    narozniki, odcienie liczone z jednego koloru bazowego.
 
-   Odcienie robimy kanalami RGB + alpha (`--x-rgb: 61 130 232` uzywane jako
-   `rgb(var(--x-rgb) / 0.25)`), a NIE przez color-mix(). Powod nie jest
-   estetyczny: color-mix wymaga przegladarki z 2023, a strone odczytu linka
-   otwiera ODBIORCA, ktorego przegladarki nie wybieramy (stare iOS zostaja
-   na starym Safari). Skladnia rgb z alpha jest starsza niz cokolwiek, czego
-   ta aplikacja juz wymaga, wiec nie podnosi progu wejscia.
+   Kolory zapisujemy w HSL, a przezroczystosci skladnia z ukosnikiem
+   (`hsl(H S% L% / 0.25)`, `rgb(R G B / 0.25)`) - NIE przez color-mix().
+   Powod nie jest estetyczny: color-mix wymaga przegladarki z 2023, a strone
+   odczytu linka otwiera ODBIORCA, ktorego przegladarki nie wybieramy (stare
+   iOS zostaja na starym Safari). HSL z alpha jest starsze niz cokolwiek, czego
+   ta aplikacja juz wymaga, wiec nie zaweza kregu odbiorcow.
 
-   Stan zastany, ktory ta przebudowa demontuje: dekoracja oparta na bitmapach
-   naroznych i lamanych ramkach. `php tools/audit-css.php` pokazuje aktualna
-   skale tej warstwy oraz zmienne nieuzywane i zdublowane.
+   Narzedzia: `php tools/audit-colors.php` (paleta w HSL, rozrzut nasycenia),
+   `php tools/audit-css.php` (martwe klasy, zmienne, skala dekoracji).
    ========================================================================= */
 
 :root {
-  /* --- Surfaces (rampa przyciemniona do mockupu m01: niemal czern
-         z chlodnym podtonem; zmierzono z m01.png: bg #04090e,
-         wnetrza boxow #000208-#04080e) --- */
-  --bb-bg:           #05080e;  /* page */
-  --bb-surface-1:    #10141f;  /* card */
-  --bb-surface-2:    #161b28;  /* hover/raised */
-  --bb-surface-3:    #161b28;  /* input/raised */
-  --bb-surface-sunk: #080c14;  /* sunken field (editor, url) */
+  /* Powierzchnie: rampa jasnosci na odcieniu neutralnym (--bb-h-neutral
+     nizej). Wczesniej kazda miala wlasny odcien z zakresu 218-224 st. */
+  --bb-bg:           hsl(220 45% 4%);   /* strona */
+  --bb-surface-1:    hsl(220 32% 9%);   /* karta */
+  --bb-surface-2:    hsl(220 28% 13%);  /* hover / podniesiona */
+  --bb-surface-3:    var(--bb-surface-2);
+  --bb-surface-sunk: hsl(220 40% 6%);   /* pole wklesle (edytor, url) */
 
   /* --- POKRETLA WYGLADU ---
      Trzy wartosci do recznego tuningu. Ramki nie sa wpisywane osobno: wszystkie
@@ -41,63 +39,87 @@
   --bb-border-mid:   rgb(var(--bb-line-rgb) / var(--bb-line-strength));
   --bb-border-hover: rgb(var(--bb-line-rgb) / calc(var(--bb-line-strength) * 2.2));
 
-  /* --- Text (chlodna rampa, czytelna) --- */
-  --bb-fg:           #eef1f6;  /* primary */
-  --bb-fg-1:         #e2e6ee;  /* body */
-  --bb-fg-2:         #d4d9e4;
-  --bb-fg-3:         #aab2c2;
-  --bb-fg-4:         #aab2c2;  /* tertiary */
-  --bb-fg-5:         #6b7385;  /* muted */
-  --bb-fg-6:         #5d6477;
-  --bb-fg-7:         #4c5366;  /* quiet */
-  --bb-fg-8:         #3a4154;  /* separator dots */
-  --bb-fg-body:      #d4d9e4;  /* antibot hover text */
-  --bb-fg-tab:       #c3cad8;  /* active tab text */
+  /* --- PALETA: CZTERY BARWY SYGNALOWE + JEDNA NEUTRALNA ---
+     Zapisane w HSL, bo wtedy matematyka jest widoczna wprost w kodzie i da sie
+     ja recznie kregic. Odcien (hue) to jedna liczba na role.
 
-  /* --- Akcja (blue - przyciski primary) --- */
-  --bb-accent:       #3d82e8;
-  --bb-accent-hover: #5694ee;
-  --bb-accent-press: #2f6fd0;
-  --bb-accent-link:  #7fb0f5;
-  --bb-accent-tint:  #14223a;
-  --bb-accent-light: #7fb0f5;  /* antibot selected */
+     Balagan, ktory to porzadkuje, byl mierzalny (`php tools/audit-colors.php`):
+     46 kolorow w szesciu rodzinach, w tym DWIE osobne rodziny zieleni oddalone
+     o 30-50 stopni - dlatego czytaly sie jako rozne barwy, a nie odcienie
+     jednej. Do tego nasycenia od 39% do 78% w obrebie jednej rodziny i osobny
+     niebieski w stopce, inny niz niebieski akcentu.
 
-  /* --- Akcent (teal - kbd, logo .one) --- */
-  --bb-teal:         #25c2a8;
-  --bb-teal-ink:     #04302a;
+     Klucz nie jest w liczbie odcieni, a w tym, ze wszystkie sygnaly maja teraz
+     WSPOLNE nasycenie i wspolne poziomy jasnosci. Kolory o tych samych S i L
+     czytaja sie jako rodzenstwo; to samo cztery odcienie o roznym nasyceniu
+     wygladaja jak zbior przypadkowych barw.
 
-  /* --- Info (violet - trzeci filar) --- */
-  --bb-violet:       #9b7ce8;
+     Akcja jest fioletem, nie niebieskim: fiolet niesie logo, wiec akcent
+     przestal byc trzecim chlodnym odcieniem obok niebieskiego i turkusu. */
+  --bb-h-accent:   255;   /* fiolet  - akcja, linki, focus, ikony */
+  --bb-h-positive: 170;   /* turkus  - JEDYNY zielony w aplikacji */
+  --bb-h-secret:    40;   /* zloto   - dane poufne (jedyna barwa ciepla) */
+  --bb-h-danger:     4;   /* czerwien - wylacznie bledy */
+  --bb-h-neutral:  220;   /* powierzchnie, tekst, ramki */
 
-  /* --- Secret (fragment poufny) --- */
-  --bb-secret:       #f0c060;
-  --bb-secret-ink:   #d4922a;
+  --bb-s-signal:    60%;  /* wspolne nasycenie wszystkich sygnalow */
+  --bb-s-deep:      45%;  /* nasycenie tel i atramentow */
 
-  /* --- Sukces (green) --- */
-  --bb-success:      #46c46e;
-  --bb-success-light:#7ddb98;
-  --bb-success-mid:  #5fcd82;
-  --bb-success-ink:  #06310f;
-  --bb-success-bg:   #11271a;
-  --bb-success-bg-2: #0e2015;
-  --bb-success-border:#1f4030;
-  --bb-success-hover:#56d07c;
-  --bb-success-button:#46c46e;
+  /* --- Text: jedna rampa jasnosci na odcieniu neutralnym --- */
+  --bb-fg:           hsl(var(--bb-h-neutral) 25% 95%);  /* primary */
+  --bb-fg-1:         hsl(var(--bb-h-neutral) 22% 91%);  /* body */
+  --bb-fg-2:         hsl(var(--bb-h-neutral) 20% 86%);
+  --bb-fg-3:         hsl(var(--bb-h-neutral) 16% 71%);
+  --bb-fg-4:         var(--bb-fg-3);
+  --bb-fg-5:         hsl(var(--bb-h-neutral) 12% 47%);  /* muted */
+  --bb-fg-6:         hsl(var(--bb-h-neutral) 12% 42%);
+  --bb-fg-7:         hsl(var(--bb-h-neutral) 14% 35%);  /* quiet */
+  --bb-fg-8:         hsl(var(--bb-h-neutral) 16% 28%);
+  --bb-fg-body:      var(--bb-fg-2);
+  --bb-fg-tab:       var(--bb-fg-2);
 
-  /* --- Danger (red) --- */
-  --bb-danger:       #e8554a;
-  --bb-danger-light: #f07a72;
-  --bb-danger-ink:   #5a1d18;
-  --bb-danger-bg:    #271414;
-  --bb-danger-border:#45211e;
+  /* --- Akcja (fiolet) --- */
+  --bb-accent:       hsl(var(--bb-h-accent) var(--bb-s-signal) 62%);
+  --bb-accent-hover: hsl(var(--bb-h-accent) var(--bb-s-signal) 68%);
+  --bb-accent-press: hsl(var(--bb-h-accent) var(--bb-s-signal) 55%);
+  --bb-accent-link:  hsl(var(--bb-h-accent) var(--bb-s-signal) 74%);
+  --bb-accent-tint:  hsl(var(--bb-h-accent) var(--bb-s-deep) 15%);
+  --bb-accent-light: var(--bb-accent-link);
 
-  /* --- Warn (alias for secret) --- */
+  /* --- Pozytyw (turkus): jeden zielony dla marki i dla sukcesu --- */
+  --bb-teal:         hsl(var(--bb-h-positive) var(--bb-s-signal) 45%);
+  --bb-teal-ink:     hsl(var(--bb-h-positive) var(--bb-s-deep) 10%);
+  --bb-violet:       var(--bb-accent);
+
+  /* --- Secret (dane poufne) --- */
+  --bb-secret:       hsl(var(--bb-h-secret) var(--bb-s-signal) 62%);
+  --bb-secret-ink:   hsl(var(--bb-h-secret) var(--bb-s-signal) 45%);
+
+  /* --- Sukces: TEN SAM odcien co pozytyw, tylko inne jasnosci --- */
+  --bb-success:       hsl(var(--bb-h-positive) var(--bb-s-signal) 52%);
+  --bb-success-light: hsl(var(--bb-h-positive) var(--bb-s-signal) 67%);
+  --bb-success-mid:   hsl(var(--bb-h-positive) var(--bb-s-signal) 59%);
+  --bb-success-hover: hsl(var(--bb-h-positive) var(--bb-s-signal) 58%);
+  --bb-success-button: var(--bb-success);
+  --bb-success-ink:   hsl(var(--bb-h-positive) var(--bb-s-deep) 11%);
+  --bb-success-bg:    hsl(var(--bb-h-positive) var(--bb-s-deep) 11%);
+  --bb-success-bg-2:  hsl(var(--bb-h-positive) var(--bb-s-deep) 9%);
+  --bb-success-border: hsl(var(--bb-h-positive) var(--bb-s-deep) 19%);
+
+  /* --- Danger: te same poziomy jasnosci co pozostale sygnaly --- */
+  --bb-danger:        hsl(var(--bb-h-danger) var(--bb-s-signal) 60%);
+  --bb-danger-light:  hsl(var(--bb-h-danger) var(--bb-s-signal) 69%);
+  --bb-danger-ink:    hsl(var(--bb-h-danger) var(--bb-s-deep) 22%);
+  --bb-danger-bg:     hsl(var(--bb-h-danger) var(--bb-s-deep) 12%);
+  --bb-danger-border: hsl(var(--bb-h-danger) var(--bb-s-deep) 19%);
+
+  /* --- Warn = secret --- */
   --bb-warn:         var(--bb-secret);
   --bb-warn-ink:     var(--bb-secret-ink);
 
-  /* --- Mask (expired placeholder) --- */
-  --bb-mask-bg:      rgba(107, 115, 133, 0.22);
-  --bb-mask-fg:      #6b7385;
+  /* --- Mask (zamaskowany sekret po wygasnieciu) --- */
+  --bb-mask-bg:      hsl(var(--bb-h-neutral) 12% 47% / 0.22);
+  --bb-mask-fg:      var(--bb-fg-5);
 
   /* --- Shadows (sparingly) --- */
   --bb-shadow-sm:    0 1px 2px rgba(0,0,0,0.5);
@@ -162,9 +184,10 @@
   color: var(--bb-bg);
 }
 .bb-chip [data-lucide] { width: 19px; height: 19px; stroke-width: 2.2; vertical-align: middle; }
-.bb-chip-blue   { background: var(--bb-accent); box-shadow: 0 0 10px rgba(58, 123, 213, 0.22); }
-.bb-chip-teal   { background: var(--bb-teal); box-shadow: 0 0 10px rgba(37, 194, 168, 0.22); }
-.bb-chip-violet { background: var(--bb-violet); box-shadow: 0 0 10px rgba(155, 124, 232, 0.22); }
+/* Chipy bez poswiat - kolor niesie samo tlo. */
+.bb-chip-blue   { background: var(--bb-accent); }
+.bb-chip-teal   { background: var(--bb-teal); }
+.bb-chip-violet { background: var(--bb-accent); }
 .bb-chip-green  { background: var(--bb-success); }
 .bb-chip-gold   { background: var(--bb-secret); }
 .bb-chip-red    { background: var(--bb-danger); }
@@ -195,7 +218,6 @@
   width: auto;
   display: inline-block;
   vertical-align: middle;
-  filter: drop-shadow(0 0 10px rgba(155, 124, 232, 0.35)) drop-shadow(0 0 18px rgba(37, 194, 168, 0.18));
 }
 @media (max-width: 480px) {
   .bb-logo svg { height: 56px !important; }
@@ -207,11 +229,11 @@
 
 /* Zloty highlight przy zaznaczaniu tekstu - echo brand color */
 ::selection {
-  background: rgba(212, 146, 42, 0.35);
+  background: hsl(var(--bb-h-secret) var(--bb-s-signal) 45% / 0.35);
   color: var(--bb-fg);
 }
 ::-moz-selection {
-  background: rgba(212, 146, 42, 0.35);
+  background: hsl(var(--bb-h-secret) var(--bb-s-signal) 45% / 0.35);
   color: var(--bb-fg);
 }
 
