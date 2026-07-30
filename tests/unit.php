@@ -143,10 +143,12 @@ ok(count($footerHardcode) === 0, 'i18n: stopka fixed nie zaszywa PL (uzywa foote
 // blad hasla i lockout (np. klawiatura mobilna doklejajaca spacje / copy-paste).
 // deriveMasterV3 bierze haslo jako surowe bajty (NFC + TextEncoder), wiec backslash
 // i inne znaki sa bezpieczne - jedyne ryzyko rozjazdu to wlasnie trim po jednej stronie.
-$idxSrc = file_get_contents(__DIR__ . '/../index.php');
+// Uwaga: to guard po ZRODLE, wiec jest wrazliwy na przenoszenie kodu miedzy
+// plikami. Sciezka celuje w plik, gdzie skrypt realnie zyje - nie w szablon.
+$idxSrc = file_get_contents(__DIR__ . '/../assets/js/home-generate.js');
 $vwSrc  = file_get_contents(__DIR__ . '/../view.php');
 echo "\n-- haslo: parytet trim create/view --\n";
-ok(substr_count($idxSrc, "linkPassword').value.trim()") >= 2, 'trim: index.php tnie haslo przy tworzeniu (single + bulk)');
+ok(substr_count($idxSrc, "linkPassword').value.trim()") >= 2, 'trim: home-generate.js tnie haslo przy tworzeniu (single + bulk)');
 ok(strpos($vwSrc, "getElementById('pwdInput').value.trim()") !== false, 'trim: view.php formularz v3 tnie haslo');
 ok(strpos($vwSrc, 'resolve(input.value.trim())') !== false, 'trim: view.php inline prompt tnie haslo');
 ok(strpos($vwSrc, "getElementById('pwdInput').value,") === false, 'trim: brak nietrymowanego odczytu pwdInput (regresja)');

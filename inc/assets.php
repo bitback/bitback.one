@@ -25,3 +25,27 @@ function asset_css(string ...$rel): string {
     }
     return implode("\n    ", $out);
 }
+
+/**
+ * Skrypty klasyczne (BEZ type="module"). Kolejnosc argumentow = kolejnosc
+ * wykonania.
+ *
+ * Klasyczne, nie moduly, i to jest wymog twardy: deklaracje `function` na
+ * najwyzszym poziomie musza wyladowac na `window`, bo tak je widzi
+ * tests/harness.html (wola realne funkcje strony, zeby testy nie driftowaly
+ * od kodu). Modul zamknalby je w swoim zakresie i suita padla by na
+ * sanity-checku.
+ *
+ * Bez atrybutu `integrity`: hash pinowany w zrodle ma sens dla crypto.js,
+ * ktory jest publikowany do niezaleznej weryfikacji (README). Dla wlasnych
+ * plikow UI z tego samego origin co HTML nie wnosi ochrony - kto podmieni
+ * plik, podmieni i hash w HTML - a wymusza recznie utrzymywany hash, ktory
+ * przy rozjezdzie blokuje wykonanie skryptu.
+ */
+function asset_js(string ...$rel): string {
+    $out = [];
+    foreach ($rel as $r) {
+        $out[] = '<script src="' . asset_url($r) . '"></script>';
+    }
+    return implode("\n", $out);
+}
