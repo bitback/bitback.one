@@ -43,7 +43,10 @@
     display: grid;
     grid-template-columns: 1fr 340px; /* proporcja kolumn jak w mockupie m01 */
     gap: 1.5rem;
-    align-items: stretch;
+    /* start, NIE stretch: prawa kolumna ma stac na wlasnej wysokosci.
+       Przy stretch rosla do wysokosci edytora i to ona wymuszala
+       rozpychanie wierszy ustawien. */
+    align-items: start;
 }
 @media (max-width: 768px) {
     .two-col { grid-template-columns: 1fr; }
