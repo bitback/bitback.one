@@ -630,6 +630,32 @@ document.getElementById('app').addEventListener('load', async () => {
             log(subEv.defaultPrevented, 'wiring: submit formularza zablokowany (strona sie nie przeladowuje)');
         }
 
+        // ============ kopiowanie linku trafia we WLASCIWY przycisk ============
+        // .copy-btn to klasa STYLU i nosi ja takze przycisk generatora hasla,
+        // stojacy w dokumencie WYZEJ. Wybor przez querySelector('.copy-btn')
+        // podmienial napis w generatorze zamiast w przycisku kopiowania.
+        grp('kopiowanie linku - identyfikacja przycisku');
+        {
+            const copyBtn = doc.querySelector('[data-bb-action="copy-link"]');
+            const pwdBtn  = doc.querySelector('[data-bb-action="generate-password"]');
+            const pwdBefore = pwdBtn.innerHTML;
+            log(doc.querySelectorAll('.copy-btn').length > 1, 'kopiowanie: klasa .copy-btn nosi wiecej niz jeden przycisk (test nie pozorny)');
+
+            // Schowek w headless bywa bez uprawnien - stub, zeby test mierzyl
+            // WYBOR przycisku, a nie dostepnosc clipboard API.
+            Object.defineProperty(win.navigator, 'clipboard', {
+                configurable: true,
+                value: { writeText: () => Promise.resolve() }
+            });
+            doc.getElementById('resultUrl').value = 'https://example.test/abc#deadbeef';
+            win.copyLink();
+            let marked = null;
+            for (let i = 0; i < 40 && !marked; i++) { marked = doc.querySelector('.copied'); if (!marked) await new Promise(r => setTimeout(r, 25)); }
+            log(marked === copyBtn, 'copyLink: potwierdzenie "skopiowano" ladu je na przycisku kopiowania');
+            log(pwdBtn.innerHTML === pwdBefore, 'copyLink: przycisk generatora hasla zostaje nietkniety');
+            doc.getElementById('resultUrl').value = '';
+        }
+
         // ============ view.php: deszyfrowanie GCM + XSS + linkify + TOTP (drugi iframe) ============
         // Rekord tworzony przez tests/fixture.php (aktywny tylko przy BB_TEST_DATA_DIR),
         // bloby liczone tu w #app; potem /view.php?slug=uuid#hexKey w iframe #view.

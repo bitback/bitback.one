@@ -298,7 +298,10 @@ function copyLink() {
     input.setSelectionRange(0, input.value.length); // mobile Safari
 
     const showCopied = () => {
-        const btn = document.querySelector('.copy-btn');
+        // Wybor po data-bb-action, NIE po klasie .copy-btn: ta klasa jest
+        // stylem i nosi ja takze przycisk generatora hasla, stojacy w
+        // dokumencie wyzej - '.copy-btn' trafialo wiec w niego.
+        const btn = document.querySelector('[data-bb-action="copy-link"]');
         const original = btn.innerHTML;
         btn.innerHTML = '<svg data-lucide="check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-0.15em;margin-right:0.3em;" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>' + T.copied;
         btn.classList.add('copied');
