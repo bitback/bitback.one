@@ -22,35 +22,28 @@ Thumbs.db
 vendor/
 node_modules/
 
-# === Dokumentacja wewnętrzna ===
-docs/
-security-audit/
-
 # === Narzędzia lokalne ===
 browser.php
-
-# === Design bundle (referencyjny, nie produkcyjny) ===
-# Wzorzec, nie pojedynczy folder: kolejne iteracje designu dostaja wlasny katalog
-# (_new_design01, _new_design_<data>). Repo jest publiczne, a X: to web root -
-# mockupy i PNG-i nie moga tam trafic.
-_new_design*/
 
 # === Env ===
 .env
 .env.local
 
-# === Interop (SDK integratora: port krypto Python/CLI + golden vector) ===
-# PRYWATNE rozwiazanie. Ma WLASNY, osobny git LOKALNY w interop/.git (bez remote,
-# nie pushowany nigdzie). Ta linia to JEDYNA rzecz trzymajaca interop poza publicznym
-# repo bitback - NIE USUWAC. Skasowanie = interop wyciekłby na publiczny GitHub + deploy X:.
-interop/
-
-# === API tokeny (sekret bearer, web-denied, recznie edytowane) ===
+# === API tokeny (sekret bearer, web-denied, ręcznie edytowane) ===
 inc/api-tokens.txt
 
-# === Zrodlowe wersje grafik (duze PNG, nie produkcyjne) ===
+# === Źródłowe wersje grafik (duże PNG, nie produkcyjne) ===
 assets/art/_src/
 
-# === Lokalne notatki AI (repo publiczne) ===
+# === Druga linia obrony: prywatne katalogi przestrzeni roboczej ===
+# Korzeniem repo jest folder www/. Poniższe ścieżki leżą PIĘTRO WYŻEJ, poza
+# katalogiem repo, więc git ich nie widzi niezależnie od tego pliku - granicę
+# wymusza sama struktura katalogów, nie lista wyjątków.
+# Wpisy zostają celowo: jeśli którykolwiek z tych katalogów kiedykolwiek trafi
+# do wnętrza www/, ma zostać zignorowany, a nie opublikowany. Repo jest publiczne.
+docs/
+security-audit/
+interop/
+_new_design*/
 CLAUDE.md
 .claude/
