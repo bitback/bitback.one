@@ -1,7 +1,7 @@
 // --- WSPOLNY PAYLOAD (pojedynczy link + bulk) ---
 // Filtr pustych, przydzial gestego idx 0..N-1, podzial na text/secret,
 // szyfrowanie oboma blobami. WYMAGA hexKey (encryptBlob go wymaga).
-// total_sections MUSI = liczba sekcji po filtrze - view.php fillMasked
+// total_sections MUSI = liczba sekcji po filtrze - view-decrypt.js fillMasked
 // maskuje po tej numeracji, rozjazd zepsulby maskowanie u odbiorcy.
 async function sectionsToPayload(sections, aesKey) {
     const filtered = sections.filter(s => s.content.length > 0);
