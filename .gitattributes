@@ -15,3 +15,17 @@ crypto.js -text eol=lf
 
 # Skrypty PowerShell zostaja z CRLF (natywne dla Windows).
 *.ps1 text eol=crlf
+
+# Konfiguracja repo i serwera oraz pliki tekstowe bez rozszerzenia. Bez tych
+# regul git zapowiadal przepisanie ich na CRLF przy nastepnym dotknieciu,
+# co przy wdrozeniu kopiowaniem bajtow dawaloby roznice miedzy repo a serwerem.
+.htaccess      -text eol=lf
+.gitignore     -text eol=lf
+.gitattributes -text eol=lf
+LICENSE        -text eol=lf
+*.json         -text eol=lf
+*.svg          -text eol=lf
+
+# Binaria - git nie ma ich tykac zadna konwersja.
+*.webp  binary
+*.woff2 binary
