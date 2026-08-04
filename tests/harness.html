@@ -92,6 +92,28 @@ document.getElementById('app').addEventListener('load', async () => {
             log(false, 'deleteDays input obecny w index.php');
         }
 
+        // =================== demo oznaczania poufnego ========================
+        // Pokaz rysuje sie w warstwie NAD polem i nie moze dotykac #editor:
+        // aplikacja buduje ladunek z editor.textContent i z .secret w srodku,
+        // wiec tekst dema w prawdziwym polu dalby sie zaszyfrowac i wyslac.
+        // Ten filar pilnuje wlasnie tej granicy.
+        grp('demo oznaczania poufnego (warstwa nad edytorem)');
+        // Headless zglasza prefers-reduced-motion: reduce, wiec pokaz sie tam
+        // NIE uruchamia - i tak ma byc. Test sprawdza wiec zgodnosc obecnosci
+        // warstwy z ustawieniem ruchu, a niezmienniki (puste pole, brak .secret,
+        // przepuszczanie klikniec) egzekwuje w obu przypadkach.
+        const demoReduce = win.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const demoLayer = doc.querySelector('.bb-demo-layer');
+        log(!!demoLayer === !demoReduce, 'demo: warstwa obecna dokladnie wtedy, gdy ruch dozwolony (reduce=' + demoReduce + ')');
+        log(editor.textContent.trim() === '', 'demo: #editor pozostaje PUSTY (tresc dema nie trafia do ladunku)');
+        log(editor.querySelectorAll('.secret').length === 0, 'demo: zero elementow .secret w #editor');
+        log(!demoLayer || win.getComputedStyle(demoLayer).pointerEvents === 'none',
+            'demo: klikniecia docieraja do pola (warstwa nie lapie myszy)');
+        // dotkniecie pola konczy pokaz na dobre
+        editor.dispatchEvent(new win.PointerEvent('pointerdown', { bubbles: true }));
+        await new Promise(r => setTimeout(r, 60));
+        log(!doc.querySelector('.bb-demo-layer'), 'demo: dotkniecie pola usuwa warstwe na dobre');
+
         // ======================= FAZA 1: import tabeli =======================
         grp('FAZA 1 - cleanPastedTable / hoist');
         const excelHtml = '<table border=1 style="border-collapse:collapse" width="600">' +

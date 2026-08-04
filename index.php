@@ -64,6 +64,7 @@ function bb_config_data(array $t, array $challenge): array {
         'assets/css/home-editor.css',
         'assets/css/home-config.css',
         'assets/css/home-result.css',
+        'assets/css/editor-demo.css',
         'assets/css/footer.css'
     ) ?>
 </head>
@@ -210,7 +211,8 @@ function bb_config_data(array $t, array $challenge): array {
     'assets/js/home-editor.js',
     'assets/js/home-bulk.js',
     'assets/js/home-generate.js',
-    'assets/js/home-wire.js'
+    'assets/js/home-wire.js',
+    'assets/js/editor-demo.js'
 ) ?>
 
 </body>
