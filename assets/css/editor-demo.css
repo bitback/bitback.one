@@ -124,10 +124,7 @@
     box-shadow: 0 0 0 5px hsl(var(--bb-h-positive) var(--bb-s-signal) 52% / 0.2);
 }
 
-/* Kto prosi o mniej ruchu, dostaje pole bez animacji - skrypt sam sie nie
-   uruchamia, ta regula to druga linia obrony. */
-@media (prefers-reduced-motion: reduce) {
-    .bb-demo-layer, .bb-demo-mouse { display: none; }
-    .bb-demo-idle { animation: none; }
-    .bb-demo-on .editor:empty::before { content: attr(data-ph); }
-}
+/* DECYZJA USERA (2026-08-05): pokaz gra ZAWSZE, takze przy wylaczonych efektach
+   animacji w systemie. Nie ma tu wiec reguly @media (prefers-reduced-motion) i
+   nie nalezy jej dopisywac bez pytania - pierwsza wersja to ustawienie
+   respektowala i user nie widzial na produkcji niczego. */

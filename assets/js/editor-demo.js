@@ -25,12 +25,17 @@
     var markBtn = document.querySelector('[data-bb-action="toggle-secret"]');
     if (!wrap) return;
 
-    // Nie startuj, gdy pole juz cos ma (przywrocony stan formularza), gdy user
-    // prosi o mniej ruchu, albo gdy pole jest juz aktywne.
-    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduce) return;
+    // Nie startuj, gdy pole juz cos ma (przywrocony stan formularza) albo gdy
+    // pole jest juz aktywne.
     if (editor.textContent.trim().length > 0) return;
     if (document.activeElement === editor) return;
+
+    // DECYZJA USERA (2026-08-05): pokaz gra ZAWSZE, takze przy wylaczonych
+    // efektach animacji w systemie (prefers-reduced-motion: reduce). Pierwsza
+    // wersja to ustawienie respektowala i user nie widzial nic, bo ma animacje
+    // wylaczone w Windows. Zgloszone jako swiadome odstepstwo od domyslnej
+    // praktyki dostepnosciowej i podtrzymane wprost. Nie przywracac guardu bez
+    // pytania.
 
     /* --- tresc pokazu z podpowiedzi pola --------------------------------- */
 

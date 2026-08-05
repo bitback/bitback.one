@@ -98,13 +98,15 @@ document.getElementById('app').addEventListener('load', async () => {
         // wiec tekst dema w prawdziwym polu dalby sie zaszyfrowac i wyslac.
         // Ten filar pilnuje wlasnie tej granicy.
         grp('demo oznaczania poufnego (warstwa nad edytorem)');
-        // Headless zglasza prefers-reduced-motion: reduce, wiec pokaz sie tam
-        // NIE uruchamia - i tak ma byc. Test sprawdza wiec zgodnosc obecnosci
-        // warstwy z ustawieniem ruchu, a niezmienniki (puste pole, brak .secret,
-        // przepuszczanie klikniec) egzekwuje w obu przypadkach.
+        // Headless zglasza prefers-reduced-motion: reduce - tak samo jak Windows
+        // z wylaczonymi efektami animacji. DECYZJA USERA (2026-08-05): pokaz ma
+        // grac ZAWSZE, niezaleznie od tego ustawienia. Pierwsza wersja je
+        // respektowala i user nie widzial na produkcji niczego. Te dwie asercje
+        // sa zamkiem na przywrocenie guardu po cichu.
         const demoReduce = win.matchMedia('(prefers-reduced-motion: reduce)').matches;
         const demoLayer = doc.querySelector('.bb-demo-layer');
-        log(!!demoLayer === !demoReduce, 'demo: warstwa obecna dokladnie wtedy, gdy ruch dozwolony (reduce=' + demoReduce + ')');
+        log(!!demoLayer, 'demo: warstwa obecna niezaleznie od ustawien ruchu (reduce=' + demoReduce + ')');
+        log(!!doc.querySelector('.bb-demo-mouse'), 'demo: pokaz animowany gra takze przy wylaczonych efektach ruchu');
         log(editor.textContent.trim() === '', 'demo: #editor pozostaje PUSTY (tresc dema nie trafia do ladunku)');
         log(editor.querySelectorAll('.secret').length === 0, 'demo: zero elementow .secret w #editor');
         log(!demoLayer || win.getComputedStyle(demoLayer).pointerEvents === 'none',
