@@ -206,5 +206,12 @@ foreach ($pages as $page) {
 ok($pinned > 0, "SRI: znaleziono pinowane skrypty do sprawdzenia ($pinned w $pagesWithPin stronach)");
 
 echo "\n";
+// Pominiete asercje wychodzily z kodem 0 i nie byly nigdzie zliczane, wiec
+// brak rozszerzenia openssl kasowal pokrycie odczytu STARYCH rekordow, a suita
+// dalej meldowala sukces. Pominiecie ma byc widoczne, nie ciche.
+if ($skip) {
+    echo "UWAGA: $skip asercji POMINIETO - to nie jest zielony wynik dla tych sciezek.\n";
+    echo "       Sprawdz, czy PHP ma wymagane rozszerzenia (openssl w ext/).\n";
+}
 echo "UNIT: $pass PASS / $fail FAIL" . ($skip ? " / $skip SKIP" : '') . "\n";
 exit($fail === 0 ? 0 : 1);
