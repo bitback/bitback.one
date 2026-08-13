@@ -174,6 +174,37 @@ ok(strpos($srcView, 'resolve(input.value.trim())') !== false, 'trim: view-decryp
 ok(strpos($srcGate, "getElementById('pwdInput').value,") === false, 'trim: brak nietrymowanego odczytu pwdInput (regresja)');
 ok(strpos($srcView, 'resolve(input.value)') === false, 'trim: brak nietrymowanego resolve inline (regresja)');
 
+// --- skroty przypiete do skryptow (SRI) ---
+// Rozjazd skrotu z plikiem to udokumentowany zabojca serwisu: przegladarka
+// odmawia wykonania skryptu i aplikacja staje. Asercja jest UNIWERSALNA -
+// zbior bierze sie z atrybutow integrity znalezionych w stronach, wiec kazdy
+// przyszly pinowany skrypt wchodzi pod guard bez dopisywania przypadku.
+$root = dirname(__DIR__);
+$pages = glob($root . '/*.php') ?: [];
+$pinned = 0;
+$pagesWithPin = 0;
+foreach ($pages as $page) {
+    $html = (string)file_get_contents($page);
+    if (!preg_match_all('/<script[^>]*src="([^"?]+)[^"]*"[^>]*integrity="sha384-([^"]+)"/i', $html, $m, PREG_SET_ORDER)) {
+        continue;
+    }
+    $pagesWithPin++;
+    foreach ($m as $s) {
+        $pinned++;
+        $srcPath = $root . '/' . ltrim($s[1], '/');
+        $label = basename($page) . ' -> ' . $s[1];
+        if (!is_file($srcPath)) {
+            ok(false, "SRI: $label wskazuje nieistniejacy plik");
+            continue;
+        }
+        $real = base64_encode(hash_file('sha384', $srcPath, true));
+        ok($real === $s[2], "SRI: $label skrot zgodny z plikiem");
+    }
+}
+// Bez tego guard po tresci przechodzilby cicho, gdyby atrybuty zniknely
+// (np. po przeniesieniu skryptow) - zero znalezisk wygladaloby jak sukces.
+ok($pinned > 0, "SRI: znaleziono pinowane skrypty do sprawdzenia ($pinned w $pagesWithPin stronach)");
+
 echo "\n";
 echo "UNIT: $pass PASS / $fail FAIL" . ($skip ? " / $skip SKIP" : '') . "\n";
 exit($fail === 0 ? 0 : 1);
