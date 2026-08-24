@@ -140,8 +140,6 @@
      Byla teal z poswiata i to ona odpowiadala za "walenie kontrastem".
      Teraz ta sama cicha linia co reszta - stad ujednolicony wyglad.
      Nazwy zostaja, bo uzywa ich kilkanascie regul; kolor idzie z pokretel. */
-  --bb-neon-border: var(--bb-border);
-  --bb-neon-glow: none;
 
   /* --- Fonts ---
      Manrope (UI, zaakceptowana na mockupie) + JetBrains Mono (dane).
@@ -185,23 +183,6 @@
 }
 /* Okragle chipy ikon (m01): solidne kolorowe kolo, ciemna ikona,
    bez ramki, subtelny glow. */
-.bb-chip {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--bb-bg);
-}
-.bb-chip [data-lucide] { width: 19px; height: 19px; stroke-width: 2.2; vertical-align: middle; }
-/* Chipy bez poswiat - kolor niesie samo tlo. */
-.bb-chip-blue   { background: var(--bb-accent); }
-.bb-chip-teal   { background: var(--bb-teal); }
-.bb-chip-violet { background: var(--bb-accent); }
-.bb-chip-green  { background: var(--bb-success); }
-.bb-chip-gold   { background: var(--bb-secret); }
-.bb-chip-red    { background: var(--bb-danger); }
 /* Ghost na 404 i expired - duzy */
 .ghost [data-lucide] { width: 64px; height: 64px; stroke-width: 1.2; }
 /* Zt-badge kłódka - mała */
@@ -308,7 +289,6 @@ html, body {
    wartosciach (3, 5, 8, 10 px) i nie bylo ich widac, bo globalny reset
    zerowal wszystko - teraz jada z jednego pokretla --bb-radius.
    ========================================================================= */
-.trust-box,
 .config-panel,
 .config-verify,
 .bb-frame,
@@ -336,7 +316,6 @@ html, body {
 .home-link { border-radius: var(--bb-radius); }
 
 /* Chipy ikon i spinnery sa kolami niezaleznie od --bb-radius. */
-.bb-chip,
 .generate-btn .spinner,
 .loading .spinner { border-radius: 50%; }
 

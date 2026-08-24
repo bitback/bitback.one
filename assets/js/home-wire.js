@@ -17,7 +17,6 @@ document.addEventListener('click', function(ev) {
         case 'generate-password': generatePassword(); break;
         case 'generate-link':     generateLink(); break;
         case 'copy-link':         copyLink(); break;
-        case 'preview':           setPreview(el.dataset.bbMode, el); break;
     }
 });
 

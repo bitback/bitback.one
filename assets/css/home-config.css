@@ -29,10 +29,9 @@
 .verify-panel {
     padding: 1rem;
 }
-.verify-panel label { margin-bottom: 0.45rem; }
-
-.config-group label,
-.verify-panel label {
+/* Weryfikacja nie ma juz wlasnego naglowka w ramce - niesie go etykieta kroku
+   nad ramka, tak samo jak przy pozostalych sekcjach. */
+.config-group label {
     display: block;
     font-size: 0.76rem;
     font-weight: 600;
@@ -222,10 +221,19 @@
 /* akcje: weryfikacja + generuj obok siebie; generuj rosnie na wysokosc panelu.
    DOM order content->settings->verify->generate->result->preview = poprawny
    flow tez na mobile (gdzie wszystko stackuje sie w jedna kolumne) */
-.action-row { display: flex; align-items: stretch; gap: 1.5rem; margin-top: 1.5rem; }
-.action-row .verify-panel { flex: 1.25; }
-.action-row .generate-btn { flex: 1; margin-top: 0; width: auto; white-space: nowrap; }
-@media (max-width: 768px) { .action-row { flex-direction: column; } }
+/* Kroki 3 i 4 stoja na DOKLADNIE tej samej siatce co kolumny wyzej, inaczej
+   numer 3 nie trafia pod numer 1, a numer 4 pod numer 2. */
+.action-row {
+    display: grid;
+    grid-template-columns: 1fr calc(340px + var(--bb-rail));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+.act-cell { display: flex; flex-direction: column; min-width: 0; }
+.act-cell-gen { padding-left: var(--bb-rail); }
+.act-cell-gen .generate-btn { flex: 1; margin-top: 0; width: auto; white-space: nowrap; }
+@media (max-width: 900px) { .act-cell-gen { padding-left: 0; } }
+@media (max-width: 768px) { .action-row { grid-template-columns: 1fr; } }
 
 .mark-secret-btn:hover { background: var(--bb-success-hover); }
 .mark-secret-btn:active { background: var(--bb-success); }

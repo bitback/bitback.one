@@ -76,26 +76,9 @@ function bb_config_data(array $t, array $challenge): array {
     <p><?= htmlspecialchars($t['subtitle']) ?></p>
 </div>
 
-<div class="trust bb-rise-2">
-    <div class="trust-box">
-        <div class="trust-grid">
-            <div class="trust-item">
-                <div class="bb-chip bb-chip-violet"><?= bb_icon('lock') ?></div>
-                <div class="trust-title"><?= htmlspecialchars($t['trust1_title']) ?></div>
-                <div class="trust-desc"><?= htmlspecialchars($t['trust1_desc']) ?></div>
-            </div>
-            <div class="trust-item">
-                <div class="bb-chip bb-chip-violet"><?= bb_icon('clock') ?></div>
-                <div class="trust-title"><?= htmlspecialchars($t['trust2_title']) ?></div>
-                <div class="trust-desc"><?= htmlspecialchars($t['trust2_desc']) ?></div>
-            </div>
-            <div class="trust-item">
-                <div class="bb-chip bb-chip-violet"><?= bb_icon('monitor') ?></div>
-                <div class="trust-title"><?= htmlspecialchars($t['trust3_title']) ?></div>
-                <div class="trust-desc"><?= htmlspecialchars($t['trust3_desc']) ?></div>
-            </div>
-        </div>
-    </div>
+<div class="security bb-rise-2">
+    <div class="col-label"><?= htmlspecialchars($t['security_label']) ?></div>
+    <p class="security-prose"><?= htmlspecialchars($t['security_prose']) ?></p>
 </div>
 
 <div class="main bb-rise-3">
@@ -105,7 +88,7 @@ function bb_config_data(array $t, array $challenge): array {
         <div class="two-col">
             <!-- LEWA — edytor -->
             <div class="col-left">
-                <div class="col-label"><?= htmlspecialchars($t['content_label']) ?></div>
+                <div class="col-label"><span class="step-badge" aria-hidden="true">1</span><?= htmlspecialchars($t['content_label']) ?></div>
                 <div class="content-col">
                     <div class="hint-bar">
                         <span class="hint-text"><?= $t['hint_text'] ?></span>
@@ -126,7 +109,7 @@ function bb_config_data(array $t, array $challenge): array {
 
             <!-- PRAWA — konfiguracja -->
             <div class="col-right">
-                <div class="col-label"><?= htmlspecialchars($t['settings_label']) ?></div>
+                <div class="col-label"><span class="step-badge" aria-hidden="true">2</span><?= htmlspecialchars($t['settings_label']) ?><span class="step-optional">(<?= htmlspecialchars($t['optional_tag']) ?>)</span></div>
                 <div class="config-panel bb-frame">
                     <div class="config-group">
                         <label><?= htmlspecialchars($t['expire_label']) ?></label>
@@ -163,14 +146,19 @@ function bb_config_data(array $t, array $challenge): array {
             </div>
         </div>
 
-        <!-- AKCJE: weryfikacja + generuj obok siebie -->
+        <!-- AKCJE: kroki 3 i 4, na tej samej siatce co kolumny wyzej -->
         <div class="action-row">
-            <div class="verify-panel bb-frame config-verify">
-                <label><?= htmlspecialchars($t['verify_label']) ?></label>
-                <div class="antibot-q" id="mathQuestion" aria-live="polite"></div>
-                <div class="antibot-options" id="mathOptions" role="group" aria-label="<?= htmlspecialchars($t['verify_label']) ?>"></div>
+            <div class="act-cell">
+                <div class="col-label"><span class="step-badge" aria-hidden="true">3</span><?= htmlspecialchars($t['verify_label']) ?></div>
+                <div class="verify-panel bb-frame config-verify">
+                    <div class="antibot-q" id="mathQuestion" aria-live="polite"></div>
+                    <div class="antibot-options" id="mathOptions" role="group" aria-label="<?= htmlspecialchars($t['verify_label']) ?>"></div>
+                </div>
             </div>
-            <button type="button" class="generate-btn dimmed" data-bb-action="generate-link"><span><?= htmlspecialchars($t['generate_btn']) ?></span><?= bb_icon('arrow-right') ?></button>
+            <div class="act-cell act-cell-gen">
+                <div class="col-label"><span class="step-badge" aria-hidden="true">4</span><?= htmlspecialchars($t['generate_label']) ?></div>
+                <button type="button" class="generate-btn dimmed" data-bb-action="generate-link"><span><?= htmlspecialchars($t['generate_btn']) ?></span><?= bb_icon('arrow-right') ?></button>
+            </div>
         </div>
 
         <!-- LINK WYJŚCIOWY -->
@@ -191,11 +179,7 @@ function bb_config_data(array $t, array $challenge): array {
         <!-- PODGLĄD na dole -->
         <div class="preview-section">
             <div class="preview-bar">
-                <div class="col-label"><?= htmlspecialchars($t['preview_label']) ?></div>
-                <div class="preview-tabs">
-                    <button type="button" class="preview-tab active" data-bb-action="preview" data-bb-mode="expired"><?= htmlspecialchars($t['preview_expired']) ?></button>
-                    <button type="button" class="preview-tab" data-bb-action="preview" data-bb-mode="active"><?= htmlspecialchars($t['preview_active']) ?></button>
-                </div>
+                <div class="col-label"><?= htmlspecialchars($t['preview_label'] . ' ' . $t['preview_expired']) ?></div>
             </div>
             <div class="preview-box bb-frame" id="preview"></div>
         </div>

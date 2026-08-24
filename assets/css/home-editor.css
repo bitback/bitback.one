@@ -35,13 +35,15 @@
 .main {
     max-width: 1100px;
     margin: 0 auto;
-    padding: 0 1rem 3rem;
+    padding: 0 1rem 3rem var(--bb-rail);
 }
 
 /* --- LAYOUT DWU-KOLUMNOWY --- */
+/* Prawa kolumna jest szersza o szyne, bo szyna jest jej wcieciem: numer stoi
+   w pustym pasie PRZED trescia, tak samo jak przy kolumnie lewej. */
 .two-col {
     display: grid;
-    grid-template-columns: 1fr 340px; /* proporcja kolumn jak w mockupie m01 */
+    grid-template-columns: 1fr calc(340px + var(--bb-rail));
     gap: 1.5rem;
     /* start, NIE stretch: prawa kolumna ma stac na wlasnej wysokosci.
        Przy stretch rosla do wysokosci edytora i to ona wymuszala
@@ -51,6 +53,7 @@
 @media (max-width: 768px) {
     .two-col { grid-template-columns: 1fr; }
 }
+.col-right { padding-left: var(--bb-rail); }
 
 .col-label {
     display: flex;
@@ -62,6 +65,9 @@
     letter-spacing: 0.22em;
     color: var(--bb-fg-2);
     margin-bottom: 0.45rem;
+    /* odstepy robia marginesy pojedynczych elementow, bo plakietka kroku jest
+       wyjeta z ukladu (stoi w szynie) i wspolny gap dawalby puste miejsce */
+    gap: 0;
 }
 /* Linia za etykieta sekcji: zwykla kreska, ta sama co ramki. Byla
    gradientem teal->fiolet z zagieciem 45 stopni na koncu (clip-path) i to
@@ -70,9 +76,59 @@
     content: '';
     flex: 1;
     height: 1px;
+    margin-left: 0.35em;
     background: var(--bb-border);
 }
-.preview-bar .col-label::after { content: none; }
+
+/* ====== PLAKIETKI KROKOW 1-4 ======
+   Kolo pelnym kolorem w szynie po lewej stronie kolumny. Numer ma byc widoczny
+   od razu, dlatego tlo, a nie sama ramka. */
+.step-badge {
+    position: absolute;
+    top: -0.6rem;
+    left: calc(var(--bb-rail) * -1 + 0.5rem);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.9rem;
+    height: 2.9rem;
+    border-radius: 50%;
+    /* barwa i tekst z tokenow - plakietka nie wprowadza wlasnego koloru */
+    background: var(--bb-accent);
+    color: var(--bb-fg);
+    font-family: var(--bb-font-mono);
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 0;
+}
+/* w kolumnie prawej szyna jest wcieciem WEWNATRZ kolumny, wiec numer liczy sie
+   od jej wlasnej krawedzi */
+.col-right .step-badge,
+.act-cell-gen .step-badge { left: 0.5rem; }
+.col-left, .col-right, .act-cell { position: relative; }
+
+/* dopisek przy kroku opcjonalnym: ciszej niz etykieta, bez wersalikow */
+.step-optional {
+    flex: none;
+    margin-left: 0.55em;
+    text-transform: none;
+    letter-spacing: 0.02em;
+    font-weight: 500;
+    font-size: 0.74rem;
+    color: var(--bb-fg-6);
+}
+
+/* Ponizej 900px szyny nie ma: numer wraca do linii etykiety. */
+@media (max-width: 900px) {
+    .col-right { padding-left: 0; }
+    .step-badge {
+        position: static;
+        width: 2.1rem;
+        height: 2.1rem;
+        font-size: 1rem;
+        margin-right: 0.7em;
+    }
+}
 
 /* Kolumna tresci nie ma juz zewnetrznej ramki: etykieta, pole i przycisk
    stoja wprost w kolumnie. Granice rysuje samo pole edytora. */

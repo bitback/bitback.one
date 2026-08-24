@@ -1,5 +1,10 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
+/* Szyna numerow krokow: pas po lewej, w ktorym stoja plakietki 1-4. Kazdy pas
+   strony (naglowek, baner, obie kolumny) liczy od niej swoja lewa krawedz. */
+.bb-landing { --bb-rail: 4.4rem; }
+@media (max-width: 900px) { .bb-landing { --bb-rail: 1rem; } }
+
 body {
     font-family: var(--bb-font-sans);
     background: var(--bb-bg);
@@ -18,9 +23,13 @@ body {
     flex-wrap: wrap;
     justify-content: space-between;
     gap: 0.4rem 1.6rem;
-    padding: 1.3rem 2.4rem 1rem;
+    /* lewa krawedz naglowka to ta sama pionowa co tresc pod nim */
+    padding: 1.3rem 1rem 1rem var(--bb-rail);
 }
-.header .bb-logo svg { width: 214px; height: auto; }
+/* Szerokosc liczy sie z wysokosci. Sztywna szerokosc byla wieksza niz rysunek
+   przy wymuszonej wysokosci, a SVG centruje sie w swoim pudelku - stad ~17px
+   pustego po lewej, przez ktore logo odstawalo od reszty strony. */
+.header .bb-logo svg { width: auto; }
 .header h1 {
     font-size: 1.6rem;
     font-weight: 300;
@@ -35,48 +44,19 @@ body {
     letter-spacing: 0.24em;
 }
 
-/* ====== TRUST BAR ====== */
-.trust {
+/* ====== BANER BEZPIECZENSTWA ======
+   Jeden akapit prozy zamiast trzech kolumn z ikonami. Bez ramki: baner ma byc
+   wprowadzeniem do ponumerowanych krokow, nie konkurentem dla nich, a ramka
+   obejmowala tez szyne numerow i wpychala je optycznie do srodka pudelka. */
+.security {
     max-width: 1100px;
-    margin: 0 auto 1.5rem;
-    padding: 0 1rem;
+    margin: 0 auto 1.4rem;
+    padding: 0 1rem 0 var(--bb-rail);
 }
-/* Pasek zaufania: ciemne wnetrze w ramce. */
-.trust-box {
-    padding: 1rem;
-    background: var(--bb-surface-sunk);
-    border: 1px solid var(--bb-neon-border);
-    box-shadow: var(--bb-neon-glow);
-}
-.trust-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
-}
-@media (max-width: 768px) {
-    .trust-grid { grid-template-columns: 1fr; }
-}
-/* item trust bara (m01): chip inline po lewej tytulu,
-   opis pod spodem na calej szerokosci */
-.trust-item {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    column-gap: 0.65rem;
-    row-gap: 0.45rem;
-    align-items: center;
-    padding: 0.4rem;
-}
-.trust-item .trust-desc { grid-column: 1 / -1; }
-.trust-title {
-    font-size: 0.78rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--bb-fg);
-}
-.trust-desc {
-    font-size: 0.8rem;
-    color: var(--bb-fg-3);
-    line-height: 1.55;
+.security .col-label { color: var(--bb-fg-3); }
+.security-prose {
+    font-size: 0.82rem;
+    line-height: 1.65;
+    color: var(--bb-fg-5);
 }
 

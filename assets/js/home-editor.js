@@ -4,7 +4,6 @@
 const BB = JSON.parse(document.getElementById('bb-config').textContent);
 const T = BB.t;
 const editor = document.getElementById('editor');
-let previewMode = 'expired';
 
 // --- GUTTER NUMERACJI LINII ---
 // Liczy linie WIZUALNE (wysokosc wyrenderowanej tresci / line-height),
@@ -235,7 +234,6 @@ function updatePreview() {
     if (toggleWrap) toggleWrap.style.display = hasImportTable ? '' : 'none';
     if (!hasImportTable) { const n = document.getElementById('importNote'); if (n) n.remove(); }
     const previewBox = document.getElementById('preview');
-    const html = editor.innerHTML;
     const isEmpty = editor.textContent.trim().length === 0;
     updateGuide();
 
@@ -253,30 +251,20 @@ function updatePreview() {
         pnote.className = 'bulk-preview-note';
         pnote.textContent = (T.bulk_preview_note || '').replace('{n}', recs.length);
         previewBox.appendChild(pnote);
-        if (recs[0]) previewBox.appendChild(buildBulkPreview(recs[0], previewMode === 'expired'));
+        if (recs[0]) previewBox.appendChild(buildBulkPreview(recs[0], true));
         return;
     }
 
-    if (previewMode === 'expired') {
-        // DOM-based replacement - safe for any content inside .secret
-        const clone = editor.cloneNode(true);
-        clone.querySelectorAll('.secret').forEach(el => {
-            const masked = document.createElement('span');
-            masked.className = 'masked';
-            masked.textContent = '●●●●●●';
-            el.replaceWith(masked);
-        });
-        previewBox.innerHTML = clone.innerHTML;
-    } else {
-        previewBox.innerHTML = html;
-    }
-}
-
-function setPreview(mode, btn) {
-    previewMode = mode;
-    document.querySelectorAll('.preview-tab').forEach(t => t.classList.remove('active'));
-    btn.classList.add('active');
-    updatePreview();
+    // Podglad ma jeden stan: tak zobaczy tresc odbiorca po wygasnieciu linka.
+    // DOM-based replacement - safe for any content inside .secret
+    const clone = editor.cloneNode(true);
+    clone.querySelectorAll('.secret').forEach(el => {
+        const masked = document.createElement('span');
+        masked.className = 'masked';
+        masked.textContent = '●●●●●●';
+        el.replaceWith(masked);
+    });
+    previewBox.innerHTML = clone.innerHTML;
 }
 
 editor.addEventListener('input', updatePreview);

@@ -164,7 +164,7 @@ try {
     Write-Host ""; Write-Host "== RENDER EN =="
 
     # 1. index.php
-    CheckPage 'index' (GetPage '/index.php?lang=en') @('Zero-trust encryption', 'secure links for sharing confidential data')
+    CheckPage 'index' (GetPage '/index.php?lang=en') @('This is the zero-trust model', 'secure links for sharing confidential data')
 
     # 2. 404.php (globalny)
     CheckPage '404.php' (GetPage '/404.php?lang=en') @('This link does not exist', 'Source code on')

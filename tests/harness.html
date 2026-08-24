@@ -617,7 +617,7 @@ document.getElementById('app').addEventListener('load', async () => {
         {
             const calls = [];
             const orig = {};
-            ['toggleSecret', 'generatePassword', 'generateLink', 'copyLink', 'setPreview'].forEach(n => {
+            ['toggleSecret', 'generatePassword', 'generateLink', 'copyLink'].forEach(n => {
                 orig[n] = win[n];
                 win[n] = function (...a) { calls.push(n + (typeof a[0] === 'string' ? ':' + a[0] : '')); };
             });
@@ -627,8 +627,6 @@ document.getElementById('app').addEventListener('load', async () => {
             log(clickA('[data-bb-action="generate-password"]') && calls.includes('generatePassword'), 'wiring: przycisk generatora hasla wola generatePassword()');
             log(clickA('[data-bb-action="generate-link"]') && calls.includes('generateLink'), 'wiring: przycisk wola generateLink()');
             log(clickA('[data-bb-action="copy-link"]') && calls.includes('copyLink'), 'wiring: przycisk wola copyLink()');
-            log(clickA('[data-bb-action="preview"][data-bb-mode="active"]') && calls.includes('setPreview:active'), 'wiring: zakladka podgladu wola setPreview("active")');
-            log(clickA('[data-bb-action="preview"][data-bb-mode="expired"]') && calls.includes('setPreview:expired'), 'wiring: zakladka podgladu wola setPreview("expired")');
 
             // Klik trafia zwykle w ikone/span WEWNATRZ przycisku, nie w sam
             // przycisk - delegacja musi to podniesc przez closest().
