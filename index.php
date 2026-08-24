@@ -184,7 +184,9 @@ function bb_config_data(array $t, array $challenge): array {
 
 <div class="security bb-rise-4">
     <div class="col-label"><?= htmlspecialchars($t['security_label']) ?></div>
-    <p class="security-prose"><?= htmlspecialchars($t['security_prose']) ?></p>
+    <?php foreach (['security_p1', 'security_p2', 'security_p3', 'security_p4', 'security_p5'] as $k): ?>
+    <p class="security-prose"><?= $t[$k] ?></p>
+    <?php endforeach; ?>
 </div>
 
 <?= site_footer_html() ?>

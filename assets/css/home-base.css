@@ -61,4 +61,7 @@ body {
     line-height: 1.65;
     color: var(--bb-fg-5);
 }
+.security-prose + .security-prose { margin-top: 0.75rem; }
+/* poczatki akapitow prowadza po tekscie, wiec sa jasniejsze od reszty */
+.security-prose strong { color: var(--bb-fg-3); font-weight: 700; }
 
