@@ -93,7 +93,7 @@ function get_strings(?string $lang = null): array {
             'security_prose' => 'Szyfrowanie odbywa się w 100% w Twojej przeglądarce. Serwer otrzymuje już zaszyfrowane dane. Link jest kluczem do odczytu ich zawartości i widoczny jest chwilowo po wygenerowaniu. Pełny link jest nie do odzyskania, ponieważ zawiera część „#fragment", która nigdy nie trafia do serwera. Nawet administrator widzi już zaszyfrowane dane. To jest model „zero trust".',
             // index: hint bar
             'hint_text' => 'Wpisz treść poniżej. Oznacz fragmenty <strong class="hl">poufne</strong> (przycisk lub <span class="kbd-chip">Ctrl+E</span>).',
-            'mark_note' => 'Poufne fragmenty zostaną ukryte po wygaśnięciu linka - reszta treści pozostanie widoczna do czasu usunięcia linka. Ponowne użycie odznacza.',
+            'mark_note' => 'Poufne fragmenty zostaną bezpowrotnie zamazane po wygaśnięciu linka. Link działa do czasu jego permanentnego usunięcia.',
             'mark_secret_btn' => 'Oznacz zaznaczony tekst jako poufny',
             // index: editor placeholder
             'editor_placeholder' => "Wpisz treść tutaj...\nNp. Login: admin\nHasło: s3cret123  ← zaznacz i Ctrl+E",
@@ -186,7 +186,7 @@ function get_strings(?string $lang = null): array {
             'security_prose' => 'Encryption happens entirely in your browser. The server only ever receives data that is already encrypted. The link is the key to its contents and is shown only briefly after it has been generated. The full link cannot be recovered, because it contains a "#fragment" part that never reaches the server. Even an administrator sees encrypted data only. This is the zero-trust model.',
             // index: hint bar
             'hint_text' => 'Type your content below. Mark the <strong class="hl">secret</strong> fragments (button or <span class="kbd-chip">Ctrl+E</span>).',
-            'mark_note' => 'Secret fragments will be hidden after the link expires - the rest of the content stays visible until the link is deleted. Use again to unmark.',
+            'mark_note' => 'Secret fragments are irreversibly wiped after the link expires. The link works until it is permanently deleted.',
             'mark_secret_btn' => 'Mark selected text as secret',
             // index: editor placeholder
             'editor_placeholder' => "Type your content here...\ne.g. Login: admin\nPassword: s3cret123  ← select and Ctrl+E",
