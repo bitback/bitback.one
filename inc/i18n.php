@@ -92,7 +92,7 @@ function get_strings(?string $lang = null): array {
             'security_label' => 'Bezpieczeństwo',
             'security_prose' => 'Szyfrowanie odbywa się w 100% w Twojej przeglądarce. Serwer otrzymuje już zaszyfrowane dane. Link jest kluczem do odczytu ich zawartości i widoczny jest chwilowo po wygenerowaniu. Pełny link jest nie do odzyskania, ponieważ zawiera część „#fragment", która nigdy nie trafia do serwera. Nawet administrator widzi już zaszyfrowane dane. To jest model „zero trust".',
             // index: hint bar
-            'hint_text' => 'Zaznacz fragment tekstu i naciśnij <span class="kbd-chip">Ctrl+E</span>, aby oznaczyć go jako <strong class="hl">poufny</strong>.',
+            'hint_text' => 'Wpisz treść poniżej. Oznacz fragmenty <strong class="hl">poufne</strong> (przycisk lub <span class="kbd-chip">Ctrl+E</span>).',
             'mark_note' => 'Poufne fragmenty zostaną ukryte po wygaśnięciu linka - reszta treści pozostanie widoczna do czasu usunięcia linka. Ponowne użycie odznacza.',
             'mark_secret_btn' => 'Oznacz zaznaczony tekst jako poufny',
             // index: editor placeholder
@@ -185,7 +185,7 @@ function get_strings(?string $lang = null): array {
             'security_label' => 'Security',
             'security_prose' => 'Encryption happens entirely in your browser. The server only ever receives data that is already encrypted. The link is the key to its contents and is shown only briefly after it has been generated. The full link cannot be recovered, because it contains a "#fragment" part that never reaches the server. Even an administrator sees encrypted data only. This is the zero-trust model.',
             // index: hint bar
-            'hint_text' => 'Select text and press <span class="kbd-chip">Ctrl+E</span> to mark it as <strong class="hl">secret</strong>.',
+            'hint_text' => 'Type your content below. Mark the <strong class="hl">secret</strong> fragments (button or <span class="kbd-chip">Ctrl+E</span>).',
             'mark_note' => 'Secret fragments will be hidden after the link expires - the rest of the content stays visible until the link is deleted. Use again to unmark.',
             'mark_secret_btn' => 'Mark selected text as secret',
             // index: editor placeholder
