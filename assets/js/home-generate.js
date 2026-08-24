@@ -211,6 +211,9 @@ async function generateLink() {
             // Serwer zwraca URL bez klucza — klucz dodajemy po stronie klienta
             document.getElementById('resultUrl').value = result.url + '#' + hexKey;
             document.getElementById('result').classList.add('show');
+            // link jest, wiec nastepny krok to skopiowanie go - przycisk pulsuje
+            const copyBtn = document.querySelector('[data-bb-action="copy-link"]');
+            if (copyBtn) copyBtn.classList.add('bb-guide');
             // pokaż hasło jeśli było ustawione
             const pwdEl = document.getElementById('resultPassword');
             if (pwd) {
@@ -273,7 +276,9 @@ function renderBulkResults(records, links, keys) {
         const cell = document.createElement('div'); cell.className = 'bulk-link-cell';
         const inp = document.createElement('input'); inp.readOnly = true; inp.value = x.url;
         const btn = document.createElement('button'); btn.type = 'button'; btn.textContent = T.copy || 'Copy';
+        btn.classList.add('bb-guide');   // kazdy link czeka na skopiowanie osobno
         btn.addEventListener('click', () => {
+            btn.classList.remove('bb-guide');   // gasnie tylko ten klikniety
             const done = () => { btn.textContent = T.copied || 'OK'; setTimeout(() => btn.textContent = T.copy || 'Copy', 2000); };
             if (navigator.clipboard && window.isSecureContext) {
                 navigator.clipboard.writeText(x.url).then(done).catch(() => { inp.select(); try { document.execCommand('copy'); done(); } catch (e) {} });
@@ -293,6 +298,11 @@ function renderBulkResults(records, links, keys) {
 }
 
 function copyLink() {
+    // klikniecie jest wykonaniem podpowiadanego kroku - puls gasnie od razu,
+    // niezaleznie od tego, czy schowek przyjmie tresc
+    const guided = document.querySelector('[data-bb-action="copy-link"]');
+    if (guided) guided.classList.remove('bb-guide');
+
     const input = document.getElementById('resultUrl');
     input.select();
     input.setSelectionRange(0, input.value.length); // mobile Safari

@@ -109,6 +109,18 @@
     white-space: nowrap;
 }
 .copy-btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
+
+/* Po wygenerowaniu linku nastepnym krokiem jest skopiowanie go, wiec przycisk
+   kopiowania pulsuje az do klikniecia - ta sama mowa prowadzenia co przy
+   weryfikacji i przycisku generowania. Puls robi box-shadow, nie filter:
+   .copy-btn trzyma na filtrze stan hover, a animacja by go zablokowala.
+   W trybie hurtowym pulsuje kazdy przycisk osobno i gasnie tylko klikniety. */
+@keyframes bb-guide-copy {
+    0%, 100% { box-shadow: 0 0 0 hsl(var(--bb-h-accent) var(--bb-s-signal) 62% / 0); }
+    50%      { box-shadow: 0 0 14px hsl(var(--bb-h-accent) var(--bb-s-signal) 62% / 0.75); }
+}
+.copy-btn.bb-guide,
+.bulk-link-cell button.bb-guide { animation: bb-guide-copy 1.1s ease-in-out infinite; }
 .copy-btn:active { filter: brightness(0.92); transform: translateY(0); }
 
 .result-password {

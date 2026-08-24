@@ -376,6 +376,17 @@ document.getElementById('app').addEventListener('load', async () => {
         log(note && note.textContent.indexOf('sekret123') !== -1, 'haslo ustawione -> notka z haslem');
         pwdEl.value = pwdOld;
 
+        // prowadzenie po wygenerowaniu: kazdy przycisk kopiowania pulsuje, a
+        // klikniecie gasi WYLACZNIE ten klikniety (reszta linkow czeka dalej)
+        {
+            const cbtns = box.querySelectorAll('.bulk-link-cell button');
+            log(cbtns.length === 2 && [...cbtns].every(b => b.classList.contains('bb-guide')),
+                'hurt: kazdy przycisk kopiowania pulsuje po wygenerowaniu');
+            cbtns[0].click();
+            log(!cbtns[0].classList.contains('bb-guide'), 'hurt: klikniety przycisk przestaje pulsowac');
+            log(cbtns[1].classList.contains('bb-guide'), 'hurt: pozostale przyciski pulsuja dalej');
+        }
+
         // klik poprawnej odpowiedzi math (ustawia modul-scoped selectedAnswer).
         // CH jest let (nie na window) - czytamy pytanie z DOM "A + B = ?".
         function answerMath() {
@@ -670,10 +681,13 @@ document.getElementById('app').addEventListener('load', async () => {
                 value: { writeText: () => Promise.resolve() }
             });
             doc.getElementById('resultUrl').value = 'https://example.test/abc#deadbeef';
+            copyBtn.classList.add('bb-guide');
+            log(copyBtn.classList.contains('bb-guide'), 'copyLink: przycisk pulsuje przed kliknieciem (test nie pozorny)');
             win.copyLink();
             let marked = null;
             for (let i = 0; i < 40 && !marked; i++) { marked = doc.querySelector('.copied'); if (!marked) await new Promise(r => setTimeout(r, 25)); }
             log(marked === copyBtn, 'copyLink: potwierdzenie "skopiowano" ladu je na przycisku kopiowania');
+            log(!copyBtn.classList.contains('bb-guide'), 'copyLink: klikniecie gasi pulsowanie przycisku');
             log(pwdBtn.innerHTML === pwdBefore, 'copyLink: przycisk generatora hasla zostaje nietkniety');
             doc.getElementById('resultUrl').value = '';
         }
