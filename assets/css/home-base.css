@@ -48,10 +48,12 @@ body {
    Jeden akapit prozy zamiast trzech kolumn z ikonami. Bez ramki: baner ma byc
    wprowadzeniem do ponumerowanych krokow, nie konkurentem dla nich, a ramka
    obejmowala tez szyne numerow i wpychala je optycznie do srodka pudelka. */
+/* Baner stoi POD formularzem: jest wyjasnieniem dla kogos, kto chce wiedziec,
+   czemu ma zaufac, a nie wstepem do pierwszego kroku. */
 .security {
     max-width: 1100px;
-    margin: 0 auto 1.4rem;
-    padding: 0 1rem 0 var(--bb-rail);
+    margin: 0 auto;
+    padding: 0 1rem 2.5rem var(--bb-rail);
 }
 .security .col-label { color: var(--bb-fg-3); }
 .security-prose {

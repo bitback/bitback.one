@@ -76,11 +76,6 @@ function bb_config_data(array $t, array $challenge): array {
     <p><?= htmlspecialchars($t['subtitle']) ?></p>
 </div>
 
-<div class="security bb-rise-2">
-    <div class="col-label"><?= htmlspecialchars($t['security_label']) ?></div>
-    <p class="security-prose"><?= htmlspecialchars($t['security_prose']) ?></p>
-</div>
-
 <div class="main bb-rise-3">
     <form id="createForm" autocomplete="off">
         <input type="text" name="website_url" class="ohnohoney" tabindex="-1" autocomplete="off">
@@ -185,6 +180,11 @@ function bb_config_data(array $t, array $challenge): array {
         </div>
     </form>
 
+</div>
+
+<div class="security bb-rise-4">
+    <div class="col-label"><?= htmlspecialchars($t['security_label']) ?></div>
+    <p class="security-prose"><?= htmlspecialchars($t['security_prose']) ?></p>
 </div>
 
 <?= site_footer_html() ?>
