@@ -184,9 +184,14 @@ function bb_config_data(array $t, array $challenge): array {
 
 <div class="security bb-rise-4">
     <div class="col-label"><?= htmlspecialchars($t['security_label']) ?></div>
-    <?php foreach (['security_p1', 'security_p2', 'security_p3', 'security_p4', 'security_p5'] as $k): ?>
-    <p class="security-prose"><?= $t[$k] ?></p>
-    <?php endforeach; ?>
+    <div class="security-grid">
+        <?php for ($i = 1; $i <= 6; $i++): ?>
+        <div>
+            <h2 class="security-h"><?= htmlspecialchars($t['security_h' . $i]) ?></h2>
+            <p class="security-prose"><?= htmlspecialchars($t['security_p' . $i]) ?></p>
+        </div>
+        <?php endfor; ?>
+    </div>
 </div>
 
 <?= site_footer_html() ?>

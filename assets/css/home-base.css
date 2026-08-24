@@ -61,7 +61,20 @@ body {
     line-height: 1.65;
     color: var(--bb-fg-5);
 }
-.security-prose + .security-prose { margin-top: 0.75rem; }
-/* poczatki akapitow prowadza po tekscie, wiec sa jasniejsze od reszty */
-.security-prose strong { color: var(--bb-fg-3); font-weight: 700; }
+/* Sekcje ida w dwie kolumny: przy pelnej szerokosci strony wiersz miałby
+   okolo 150 znakow, czyli dwa razy wiecej, niz oko czyta bez gubienia
+   powrotu. Dwie kolumny zuzywaja cala szerokosc i skracaja wiersz o polowe. */
+.security-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.3rem 2.5rem;
+    align-items: start;
+}
+@media (max-width: 900px) { .security-grid { grid-template-columns: 1fr; } }
+.security-h {
+    font-size: 0.86rem;
+    font-weight: 700;
+    color: var(--bb-fg-2);
+    margin-bottom: 0.25rem;
+}
 
