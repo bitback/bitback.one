@@ -90,7 +90,7 @@ function get_strings(?string $lang = null): array {
             'og_view_description' => 'Ktoś udostępnił Ci poufne dane przez zaszyfrowany link jednorazowy.',
             // index: trust bar
             'security_label' => 'Bezpieczeństwo',
-            'security_prose' => 'Szyfrowanie odbywa się w 100% w Twojej przeglądarce. Serwer otrzymuje już zaszyfrowane dane. Link jest kluczem do odczytu ich zawartości i widoczny jest chwilowo po wygenerowaniu. Pełny link jest nie do odzyskania, ponieważ zawiera część „#fragment", która nigdy nie trafia do serwera. Nawet administrator widzi już zaszyfrowane dane. To jest model „zero trust".',
+            'security_prose' => 'Szyfrowanie odbywa się w 100% w Twojej przeglądarce. Serwer otrzymuje już zaszyfrowane dane. Link jest kluczem do odczytu ich zawartości i widoczny jest chwilowo po wygenerowaniu. Pełny link jest nie do odzyskania, ponieważ zawiera część „#fragment”, która nigdy nie trafia do serwera. Nawet administrator widzi już zaszyfrowane dane. To jest model „zero trust”.',
             // index: hint bar
             'hint_text' => 'Wpisz treść poniżej. Oznacz fragmenty <strong class="hl">poufne</strong> (przycisk lub <span class="kbd-chip">Ctrl+E</span>).',
             'mark_note' => 'Poufne fragmenty zostaną bezpowrotnie zamazane po wygaśnięciu linka. Link działa do czasu jego permanentnego usunięcia.',
