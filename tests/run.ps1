@@ -109,7 +109,16 @@ try {
         $m = [regex]::Match($resultText, '^(PASS|FAIL) (\d+)/(\d+)')
     }
     # Zrzut PNG: osobny przebieg, best-effort (moze zlapac suite w polowie).
+    # Zdjecie 'Stop' na czas tego wywolania jest OBOWIAZKOWE: PowerShell 5.1
+    # przy $ErrorActionPreference='Stop' zamienia stderr komendy natywnej w blad
+    # TERMINUJACY, a Chrome melduje na stderr kazdy UDANY zrzut ("N bytes written
+    # to file"). Bez tego cala suita przerywa sie dokladnie tutaj - po fazie
+    # browser, przed wypisaniem jakiegokolwiek werdyktu. PS 7 tego nie robi, wiec
+    # objaw widac tylko na 5.1.
+    $eapPrev = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'
     & $browser --headless=new --disable-gpu --no-sandbox --user-data-dir=$prof --hide-scrollbars --virtual-time-budget=25000 --window-size=1100,1400 --screenshot="$shot" $url 2>$null | Out-Null
+    $ErrorActionPreference = $eapPrev
 
     if ($m -and $m.Success) { $browserVerdict = $m.Groups[1].Value; $browserPass = [int]$m.Groups[2].Value; $browserTotal = [int]$m.Groups[3].Value }
 
