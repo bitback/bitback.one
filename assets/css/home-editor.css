@@ -33,7 +33,7 @@
 .main {
     max-width: 1100px;
     margin: 0 auto;
-    padding: 0 1rem 8rem var(--bb-rail);
+    padding: 0 1rem 5.9rem var(--bb-rail);
 }
 
 /* --- LAYOUT DWU-KOLUMNOWY --- */

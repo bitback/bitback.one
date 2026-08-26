@@ -227,7 +227,8 @@
     display: grid;
     grid-template-columns: 1fr calc(340px + var(--bb-rail));
     gap: 1.5rem;
-    margin-top: 1.5rem;
+    /* odstep miedzy wierszem krokow 1-2 a wierszem 3-4 */
+    margin-top: 1.8rem;
 }
 .act-cell { display: flex; flex-direction: column; min-width: 0; }
 .act-cell-gen { padding-left: var(--bb-rail); }

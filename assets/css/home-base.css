@@ -10,7 +10,8 @@ body {
     background: var(--bb-bg);
     color: var(--bb-fg-1);
     min-height: 100vh;
-    padding-bottom: 2.5rem;
+    /* odstep nad stopka - ostatnia granica strony */
+    padding-bottom: 4.6rem;
 }
 
 /* Naglowek jest osobnym pietrem strony, nie pierwszym wierszem formularza:
@@ -29,7 +30,7 @@ body {
     justify-content: center;
     text-align: center;
     gap: 0;
-    padding: 4.2rem 1rem 5rem;
+    padding: 4rem 1rem 4.9rem;
 }
 /* Szerokosc liczy sie z wysokosci. Sztywna szerokosc byla wieksza niz rysunek
    przy wymuszonej wysokosci, a SVG centruje sie w swoim pudelku - stad ~17px
@@ -63,7 +64,7 @@ body {
 .security {
     max-width: 1100px;
     margin: 0 auto;
-    padding: 0 1rem 2.5rem var(--bb-rail);
+    padding: 0 1rem 4.5rem var(--bb-rail);
 }
 .security .col-label { color: var(--bb-fg-3); }
 .security-prose {
