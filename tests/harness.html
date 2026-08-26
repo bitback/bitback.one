@@ -92,6 +92,38 @@ document.getElementById('app').addEventListener('load', async () => {
             log(false, 'deleteDays input obecny w index.php');
         }
 
+        // =================== prowadzenie krokami 1-4 =========================
+        // Numery kroków stoją w szynie po lewej stronie obu kolumn. Uklad jest
+        // wrazliwy: krok 3 stoi pod krokiem 1, a krok 4 pod krokiem 2 tylko
+        // dlatego, ze wiersz akcji dzieli szerokosc tak samo jak kolumny wyzej.
+        // Zmiana podzialu w jednym z tych dwoch miejsc rozjezdza szyny.
+        grp('kroki 1-4 (szyna numerow)');
+        {
+            const badges = [...doc.querySelectorAll('.step-badge')];
+            log(badges.length === 4, 'kroki: cztery plakietki na stronie');
+            log(badges.map(b => b.textContent.trim()).join('') === '1234', 'kroki: numeracja 1-4 w kolejnosci dokumentu');
+            const owner = sel => badges.some(b => b.closest(sel));
+            log(owner('.col-left') && owner('.col-right'), 'kroki: 1 i 2 opisuja kolumny tresci i ustawien');
+            log(doc.querySelectorAll('.action-row .act-cell .step-badge').length === 2, 'kroki: 3 i 4 stoja w wierszu akcji');
+            // Porownujemy DEKLARACJE z arkusza, nie wyliczony uklad: ramka #app
+            // ma 1x1 px, wiec zadna prawdziwa szerokosc kolumn tu nie powstaje.
+            const declared = sel => {
+                for (const sh of doc.styleSheets) {
+                    let rules; try { rules = sh.cssRules; } catch (e) { continue; }
+                    for (const r of rules) {
+                        if (r.style && r.selectorText && r.selectorText.trim() === sel && r.style.gridTemplateColumns) {
+                            return r.style.gridTemplateColumns;
+                        }
+                    }
+                }
+                return null;
+            };
+            const gTwo = declared('.two-col'), gAct = declared('.action-row');
+            log(gTwo !== null && gAct !== null, 'kroki: obie siatki zadeklarowane w arkuszu (test nie pozorny)');
+            log(gTwo === gAct, 'kroki: wiersz akcji dzieli szerokosc tak samo jak kolumny (numery trzymaja pion)');
+            log(doc.querySelector('.col-right .step-optional') !== null, 'kroki: krok 2 oznaczony jako opcjonalny');
+        }
+
         // =================== demo oznaczania poufnego ========================
         // Pokaz rysuje sie w warstwie NAD polem i nie moze dotykac #editor:
         // aplikacja buduje ladunek z editor.textContent i z .secret w srodku,
