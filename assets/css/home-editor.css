@@ -26,10 +26,14 @@
 /* Slowo "poufny" niesie ten sam kolor co przycisk i co oznaczony tekst. */
 
 
+/* Dolne wciecie to granica miedzy formularzem a czescia opisowa
+   ("O bitback.one"). Jest szersza niz odstep pod naglowkiem, bo czesc opisowa
+   zamyka strone i ma sie odkleic mocniej niz naglowek, ktory nadal nalezy
+   do gory. */
 .main {
     max-width: 1100px;
     margin: 0 auto;
-    padding: 0 1rem 3rem var(--bb-rail);
+    padding: 0 1rem 8rem var(--bb-rail);
 }
 
 /* --- LAYOUT DWU-KOLUMNOWY --- */

@@ -13,18 +13,23 @@ body {
     padding-bottom: 2.5rem;
 }
 
-/* logo do lewej (z wcieciem), podtytul do prawej - jedna linia
-   wypelnia szerokosc, tresc apki wedruje w gore */
+/* Naglowek jest osobnym pietrem strony, nie pierwszym wierszem formularza:
+   logo i podtytul stoja jeden pod drugim, wysrodkowane, z szerokim oddechem
+   nad i pod. Wczesniej szly w jednej linii rozepchniete na boki
+   (space-between) - przy szerokim oknie robila sie miedzy nimi dziura i para
+   "nazwa + co to robi" przestawala sie czytac jako calosc. Podtytul nie ma
+   juz wlasnej krawedzi po prawej, wiec naglowek nie liczy tez lewego wciecia
+   od szyny numerow - jest symetryczny wzgledem srodka strony. */
 .header {
     max-width: 1100px;
     margin: 0 auto;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 0.4rem 1.6rem;
-    /* lewa krawedz naglowka to ta sama pionowa co tresc pod nim */
-    padding: 1.3rem 1rem 1rem var(--bb-rail);
+    justify-content: center;
+    text-align: center;
+    gap: 0;
+    padding: 4.2rem 1rem 5rem;
 }
 /* Szerokosc liczy sie z wysokosci. Sztywna szerokosc byla wieksza niz rysunek
    przy wymuszonej wysokosci, a SVG centruje sie w swoim pudelku - stad ~17px
@@ -42,6 +47,11 @@ body {
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.24em;
+    /* wersaliki z duzym trackingiem lamia sie brzydko na waskim oknie,
+       wiec podtytul ma wlasna maksymalna szerokosc i lamie sie po srodku */
+    max-width: 72ch;
+    margin: 0 auto;
+    line-height: 1.5;
 }
 
 /* ====== BANER BEZPIECZENSTWA ======
