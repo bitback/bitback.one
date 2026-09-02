@@ -33,7 +33,10 @@
 .main {
     max-width: 1100px;
     margin: 0 auto;
-    padding: 0 1rem 5.9rem var(--bb-rail);
+    /* Skrot z var() w srodku znika z modelu arkusza jako podwlasciwosci: suita
+       czyta padding-bottom deklaracja, wiec lewe wciecie idzie osobno. */
+    padding: 0 1rem 5.9rem;
+    padding-left: var(--bb-rail);
 }
 
 /* --- LAYOUT DWU-KOLUMNOWY --- */

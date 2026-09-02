@@ -124,6 +124,40 @@ document.getElementById('app').addEventListener('load', async () => {
             log(doc.querySelector('.col-right .step-optional') !== null, 'kroki: krok 2 oznaczony jako opcjonalny');
         }
 
+        // =================== naglowek jako osobne pietro =====================
+        // Naglowek ma stac w kolumnie i byc wysrodkowany, a granice miedzy
+        // pietrami strony (naglowek / formularz / czesc opisowa) maja byc
+        // realnie rozsuniete. Wczesniej naglowek szedl w jednej linii
+        // rozepchniety na boki i konczyl sie 1rem nad pierwszym krokiem,
+        // przez co czytal sie jak wiersz formularza. Jak wyzej: czytamy
+        // DEKLARACJE z arkusza, bo ramka #app ma 1x1 px i nie ma tu ukladu.
+        grp('naglowek i rytm pieter');
+        {
+            const dec = (sel, prop) => {
+                for (const sh of doc.styleSheets) {
+                    let rules; try { rules = sh.cssRules; } catch (e) { continue; }
+                    for (const r of rules) {
+                        if (r.style && r.selectorText && r.selectorText.trim() === sel && r.style[prop]) {
+                            return r.style[prop];
+                        }
+                    }
+                }
+                return null;
+            };
+            const rem = v => (v && /rem$/.test(v)) ? parseFloat(v) : NaN;
+            const dir = dec('.header', 'flexDirection');
+            const align = dec('.header', 'textAlign');
+            const headBottom = rem(dec('.header', 'paddingBottom'));
+            const mainBottom = rem(dec('.main', 'paddingBottom'));
+            // Bez tego caly blok przechodzilby cicho, gdyby selektory zniknely.
+            log(dir !== null && align !== null && !isNaN(headBottom) && !isNaN(mainBottom),
+                'naglowek: deklaracje ukladu i odstepow znalezione w arkuszu (test nie pozorny)');
+            log(dir === 'column', 'naglowek: logo i podtytul stoja w kolumnie, nie w jednej linii');
+            log(align === 'center', 'naglowek: tresc naglowka wysrodkowana');
+            log(headBottom >= 2, 'naglowek: granica pod naglowkiem rozsunieta (>= 2rem)');
+            log(mainBottom >= 2, 'naglowek: granica przed czescia opisowa rozsunieta (>= 2rem)');
+        }
+
         // =================== demo oznaczania poufnego ========================
         // Pokaz rysuje sie w warstwie NAD polem i nie moze dotykac #editor:
         // aplikacja buduje ladunek z editor.textContent i z .secret w srodku,
