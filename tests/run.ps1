@@ -163,6 +163,52 @@ finally {
     Remove-Item Env:\BB_TEST_DATA_DIR -ErrorAction SilentlyContinue
 }
 
+# --- GRANICE ZAKRESU -------------------------------------------------------
+# Wypisywane ZAWSZE. Cicha granica po pol roku jest nieodrozninalna od luki.
+Write-Host ""
+Write-Host "POMINIETE (granice zakresu, nie przeoczenia):"
+Write-Host "  - sciezki widoku pod adresem z identyfikatorem: osobno, tests\e2e-view.ps1"
+Write-Host "  - wersja angielska: osobno, tests\verify-en.ps1"
+Write-Host "  - parytet krypto ze zlotym wektorem: osobno, interop\gen\verify-vectors.mjs"
+Write-Host "  - produkcja: wszystko biegnie na serwerze lokalnym"
+Write-Host "  - zrzut PNG jest diagnostyczny i bywa niepelny, nie jest dowodem na nic"
+
+# --- KOTWICE ---------------------------------------------------------------
+# Nie sprawdzaja aplikacji. Sprawdzaja, czy suita mierzy jeszcze to, co mierzyla
+# w chwili budowy. Wypisywane TYLKO przy rozjezdzie.
+$anchors = @(
+    @{ co    = 'przegladarka suity zglasza prefers-reduced-motion: reduce'
+       jak   = { if ($resultText -and $resultText -match 'reduce=(true|false)') { $Matches[1] } else { 'brak' } }
+       oczek = 'true'
+       gdy   = 'Dwie asercje pilnujace, ze pokaz oznaczania gra TAKZE przy wylaczonych efektach ruchu, przestaly czegokolwiek pilnowac: przegladarka testowa nie prosi juz o ograniczenie ruchu, wiec przechodza trywialnie i cichy powrot guardu matchMedia nie zostanie zauwazony. Sprawdz efekty animacji w ustawieniach Windows oraz czy nie podmieniono przegladarki; docelowo dolóz --force-prefers-reduced-motion do argumentow przegladarki.' }
+
+    @{ co    = 'binaria brane ze zmiennych srodowiskowych'
+       jak   = { "$env:BB_PHP|$env:BB_BROWSER" }
+       oczek = '|'
+       gdy   = 'Suita uzyla po cichu innego PHP albo innej przegladarki niz domyslne. Zmienne moga byc celowe - chodzi o to, zeby ich wplyw byl widoczny w raporcie. Zweryfikuj kotwice interpretera ponizej i to, czy meldunek dalej niesie reduce=true.' }
+
+    @{ co    = 'interpreter PHP: wersja, plik konfiguracyjny, rozszerzenie openssl'
+       jak   = { $e = Join-Path (Split-Path -Parent $php) 'ext'
+                 $prev = $ErrorActionPreference; $ErrorActionPreference = 'Continue'
+                 $v = & $php -d "extension_dir=$e" -d extension=openssl -r "echo PHP_VERSION.'|'.(php_ini_loaded_file()?:'BRAK').'|'.(extension_loaded('openssl')?'openssl':'BRAK-openssl');" 2>$null
+                 $ErrorActionPreference = $prev
+                 "$v" }
+       oczek = '8.5.7|BRAK|openssl'
+       gdy   = 'Trzeci czlon BRAK-openssl: testy odczytu starych rekordow same oznaczaja sie jako pominiete, a suita i tak melduje zielono - napraw rozszerzenie, zanim uwierzysz w wynik. Drugi czlon inny niz BRAK: ktos dolozyl php.ini obok binarium, sprawdz w nim opcache.enable_cli i disable_functions, bo -d nadpisuje tylko trzy klucze. Pierwszy czlon inny: wymieniono interpreter, a jego numer jest wpisany na sztywno tutaj i w test-cron.ps1.' }
+)
+$anchorProblems = @()
+foreach ($a in $anchors) {
+    $now = & $a.jak
+    if ("$now" -ne "$($a.oczek)") {
+        $anchorProblems += ("  - {0}: jest `"{1}`", oczekiwano `"{2}`"`n    {3}" -f $a.co, $now, $a.oczek, $a.gdy)
+    }
+}
+if ($anchorProblems) {
+    Write-Host ""
+    Write-Host "UWAGA - ZALOZENIA SUITY SIE ROZJECHALY, wynik ponizej moze klamac:" -ForegroundColor Yellow
+    $anchorProblems | ForEach-Object { Write-Host $_ -ForegroundColor Yellow }
+}
+
 $ok = ($browserVerdict -eq 'PASS' -and $browserTotal -gt 0 -and $endpointExit -eq 0 -and $unitExit -eq 0 -and $cronExit -eq 0)
 Write-Host ""
 $fc = if ($ok) { 'Green' } else { 'Red' }
