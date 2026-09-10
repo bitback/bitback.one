@@ -37,6 +37,17 @@ window.addEventListener('resize', updateGutter);
 // weryfikacji. Po wygenerowaniu linka pobieramy swiezy z /api/challenge.php.
 let CH = BB.challenge;
 let selectedAnswer = null;
+let chLoadedAt = Date.now();          // zegar klienta, nie serwera - liczymy WIEK pytania
+let pendingAfterAnswer = null;        // co wznowic, gdy user odpowie na swieze pytanie
+let mathRescues = 0;                  // bezpiecznik: rozjechany zegar serwera nie zapetli usera
+
+// Pytanie zyje po stronie serwera ANTIBOT_TTL (15 min). Karta zostawiona na
+// godzine ma dzialac dalej, wiec wiek pytania pilnujemy sami i wymieniamy je,
+// zanim serwer zdazy je odrzucic.
+function challengeStale() {
+    const after = (BB.challengeRefreshAfter || 600) * 1000;
+    return Date.now() - chLoadedAt > after;
+}
 
 function generateMath() {
     selectedAnswer = null;
@@ -67,6 +78,12 @@ function generateMath() {
             btn.classList.add('selected');
             selectedAnswer = val;
             updateGuide();
+            hideMathNote();
+            // Wznowienie pracy przerwanej przez wygasle pytanie - user klika
+            // odpowiedz i dostaje to, po co przyszedl, bez drugiego klikniecia.
+            const resume = pendingAfterAnswer;
+            pendingAfterAnswer = null;
+            if (resume) resume();
         });
         container.appendChild(btn);
     });
@@ -76,9 +93,69 @@ generateMath();
 async function refreshChallenge() {
     try {
         const r = await fetch('/api/challenge.php');
-        CH = await r.json();
-    } catch (e) { /* zostaje stary - token wazny 15 min */ }
+        const fresh = await r.json();
+        // Podmieniamy dopiero po sprawdzeniu ksztaltu: odpowiedz bledna albo
+        // ucieta zostawilaby CH bez tokena i kazda wysylka konczylaby sie 400.
+        if (fresh && fresh.token && fresh.exp) {
+            CH = fresh;
+            chLoadedAt = Date.now();
+        }
+    } catch (e) { /* zostaje stary - ponowimy przy nastepnym tyknieciu */ }
     generateMath();
+}
+
+function showMathNote(text) {
+    const note = document.getElementById('mathNote');
+    if (!note) return;
+    note.textContent = text;
+    note.hidden = false;
+}
+
+function hideMathNote() {
+    const note = document.getElementById('mathNote');
+    if (!note) return;
+    note.hidden = true;
+    note.textContent = '';
+}
+
+// Wymiana w tle tylko gdy user jeszcze nie odpowiedzial - inaczej skasowalibysmy
+// mu wybor pod palcami. Wybor zrobiony na starym pytaniu obsluguje
+// askFreshChallengeThen() w chwili wysylki.
+function refreshChallengeIfStale() {
+    if (selectedAnswer === null && challengeStale()) refreshChallenge();
+}
+
+setInterval(refreshChallengeIfStale, 60000);
+document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) refreshChallengeIfStale();
+});
+window.addEventListener('pageshow', (e) => {
+    // Powrot z bfcache przywraca DOM sprzed dowolnie dlugiego czasu razem ze
+    // starym pytaniem - tu wymieniamy bezwarunkowo.
+    if (e.persisted) refreshChallenge(); else refreshChallengeIfStale();
+});
+
+/**
+ * Pytanie wygaslo, a user ma juz gotowa prace. Zamiast bledu: swieze pytanie,
+ * prowadzenie wzroku na nie i automatyczne wznowienie akcji po odpowiedzi.
+ */
+async function askFreshChallengeThen(resume) {
+    // Gdyby serwer odrzucal pytanie mimo swiezosci (np. zegar hosta w przod),
+    // po kilku probach przestajemy wznawiac sami - user klika Generuj recznie
+    // i widzi normalny komunikat zamiast karuzeli pytan.
+    mathRescues++;
+    pendingAfterAnswer = mathRescues <= 3 ? resume : null;
+    await refreshChallenge();
+    showMathNote(T.error_math_expired);
+    // updateGuide PRZED podswietleniem: samo prowadzenie zdejmuje bb-guide
+    // z weryfikacji, gdy w edytorze nie ma jeszcze oznaczonego fragmentu, a tu
+    // pytanie jest jedyna rzecza, ktora blokuje usera.
+    updateGuide();
+    const panel = document.querySelector('.config-verify');
+    if (panel) {
+        panel.classList.add('bb-guide');
+        panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
 }
 
 // --- TOGGLE SECRET (oznacz / odznacz) ---

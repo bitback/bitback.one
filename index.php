@@ -13,7 +13,7 @@ $challenge = antibot_challenge();
 /** Dane, ktore skrypty strony glownej dostaja z serwera (wyspa #bb-config). */
 function bb_config_data(array $t, array $challenge): array {
     $jsKeys = [
-        'error_ratelimit', 'error_math', 'error_server', 'error_connection',
+        'error_ratelimit', 'error_math', 'error_math_expired', 'error_server', 'error_connection',
         'your_password', 'password_unrecoverable', 'password_generate',
         'copied', 'copy', 'generate_btn', 'generating', 'preview_empty',
         'import_detected', 'import_multi_tables', 'bulk_preview_note',
@@ -29,6 +29,8 @@ function bb_config_data(array $t, array $challenge): array {
         // Liczba linii placeholdera edytora: gutter numeruje je, gdy pole jest puste.
         'placeholderLines' => count(explode("\n", $t['editor_placeholder'])),
         'challenge' => $challenge,
+        // Po ilu sekundach klient uznaje pytanie za stare i pobiera swieze w tle.
+        'challengeRefreshAfter' => ANTIBOT_REFRESH_AFTER,
         'batchMax'  => defined('BATCH_MAX_RECORDS') ? BATCH_MAX_RECORDS : 200,
         'defaults'  => [
             'expireDays' => DEFAULT_EXPIRE_DAYS,
@@ -148,6 +150,7 @@ function bb_config_data(array $t, array $challenge): array {
                 <div class="verify-panel bb-frame config-verify">
                     <div class="antibot-q" id="mathQuestion" aria-live="polite"></div>
                     <div class="antibot-options" id="mathOptions" role="group" aria-label="<?= htmlspecialchars($t['verify_label']) ?>"></div>
+                    <div class="antibot-note" id="mathNote" role="status" hidden></div>
                 </div>
             </div>
             <div class="act-cell act-cell-gen">

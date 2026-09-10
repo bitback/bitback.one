@@ -16,7 +16,10 @@
 param(
     [string]$BaseUrl = 'http://127.0.0.1:8199',
     # Katalog rekordow serwera testowego (run.ps1 podaje temp; patrz bootstrap.php).
-    [string]$DataDir = (Join-Path (Split-Path -Parent $PSScriptRoot) 'data')
+    [string]$DataDir = (Join-Path (Split-Path -Parent $PSScriptRoot) 'data'),
+    # PHP CLI - potrzebny do podpisania wygaslego challenge tym samym sekretem
+    # co serwer (patrz tests/make-expired-challenge.php).
+    [string]$Php = $(if ($env:BB_PHP) { $env:BB_PHP } else { 'php' })
 )
 
 $pass = 0; $fail = 0
@@ -97,6 +100,20 @@ chk "honeypot -> ok:true + 2 linki" ($r.body.ok -eq $true -and $r.body.links.Cou
 # 3. zly math -> 400 math
 $r = PostJson '/api/create-batch.php' (@{ math_a = 1; math_b = 1; math_exp = $ch.exp; math_token = $ch.token; math_answer = 999; records = @($validRec) })
 chk "zly math -> 400 'math'" ($r.code -eq 400 -and $r.body.error -eq 'math')
+# 3b. pytanie przeterminowane, ale odpowiedz POPRAWNA -> 400 'math_expired'.
+# To jest regresja bledu, w ktorym user z dobra odpowiedzia widzial
+# "Nieprawidlowa odpowiedz": klient rozni te dwa przypadki po kodzie bledu.
+$exch = & $Php (Join-Path $PSScriptRoot 'make-expired-challenge.php') | ConvertFrom-Json
+$expiredMath = @{ math_a = $exch.a; math_b = $exch.b; math_exp = $exch.exp; math_token = $exch.token; math_answer = $exch.answer }
+$r = PostJson '/api/create-batch.php' ($expiredMath + @{ records = @($validRec) })
+chk "batch: wygasle pytanie + dobra odpowiedz -> 400 'math_expired'" ($r.code -eq 400 -and $r.body.error -eq 'math_expired')
+$r = PostJson '/api/create.php' ($expiredMath + @{ encrypted_text = (b64 'AAAABBBBCCCC'); total_sections = 1; format = 3 })
+chk "create: wygasle pytanie + dobra odpowiedz -> 400 'math_expired'" ($r.code -eq 400 -and $r.body.error -eq 'math_expired')
+# Zla odpowiedz na wazne pytanie musi ZOSTAC przy 'math' - inaczej klient
+# przestalby mowic userowi, ze faktycznie pomylil sie w dodawaniu.
+$badAnswer = $math.Clone(); $badAnswer.math_answer = 999  # + z duplikatem klucza rzuca w PS
+$r = PostJson '/api/create.php' ($badAnswer + @{ encrypted_text = (b64 'AAAABBBBCCCC'); total_sections = 1; format = 3 })
+chk "create: zla odpowiedz na wazne pytanie -> nadal 'math'" ($r.code -eq 400 -and $r.body.error -eq 'math')
 # 4. 0 rekordow -> 400 batch_size
 $r = PostJson '/api/create-batch.php' ($math + @{ records = @() })
 chk "0 rekordow -> 400 'batch_size'" ($r.code -eq 400 -and $r.body.error -eq 'batch_size')

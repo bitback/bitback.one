@@ -137,7 +137,7 @@ try {
     # --- ENDPOINT SUITE ---
     Write-Host ""
     Write-Host "== ENDPOINT SUITE =="
-    & (Join-Path $PSScriptRoot 'test-endpoint.ps1') -BaseUrl $base -DataDir $testData
+    & (Join-Path $PSScriptRoot 'test-endpoint.ps1') -BaseUrl $base -DataDir $testData -Php $php
     $endpointExit = $LASTEXITCODE
 
     # --- UNIT SUITE (czyste funkcje PHP, bez HTTP) ---

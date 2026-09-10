@@ -758,6 +758,32 @@ document.getElementById('app').addEventListener('load', async () => {
             doc.getElementById('resultUrl').value = '';
         }
 
+        // ============ antybot: wygasle pytanie nie konczy pracy usera ============
+        // Regresja: serwer odrzucal przeterminowane pytanie tym samym kodem co
+        // zla odpowiedz, wiec user z poprawna suma czytal "Nieprawidlowa
+        // odpowiedz". Teraz klient wymienia pytanie i wznawia to, co robil.
+        grp('antybot - wymiana wygaslego pytania i wznowienie akcji');
+        {
+            const noteEl = doc.getElementById('mathNote');
+            const qEl = doc.getElementById('mathQuestion');
+            log(!!noteEl && noteEl.hidden, 'antybot: nota o wygasnieciu ukryta zanim cokolwiek wygasnie (test nie pozorny)');
+
+            let wznowiono = false;
+            await win.askFreshChallengeThen(() => { wznowiono = true; });
+
+            log(!noteEl.hidden && noteEl.textContent.length > 0, 'antybot: wygasniecie pokazuje note zamiast bledu odpowiedzi');
+            log(doc.querySelector('.config-verify').classList.contains('bb-guide'), 'antybot: swieze pytanie zostaje podswietlone');
+            const opts = [...doc.querySelectorAll('.antibot-opt')].map(b => +b.textContent);
+            const m = qEl.textContent.match(/(\d+)\s*\+\s*(\d+)/);
+            const suma = m ? (+m[1] + +m[2]) : NaN;
+            log(!!m && opts.indexOf(suma) !== -1, 'antybot: opcje pasuja do NOWEGO pytania (nie do wygaslego)');
+            log(!wznowiono, 'antybot: akcja czeka na odpowiedz, nie leci sama (test nie pozorny)');
+
+            [...doc.querySelectorAll('.antibot-opt')].find(b => +b.textContent === suma).click();
+            log(wznowiono, 'antybot: odpowiedz na swieze pytanie wznawia przerwana akcje');
+            log(noteEl.hidden, 'antybot: nota gasnie po odpowiedzi');
+        }
+
         // ============ view.php: deszyfrowanie GCM + XSS + linkify + TOTP (drugi iframe) ============
         // Rekord tworzony przez tests/fixture.php (aktywny tylko przy BB_TEST_DATA_DIR),
         // bloby liczone tu w #app; potem /view.php?slug=uuid#hexKey w iframe #view.

@@ -62,6 +62,23 @@ ok(antibot_verify($ch['a'], $ch['b'], $ch['exp'], $ch['token'], $ch['a'] + $ch['
 // Typy z JSON-a: klient przysyla stringi.
 ok(antibot_verify((string)$ch['a'], (string)$ch['b'], (string)$ch['exp'], $ch['token'], (string)($ch['a'] + $ch['b'])), 'antibot: wartosci jako stringi (JSON) przechodza');
 
+// --- POWOD ODMOWY (antibot_reason) ---
+// Klient rozroznia wygasle pytanie od zlej odpowiedzi. Gdyby 'expired' wpadlo
+// z powrotem do 'wrong', user z poprawna odpowiedzia znow zobaczylby
+// "Nieprawidlowa odpowiedz" - dokladnie ten blad, ktory naprawiamy.
+ok(antibot_reason($ch['a'], $ch['b'], $ch['exp'], $ch['token'], $ch['a'] + $ch['b']) === 'ok', 'reason: poprawna odpowiedz = ok');
+ok(antibot_reason($ch['a'], $ch['b'], $ch['exp'], $ch['token'], $ch['a'] + $ch['b'] + 1) === 'wrong', 'reason: zla suma = wrong');
+ok(antibot_reason(3, 4, $expOld, $tokOld, 7) === 'expired', 'reason: wygasly podpis + dobra suma = expired');
+ok(antibot_reason(3, 4, $expOld, $tokOld, 999) === 'expired', 'reason: wygasly podpis wazniejszy od sumy');
+ok(antibot_reason($ch['a'], $ch['b'], $ch['exp'], str_repeat('0', 64), $ch['a'] + $ch['b']) === 'invalid', 'reason: zmyslony token = invalid');
+ok(antibot_reason($ch['a'], $ch['b'], $ch['exp'], '', $ch['a'] + $ch['b']) === 'invalid', 'reason: pusty token = invalid');
+// Zmyslony exp z przeszloscia nie moze dostac etykiety 'expired' - to by
+// potwierdzalo botowi, ze reszta pol byla poprawna.
+ok(antibot_reason(3, 4, time() - 1, str_repeat('a', 64), 7) === 'invalid', 'reason: przeterminowany ALE niepodpisany = invalid, nie expired');
+ok(antibot_reason(3, 4, $expFar, $tokFar, 7) === 'invalid', 'reason: exp z dalekiej przyszlosci = invalid');
+// Prog odswiezania musi zostawiac zapas na odpowiedz przed wygasnieciem.
+ok(ANTIBOT_REFRESH_AFTER < ANTIBOT_TTL, 'reason: prog odswiezania krotszy niz waznosc pytania');
+
 echo "\n-- generate_uuid --\n";
 $u = generate_uuid();
 ok(preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $u) === 1, 'generate_uuid: format v4 (wariant 89ab)');

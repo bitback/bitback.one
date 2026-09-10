@@ -72,15 +72,17 @@ if (!$api['present']) {
     }
 
     // --- MATH ANTYBOT ---
-    if (!antibot_verify(
+    // 'math_expired' wydzielone z 'math' - patrz komentarz w api/create.php.
+    $mathReason = antibot_reason(
         $input['math_a'] ?? 0,
         $input['math_b'] ?? 0,
         $input['math_exp'] ?? 0,
         $input['math_token'] ?? '',
         $input['math_answer'] ?? null
-    )) {
+    );
+    if ($mathReason !== 'ok') {
         http_response_code(400);
-        echo json_encode(['error' => 'math']);
+        echo json_encode(['error' => $mathReason === 'expired' ? 'math_expired' : 'math']);
         exit;
     }
 }

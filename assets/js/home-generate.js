@@ -71,6 +71,12 @@ async function generateLink() {
         document.querySelector('.config-verify').classList.add('bb-guide');
         return;
     }
+    // Pytanie starsze niz prog: wymien je ZANIM poleci POST. Inaczej user
+    // zaszyfrowalby wszystko po to, zeby dostac 400 z serwera.
+    if (challengeStale()) {
+        await askFreshChallengeThen(generateLink);
+        return;
+    }
     document.querySelector('.generate-btn').classList.remove('bb-guide');
 
     // --- GALAZ BULK (korespondencja seryjna): N kluczy, jeden POST, N linkow ---
@@ -128,11 +134,14 @@ async function generateLink() {
             }
             const result = await resp.json();
             if (result.ok) {
+                mathRescues = 0;
                 document.getElementById('result').classList.remove('show'); // ukryj wynik pojedynczego linku
                 renderBulkResults(recs, result.links, keys);
                 refreshChallenge();
             } else if (result.error === 'ratelimit') {
                 alert(T.error_ratelimit); refreshChallenge();
+            } else if (result.error === 'math_expired') {
+                askFreshChallengeThen(generateLink);
             } else if (result.error === 'math') {
                 alert(T.error_math); refreshChallenge();
             } else if (result.error === 'batch_size' || result.error === 'too_large') {
@@ -208,6 +217,7 @@ async function generateLink() {
         const result = await resp.json();
 
         if (result.ok) {
+            mathRescues = 0;
             // Serwer zwraca URL bez klucza — klucz dodajemy po stronie klienta
             document.getElementById('resultUrl').value = result.url + '#' + hexKey;
             document.getElementById('result').classList.add('show');
@@ -228,6 +238,10 @@ async function generateLink() {
             refreshChallenge();
         } else if (result.error === 'ratelimit') {
             alert(T.error_ratelimit);
+        } else if (result.error === 'math_expired') {
+            // Zegary klienta i serwera moga sie rozjechac - wtedy wyprzedzajaca
+            // wymiana nie zdazyla i ratunkiem jest ta sama sciezka co przy starcie.
+            askFreshChallengeThen(generateLink);
         } else if (result.error === 'math') {
             alert(T.error_math);
             refreshChallenge();

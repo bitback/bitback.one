@@ -99,6 +99,15 @@
     color: var(--bb-fg);
 }
 
+/* Nota pod pytaniem: pojawia sie, gdy pytanie zostalo wymienione na swieze,
+   zeby user wiedzial dlaczego jego wybor zniknal. Ton informacyjny, nie bledu. */
+.antibot-note {
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    line-height: 1.35;
+    color: var(--bb-fg-4);
+}
+
 /* honeypot */
 .ohnohoney {
     position: absolute;
