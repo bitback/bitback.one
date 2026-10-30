@@ -2,11 +2,13 @@
 
 ## Po co
 
-Generuje token API dla integratora i drukuje trzy rzeczy: pełny token do wręczenia osobie (widoczny raz, nieodtwarzalny), jawny identyfikator do zmapowania osoby na token w lokalnej dokumentacji oraz gotową linię do wklejenia do pliku uwierzytelniania na serwerze. Plik serwera trzyma wyłącznie parę identyfikator plus skrót sekretu, bez imion - imiona w pliku uwierzytelniania ujawniałyby, kto ma dostęp, więc wyciek pliku byłby mapą tożsamości. Mapowanie osoby na identyfikator żyje osobno, poza serwerem. Odwołanie tokena to skasowanie jego linii, niezależnie od pozostałych.
+Generuje token API dla integratora i drukuje trzy rzeczy (w trybie `--save-bb` dwie, bez tokena): pełny token do wręczenia osobie (widoczny raz, nieodtwarzalny), jawny identyfikator do zmapowania osoby na token w lokalnej dokumentacji oraz gotową linię do wklejenia do pliku uwierzytelniania na serwerze. Plik serwera trzyma wyłącznie parę identyfikator plus skrót sekretu, bez imion - imiona w pliku uwierzytelniania ujawniałyby, kto ma dostęp, więc wyciek pliku byłby mapą tożsamości. Mapowanie osoby na identyfikator żyje osobno, poza serwerem. Odwołanie tokena to skasowanie jego linii, niezależnie od pozostałych.
 
 ## Wywołanie
 
 Z korzenia kodu aplikacji: `php tools/gen-api-token.php ["nazwa dla własnej referencji"]`. Wyłącznie z linii poleceń - wywołanie przez serwer WWW kończy się odmową. Nazwa jest opcjonalna i trafia tylko na wydruk, nigdy do pliku serwera.
+
+Tryb dla sesji AI, bez wydruku tokena: `php tools/gen-api-token.php --save-bb <klucz-bb-cs> ["nazwa"]`. Token trafia prosto do `bb cs save <klucz>` (typ generic), a na wydruk idą tylko jawny identyfikator i linia do pliku serwera. Wymaga `bb` w PATH; przy błędzie zapisu kończy kodem niezerowym i nic nie drukuje z tokena.
 
 ## Kiedy odpalać
 

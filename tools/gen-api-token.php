@@ -20,12 +20,35 @@ if (PHP_SAPI !== 'cli') {
     exit("Tylko CLI\n");
 }
 
+/*
+ * Tryb bez wydruku tokena (dla sesji AI):
+ *   php tools/gen-api-token.php --save-bb <klucz-bb-cs> ["nazwa"]
+ * Token trafia prosto do `bb cs save <klucz>` (typ generic) i NIE jest drukowany;
+ * drukuje sie tylko jawne ID i linia do inc/api-tokens.txt.
+ */
+$saveKey = null;
+if (($argv[1] ?? '') === '--save-bb') {
+    $saveKey = trim($argv[2] ?? '');
+    if (!preg_match('/^[a-z0-9-]+$/', $saveKey)) exit("Podaj klucz bb cs [a-z0-9-] po --save-bb\n");
+    array_splice($argv, 1, 2);
+}
 $note = trim($argv[1] ?? '');  // opcjonalna nazwa - tylko do wydruku, NIE do pliku
 
 $id     = bin2hex(random_bytes(4));  // 8 znakow hex, jawny handle
 $secret = rtrim(strtr(base64_encode(random_bytes(32)), '+/', '-_'), '=');  // 256-bit base64url
 $token  = "bbk_{$id}_{$secret}";
 $hash   = hash('sha256', $secret);
+
+if ($saveKey !== null) {
+    $cmd = 'bb cs save ' . escapeshellarg($saveKey) . ' ' . escapeshellarg($token) . ' --type generic';
+    exec($cmd . ' 2>&1', $out, $rc);
+    if ($rc !== 0) exit("bb cs save nie powiodl sie (kod $rc); token nie zapisany\n");
+    echo "Token zapisany w bb cs pod kluczem $saveKey (nie drukowany).\n";
+    echo "ID publiczne: $id\n";
+    echo "LINIA do inc/api-tokens.txt: $id  $hash\n";
+    echo "Odwolanie: skasuj te linie z inc/api-tokens.txt.\n";
+    exit(0);
+}
 
 echo "\n";
 if ($note !== '') echo "# dla: $note   (NIE zapisujemy tego w pliku serwera)\n\n";
